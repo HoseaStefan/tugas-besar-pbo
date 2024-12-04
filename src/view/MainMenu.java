@@ -37,23 +37,23 @@ public class MainMenu {
         title.setFont(new Font("SansSerif", Font.BOLD, 24));
         panel.add(title);
 
-        JButton perekamanBtn = new JButton("LOGIN");
-        perekamanBtn.setBounds(350, 100, 260, 50);
-        panel.add(perekamanBtn);
+        JButton loginButton = new JButton("LOGIN");
+        loginButton.setBounds(350, 100, 260, 50);
+        panel.add(loginButton);
 
-        // perekamanBtn.addActionListener(e -> {
-        //     frame.dispose();
-        //     new FormInputData(1, null);
-        // });
+        loginButton.addActionListener(e -> {
+            frame.dispose();
+            new FormLogin();
+        });
 
-        JButton pencarianBtn = new JButton("REGISTER");
-        pencarianBtn.setBounds(350, 170, 260, 50);
-        panel.add(pencarianBtn);
+        JButton registerButton = new JButton("REGISTER");
+        registerButton.setBounds(350, 170, 260, 50);
+        panel.add(registerButton);
 
-        // pencarianBtn.addActionListener(e -> {
-        //     frame.dispose();
-        //     new FormPencarianData();
-        // });
+        registerButton.addActionListener(e -> {
+            frame.dispose();
+            new FormRegister();
+        });
 
         JButton lupaPassButton = new JButton("LUPA PASSWORD");
         lupaPassButton.setBounds(350, 240, 260, 50);
@@ -61,13 +61,14 @@ public class MainMenu {
 
         lupaPassButton.addActionListener(e -> {
             frame.dispose();
+            new FormLupaPassword();
         });
 
-        JButton exitBtn = new JButton("EXIT");
-        exitBtn.setBounds(350, 310, 260, 50);
-        panel.add(exitBtn);
+        JButton exitButton = new JButton("EXIT");
+        exitButton.setBounds(350, 310, 260, 50);
+        panel.add(exitButton);
 
-        exitBtn.addActionListener(e -> {
+        exitButton.addActionListener(e -> {
             frame.dispose();
         });
 
