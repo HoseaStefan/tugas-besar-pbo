@@ -66,18 +66,17 @@ public class FormLogin {
         loginButton.addActionListener(e -> {
             String username = inputUsername.getText();
             String password = new String(inputPassword.getPassword());
-        
+
             if (!username.isEmpty() && !password.isEmpty()) {
                 UserType verifying = UserController.verifyUser(username, password);
                 if (verifying == UserType.NASABAH) {
                     frame.dispose();
-            new MainMenu();
+                    new MainMenu();
                 }
             } else {
                 JOptionPane.showMessageDialog(frame, "Isi terlebih dahulu kawan!");
             }
         });
-        
 
         JButton exitButton = new JButton("Back to Main Menu");
         exitButton.setBounds(350, 310, 260, 50);
