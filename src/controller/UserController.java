@@ -68,7 +68,7 @@ public class UserController {
                 userRs.getInt("pin"),
                 userRs.getInt("nomor_rekening"),
                 userRs.getDouble("saldo"),
-                null // Loyalty object can be set later
+                null 
         );
     }
 
@@ -93,7 +93,7 @@ public class UserController {
 
             ResultSet rs = checkStmt.executeQuery();
             if (rs.next()) {
-                return false; // User already exists
+                return false; 
             }
 
             String insertQuery = "INSERT INTO users (user_id, name, username, email, user_type, password) VALUES (?, ?, ?, ?, ?, ?)";
