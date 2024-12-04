@@ -67,9 +67,12 @@ public class FormLogin {
             String username = inputUsername.getText();
             String password = new String(inputPassword.getPassword());
         
-            // Validate input
             if (!username.isEmpty() && !password.isEmpty()) {
                 UserType verifying = UserController.verifyUser(username, password);
+                if (verifying == UserType.NASABAH) {
+                    frame.dispose();
+            new MainMenu();
+                }
             } else {
                 JOptionPane.showMessageDialog(frame, "Isi terlebih dahulu kawan!");
             }
