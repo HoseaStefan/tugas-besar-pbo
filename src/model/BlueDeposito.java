@@ -1,7 +1,6 @@
 package model;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 
 public class BlueDeposito extends Tabungan {
     private String tabungan_ID;
@@ -10,9 +9,10 @@ public class BlueDeposito extends Tabungan {
     private Timestamp endDate;
     private Boolean complete;
 
-    public BlueDeposito(String tabungan_id, String user_id, TabunganType tabunganType, Timestamp start_date,
-            String tabungan_ID2, DepositoType depositoType, Double saldoAkhir, Timestamp endDate, Boolean complete) {
-        super(tabungan_id, user_id, tabunganType, start_date);
+    public BlueDeposito(String tabungan_id, String user_id, String namaTabungan, TabunganType tabunganType,
+            double saldoAwal, Timestamp start_date, String tabungan_ID2, DepositoType depositoType, Double saldoAkhir,
+            Timestamp endDate, Boolean complete) {
+        super(tabungan_id, user_id, namaTabungan, tabunganType, saldoAwal, start_date);
         tabungan_ID = tabungan_ID2;
         this.depositoType = depositoType;
         this.saldoAkhir = saldoAkhir;
@@ -58,6 +58,25 @@ public class BlueDeposito extends Tabungan {
 
     public void setComplete(Boolean complete) {
         this.complete = complete;
+    }
+
+    public void tarikSaldo() {
+        System.out.println("Tarik Saldo BlueDeposito");
+    }
+
+    public void showSaldo() {
+        System.out.println("Saldo BlueDeposito: " + saldoAkhir);
+    }
+
+    @Override
+    public void createBlueSaving() {
+    }
+
+    public void createBlueGether() {
+    }
+
+    public void createBlueDeposito() {
+        System.out.println("BlueGether created");
     }
 
 }

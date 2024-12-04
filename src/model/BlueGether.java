@@ -10,10 +10,10 @@ public class BlueGether extends Tabungan {
     private double targetSaldo;
     private ArrayList<Nasabah> listNasabah;
 
-    public BlueGether(String tabungan_id, String user_id, TabunganType tabunganType, Timestamp start_date,
-            String tabungan_ID2, String owner_ID, Double saldoGether, double targetSaldo,
-            ArrayList<Nasabah> listNasabah) {
-        super(tabungan_id, user_id, tabunganType, start_date);
+    public BlueGether(String tabungan_id, String user_id, String namaTabungan, TabunganType tabunganType,
+            double saldoAwal, Timestamp start_date, String tabungan_ID2, String owner_ID, Double saldoGether,
+            double targetSaldo, ArrayList<Nasabah> listNasabah) {
+        super(tabungan_id, user_id, namaTabungan, tabunganType, saldoAwal, start_date);
         tabungan_ID = tabungan_ID2;
         this.owner_ID = owner_ID;
         this.saldoGether = saldoGether;
@@ -59,6 +59,33 @@ public class BlueGether extends Tabungan {
 
     public void setListNasabah(ArrayList<Nasabah> listNasabah) {
         this.listNasabah = listNasabah;
+    }
+
+    public void pindahSaldo() {
+        System.out.println("Pindah Saldo BlueGether");
+    }
+
+    public void tarikSaldo() {
+        System.out.println("Tarik Saldo BlueGether");
+    }
+
+    public void showSaldo() {
+        System.out.println("Saldo BlueGether: " + saldoGether);
+    }
+
+    public void tutupBlueGether() {
+        System.out.println("BlueGether ditutup");
+    }
+
+    @Override
+    public void createBlueSaving() {
+    }
+
+    public void createBlueGether() {
+        System.out.println("BlueGether created");
+    }
+
+    public void createBlueDeposito() {
     }
 
 }
