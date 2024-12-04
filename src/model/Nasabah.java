@@ -10,6 +10,7 @@ public class Nasabah extends User {
     private double saldo;
     private Loyalty loyalty;
     private ArrayList<Tabungan> listTabungan;
+    private ArrayList<PromoUsed> listVoucher;
     private ArrayList<Transaksi> listTransaksi;
 
     public Nasabah(String nasabah_id, String fullName, int pin, int nomorRekening, double saldo, Loyalty loyalty) {
