@@ -79,7 +79,7 @@ public class FormLogin {
                     // belom edit
                     System.out.println("admin");
                     frame.dispose();
-                    new MainMenu();
+                    new MenuAdmin();
                 } else {
                     JOptionPane.showMessageDialog(frame, "Salah username/password!");
                 }
