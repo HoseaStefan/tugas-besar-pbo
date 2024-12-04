@@ -12,10 +12,10 @@ public class FormRegister {
     private JFrame frame;
 
     public FormRegister() {
-        showLogin();
+        showRegister();
     }
 
-    public void showLogin() {
+    public void showRegister() {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
 
@@ -68,11 +68,11 @@ public class FormRegister {
         inputPassword.setBounds(350, 250, 260, 50);
         panel.add(inputPassword);
 
-        JButton loginButton = new JButton("LOGIN");
-        loginButton.setBounds(350, 310, 260, 50);
-        panel.add(loginButton);
+        JButton regisButton = new JButton("REGISTER");
+        regisButton.setBounds(350, 310, 260, 50);
+        panel.add(regisButton);
 
-        loginButton.addActionListener(e -> {
+        regisButton.addActionListener(e -> {
             String username = inputUsername.getText();
             String email = inputEmail.getText();
             String password = new String(inputPassword.getPassword());
@@ -98,7 +98,6 @@ public class FormRegister {
             frame.dispose();
             new MainMenu();
         });
-
         frame.add(panel);
         frame.setVisible(true);
 

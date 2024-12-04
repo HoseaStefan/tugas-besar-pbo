@@ -1,6 +1,9 @@
 package view;
 
 import javax.swing.*;
+
+import model.CurrentUser;
+
 import java.awt.*;
 
 public class MainMenu {

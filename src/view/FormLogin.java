@@ -3,6 +3,7 @@ package view;
 import javax.swing.*;
 
 import controller.UserController;
+import model.User;
 import model.UserType;
 
 import java.awt.*;
@@ -68,10 +69,19 @@ public class FormLogin {
             String password = new String(inputPassword.getPassword());
 
             if (!username.isEmpty() && !password.isEmpty()) {
-                UserType verifying = UserController.verifyUser(username, password);
-                if (verifying == UserType.NASABAH) {
+                User verifying = UserController.verifyUser(username, password);
+                if (verifying.getUserType() == UserType.NASABAH) {
+                    // belom edit
+                    System.out.println("nasabah");
                     frame.dispose();
                     new MainMenu();
+                } else if (verifying.getUserType() == UserType.ADMIN) {
+                    // belom edit
+                    System.out.println("admin");
+                    frame.dispose();
+                    new MenuAdmin();
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Salah username/password!");
                 }
             } else {
                 JOptionPane.showMessageDialog(frame, "Isi terlebih dahulu kawan!");
