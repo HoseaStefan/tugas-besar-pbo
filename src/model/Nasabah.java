@@ -3,7 +3,6 @@ package model;
 import java.util.ArrayList;
 
 public class Nasabah extends User {
-    private String nasabah_id;
     private String fullName;
     private int pin;
     private int nomorRekening;
@@ -13,8 +12,7 @@ public class Nasabah extends User {
     private ArrayList<PromoUsed> listVoucher;
     private ArrayList<Transaksi> listTransaksi;
 
-    public Nasabah(String nasabah_id, String fullName, int pin, int nomorRekening, double saldo, Loyalty loyalty) {
-        this.nasabah_id = nasabah_id;
+    public Nasabah(String fullName, int pin, int nomorRekening, double saldo, Loyalty loyalty) {
         this.fullName = fullName;
         this.pin = pin;
         this.nomorRekening = nomorRekening;
@@ -22,23 +20,14 @@ public class Nasabah extends User {
         this.loyalty = loyalty;
     }
 
-    public Nasabah(String user_id, String name, String username, String email, UserType userType, String nasabah_id,
+    public Nasabah(String user_id, String name, String username, String email, UserType userType,
             String fullName, int pin, int nomorRekening, double saldo, Loyalty loyalty) {
         super(user_id, name, username, email, userType);
-        this.nasabah_id = nasabah_id;
         this.fullName = fullName;
         this.pin = pin;
         this.nomorRekening = nomorRekening;
         this.saldo = saldo;
         this.loyalty = loyalty;
-    }
-
-    public String getNasabah_id() {
-        return nasabah_id;
-    }
-
-    public void setNasabah_id(String nasabah_id) {
-        this.nasabah_id = nasabah_id;
     }
 
     public String getFullName() {
@@ -87,6 +76,18 @@ public class Nasabah extends User {
 
     public void setListTabungan(ArrayList<Tabungan> listTabungan) {
         this.listTabungan = listTabungan;
+    }
+
+    public ArrayList<PromoUsed> getListVoucher() {
+        return listVoucher;
+    }
+
+    public void setListVoucher(ArrayList<PromoUsed> listVoucher) {
+        this.listVoucher = listVoucher;
+    }
+
+    public void addVoucher(PromoUsed newVoucher) {
+        this.listVoucher.add(newVoucher);
     }
 
     public ArrayList<Transaksi> getListTransaksi() {
