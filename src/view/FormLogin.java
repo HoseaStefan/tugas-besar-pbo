@@ -78,12 +78,10 @@ public class FormLogin {
             if (!username.isEmpty() && !password.isEmpty()) {
                 User verifying = UserController.verifyUser(username, password);
                 if (verifying.getUserType() == UserType.NASABAH) {
-                    // belom edit
                     System.out.println("nasabah");
                     frame.dispose();
-                    new MainMenu();
+                    new MenuNasabah();
                 } else if (verifying.getUserType() == UserType.ADMIN) {
-                    // belom edit
                     System.out.println("admin");
                     frame.dispose();
                     new MenuAdmin();
