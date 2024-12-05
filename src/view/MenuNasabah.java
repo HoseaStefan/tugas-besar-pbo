@@ -55,6 +55,18 @@ public class MenuNasabah {
         saldoLabel.setBounds(50, 80, 500, 50);
         panel.add(saldoLabel);
 
+        // ------------------------------------------------------------
+
+        JButton CreateSaving = new JButton("Create Blue Saving");
+        CreateSaving.setBounds(120, 240, 260, 50);
+        panel.add(CreateSaving);
+
+        CreateSaving.addActionListener(e -> {
+            frame.dispose();
+            new ShowMenuCreateBlueSaving();
+        });
+
+        // ------------------------------------------------------------
 
         JButton exitButton = new JButton("Logout");
         exitButton.setBounds(120, 600, 260, 50);
