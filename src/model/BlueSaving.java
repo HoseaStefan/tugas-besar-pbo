@@ -3,27 +3,16 @@ package model;
 import java.sql.Timestamp;
 
 public class BlueSaving extends Tabungan {
-    private String tabungan_ID;
     private Double saldoSaving;
     private int jangkaWaktu;
     private double targetSaldo;
 
     public BlueSaving(String tabungan_id, String user_id, String namaTabungan, TabunganType tabunganType,
-            double saldoAwal, Timestamp start_date, String tabungan_ID2, Double saldoSaving, int jangkaWaktu,
-            double targetSaldo) {
+            double saldoAwal, Timestamp start_date, Double saldoSaving, int jangkaWaktu, double targetSaldo) {
         super(tabungan_id, user_id, namaTabungan, tabunganType, saldoAwal, start_date);
-        tabungan_ID = tabungan_ID2;
         this.saldoSaving = saldoSaving;
         this.jangkaWaktu = jangkaWaktu;
         this.targetSaldo = targetSaldo;
-    }
-
-    public String getTabungan_ID() {
-        return tabungan_ID;
-    }
-
-    public void setTabungan_ID(String tabungan_ID) {
-        this.tabungan_ID = tabungan_ID;
     }
 
     public Double getSaldoSaving() {
