@@ -4,29 +4,26 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-
-import controller.UserController;
-import model.CurrentUser;
-import model.Nasabah;
-import model.User;
-import model.UserType;
-
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 
-public class MenuTransaksi {
+import model.CurrentUser;
+import model.Nasabah;
+
+public class FormSetorSaldo {
 
     private JFrame frame;
 
-    public MenuTransaksi(){
-        showMenuTransaksi();
+    public FormSetorSaldo(){
+        showFormSetorSaldo();
     }
 
-    public void showMenuTransaksi(){
+    public void showFormSetorSaldo(){
+        CurrentUser currentUser = CurrentUser.getInstance();
+        Nasabah nasabah = currentUser.getNasabah();
+
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
 
@@ -41,7 +38,7 @@ public class MenuTransaksi {
 
         Font buttonFont = new Font("SansSerif", Font.BOLD, 18);
 
-        frame = new JFrame("Transaksi Menu");
+        frame = new JFrame("Login");
         frame.setUndecorated(true);
         frame.setBounds(start_x, start_y, FRAME_WIDTH, FRAME_HEIGHT);
         frame.setShape(new RoundRectangle2D.Double(0, 0, FRAME_WIDTH, FRAME_HEIGHT, 30, 30));
@@ -52,38 +49,25 @@ public class MenuTransaksi {
         panel.setBackground(Color.getHSBColor(0.6f, 0.7f, 0.9f));
         panel.setBounds(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
 
-        JLabel title = new JLabel("TRANSAKSI");
-        title.setBounds(175, 150, 500, 50);
-        title.setFont(new Font("SansSerif", Font.BOLD, 24));
+        JLabel title = new JLabel("SALDO ANDA : Rp." + nasabah.getSaldo());
+        title.setBounds(50, 50, 400, 30);
+        title.setFont(new Font("SansSerif", Font.BOLD, 20));
         title.setForeground(Color.WHITE);
         panel.add(title);
 
-        frame = new JFrame("Main Menu");
-        frame.setUndecorated(true);
-        frame.setBounds(start_x, start_y, FRAME_WIDTH, FRAME_HEIGHT);
-        frame.setShape(new RoundRectangle2D.Double(0, 0, FRAME_WIDTH, FRAME_HEIGHT, 30, 30));
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JLabel usernameLabel = new JLabel("Input Jumlah Saldo Yang Ingin Di Setor : ");
+        usernameLabel.setBounds(120, 200, 500, 50);
+        title.setForeground(Color.WHITE);
+        panel.add(usernameLabel);
 
-        JButton setorSaldoButton = new JButton("Setor Saldo");
-        setorSaldoButton.setBounds(120, 275, 260, 50);
-        Component.styleButton(setorSaldoButton, new Color(3, 123, 252), buttonFont); 
-        setorSaldoButton.addActionListener(e -> {
-            frame.dispose();
-            new FormSetorSaldo(); 
-        });
-        panel.add(setorSaldoButton);
+        JTextField inputUsername = new JTextField(16);
+        inputUsername.setHorizontalAlignment(JTextField.CENTER);
+        inputUsername.setBorder(BorderFactory.createEmptyBorder());
+        inputUsername.setBounds(120, 240, 260, 50);
+        panel.add(inputUsername);
 
-        JButton transferButton = new JButton("Transfer");
-        transferButton.setBounds(120, 345, 260, 50);
-        Component.styleButton(transferButton, new Color(3, 123, 252), buttonFont); 
-        transferButton.addActionListener(e -> {
-            frame.dispose();
-            // new FormRegister(); 
-        });
-        panel.add(transferButton);
-
-        JButton topUpButton = new JButton("Top Up E-money");
-        topUpButton.setBounds(120, 415, 260, 50);
+        JButton topUpButton = new JButton("SETOR!");
+        topUpButton.setBounds(120, 310, 260, 50);
         Component.styleButton(topUpButton, new Color(3, 123, 252), buttonFont); 
         topUpButton.addActionListener(e -> {
             frame.dispose();
@@ -102,6 +86,5 @@ public class MenuTransaksi {
 
         frame.add(panel);
         frame.setVisible(true);
-
     }
 }

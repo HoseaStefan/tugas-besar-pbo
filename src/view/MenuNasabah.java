@@ -2,9 +2,12 @@ package view;
 
 import javax.swing.*;
 
+import controller.UserController;
 import model.CurrentUser;
-import model.User;
 import model.Nasabah;
+import model.User;
+import model.UserType;
+
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 
@@ -45,16 +48,32 @@ public class MenuNasabah {
         panel.setBounds(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
 
         JLabel welcomeTitle = new JLabel("Welcome, " + nasabah.getName());
-        welcomeTitle.setBounds(50, 50, 200, 25);
+        welcomeTitle.setBounds(50, 50, 400, 30);
         welcomeTitle.setFont(new Font("SansSerif", Font.BOLD, 24));
         welcomeTitle.setForeground(Color.WHITE);
         panel.add(welcomeTitle);
 
-        JLabel saldoLabel = new JLabel("Current saldo : " + nasabah.getSaldo());
-        saldoLabel.setBounds(50, 80, 500, 50);
+        JLabel norekLabel = new JLabel("Nomor Rekeningmu : " + nasabah.getNomorRekening());
+        norekLabel.setBounds(50, 100, 400, 25);
+        norekLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        norekLabel.setForeground(Color.WHITE);
+        panel.add(norekLabel);
+
+        JLabel saldoLabel = new JLabel("Current saldo : Rp." + nasabah.getSaldo());
+        saldoLabel.setBounds(50, 130, 400, 25);
+        saldoLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        saldoLabel.setForeground(Color.WHITE);
         panel.add(saldoLabel);
 
-        // ------------------------------------------------------------
+        JButton transaksiButton = new JButton("Transaksi");
+        transaksiButton.setBounds(120, 400, 260, 50);
+        Component.styleButton(transaksiButton, new Color(3, 123, 252), buttonFont);
+        panel.add(transaksiButton);
+
+        transaksiButton.addActionListener(e -> {
+            frame.dispose();
+            new MenuTransaksi();
+        });
 
         JButton CreateSaving = new JButton("Create Blue Saving");
         CreateSaving.setBounds(120, 240, 260, 50);
@@ -64,8 +83,6 @@ public class MenuNasabah {
             frame.dispose();
             new ShowMenuCreateBlueSaving();
         });
-
-        // ------------------------------------------------------------
 
         JButton exitButton = new JButton("Logout");
         exitButton.setBounds(120, 600, 260, 50);
