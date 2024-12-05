@@ -20,7 +20,7 @@ public class MainMenu {
         int screenHeight = screenSize.height;
 
         final int FRAME_WIDTH = 500;
-        final int FRAME_HEIGHT = 800;
+        final int FRAME_HEIGHT = 700;
 
         int start_x = screenWidth / 2 - (FRAME_WIDTH / 2);
         int start_y = screenHeight / 2 - (FRAME_HEIGHT / 2);
@@ -72,7 +72,7 @@ public class MainMenu {
         panel.add(lupaPassButton);
 
         JButton exitButton = new JButton("EXIT");
-        exitButton.setBounds(125, 650, 260, 50);
+        exitButton.setBounds(125, 600, 260, 50);
         styleButton(exitButton, new Color(255, 69, 58), buttonFont);
         exitButton.addActionListener(e -> {
             frame.dispose();
