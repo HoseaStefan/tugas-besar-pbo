@@ -18,7 +18,6 @@ public class MenuNasabah {
 
     public void showMenuNasabah() {
         CurrentUser currentUser = CurrentUser.getInstance();
-        User user = currentUser.getUser();
         Nasabah nasabah = currentUser.getNasabah();
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
@@ -54,7 +53,6 @@ public class MenuNasabah {
         JLabel saldoLabel = new JLabel("Current saldo : " + nasabah.getSaldo());
         saldoLabel.setBounds(50, 80, 500, 50);
         panel.add(saldoLabel);
-
 
         JButton exitButton = new JButton("Logout");
         exitButton.setBounds(120, 600, 260, 50);
