@@ -12,6 +12,7 @@ import model.BlueSaving;
 import model.CurrentUser;
 import model.TabunganType;
 import model.User;
+import model.Nasabah;
 
 public class ShowMenuCreateBlueSaving {
 
@@ -25,6 +26,7 @@ public class ShowMenuCreateBlueSaving {
 
         CurrentUser currentUser = CurrentUser.getInstance();
         User user = currentUser.getUser();
+        Nasabah nasabah = currentUser.getNasabah();
 
         Timestamp startDate = new Timestamp(System.currentTimeMillis());
 
@@ -127,18 +129,28 @@ public class ShowMenuCreateBlueSaving {
                         return;
                     }
 
+<<<<<<< HEAD
+=======
                     
+>>>>>>> 6da16e3af91e91a225e30138f838adb0401b5af5
                     // Hitung jangka waktu
                     int jangkaWaktu = (int) Math.ceil(targetSaldo / saldoAwal);
                     
                     System.out.println("hehe");
                     // Membuat objek BlueSaving
+<<<<<<< HEAD
+                    BlueSaving blueSaving = new BlueSaving("", nasabah.getUser_id(), namaTabungan,
+                            TabunganType.BLUESAVING,
+                            saldoAwal, startDate, saldoAwal, jangkaWaktu, targetSaldo);
+=======
                     BlueSaving blueSaving = new BlueSaving("", user.getUser_id(), namaTabungan, TabunganType.BLUESAVING,
                     saldoAwal, startDate, saldoAwal, jangkaWaktu, targetSaldo);
+>>>>>>> 6da16e3af91e91a225e30138f838adb0401b5af5
                     blueSaving.createBlueSaving();
                     
                     JOptionPane.showMessageDialog(frame, "Blue Saving Created Successfully!");
 
+                    JOptionPane.showMessageDialog(frame, "Blue Saving Created Successfully!");
                 } catch (NumberFormatException ex) {
 
                     JOptionPane.showMessageDialog(frame,
@@ -156,7 +168,7 @@ public class ShowMenuCreateBlueSaving {
 
         exitButton.addActionListener(e -> {
             frame.dispose();
-            new MainMenu();
+            new MenuNasabah();
         });
 
         frame.add(panel);
