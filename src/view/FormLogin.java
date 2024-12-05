@@ -5,7 +5,6 @@ import javax.swing.*;
 import controller.UserController;
 import model.User;
 import model.UserType;
-
 import java.awt.*;
 
 public class FormLogin {
@@ -48,6 +47,7 @@ public class FormLogin {
 
         JTextField inputUsername = new JTextField(16);
         inputUsername.setHorizontalAlignment(JTextField.CENTER);
+        inputUsername.setBorder(null);
         inputUsername.setBounds(350, 90, 260, 50);
         panel.add(inputUsername);
 
