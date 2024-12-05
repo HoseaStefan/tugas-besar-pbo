@@ -53,6 +53,7 @@ public class FormRegister {
         JTextField inputUsername = new JTextField(16);
         inputUsername.setHorizontalAlignment(JTextField.CENTER);
         inputUsername.setBounds(120, 240, 260, 50);
+        inputUsername.setBorder(BorderFactory.createEmptyBorder());
         panel.add(inputUsername);
 
         JLabel emailLabel = new JLabel("Input Email : ");
@@ -62,6 +63,7 @@ public class FormRegister {
         JTextField inputEmail = new JTextField(16);
         inputEmail.setHorizontalAlignment(JTextField.CENTER);
         inputEmail.setBounds(120, 320, 260, 50);
+        inputEmail.setBorder(BorderFactory.createEmptyBorder());
         panel.add(inputEmail);
 
         JLabel passLabel = new JLabel("Input Password : ");
@@ -71,6 +73,7 @@ public class FormRegister {
         JPasswordField inputPassword = new JPasswordField(16);
         inputPassword.setHorizontalAlignment(JTextField.CENTER);
         inputPassword.setBounds(120, 400, 260, 50);
+        inputPassword.setBorder(BorderFactory.createEmptyBorder());
         panel.add(inputPassword);
 
         JButton regisButton = new JButton("REGISTER");

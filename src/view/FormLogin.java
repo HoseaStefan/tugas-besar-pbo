@@ -53,7 +53,7 @@ public class FormLogin {
 
         JTextField inputUsername = new JTextField(16);
         inputUsername.setHorizontalAlignment(JTextField.CENTER);
-        inputUsername.setBorder(null);
+        inputUsername.setBorder(BorderFactory.createEmptyBorder());
         inputUsername.setBounds(120, 240, 260, 50);
         panel.add(inputUsername);
 
@@ -63,6 +63,7 @@ public class FormLogin {
 
         JPasswordField inputPassword = new JPasswordField(16);
         inputPassword.setHorizontalAlignment(JTextField.CENTER);
+        inputPassword.setBorder(BorderFactory.createEmptyBorder());
         inputPassword.setBounds(120, 320, 260, 50);
         panel.add(inputPassword);
 
