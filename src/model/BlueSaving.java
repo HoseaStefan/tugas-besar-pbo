@@ -10,7 +10,7 @@ public class BlueSaving extends Tabungan {
     public BlueSaving(String tabungan_id, String user_id, String namaTabungan, TabunganType tabunganType,
             double saldoAwal, Timestamp start_date, Double saldoSaving, int jangkaWaktu, double targetSaldo) {
         super(tabungan_id, user_id, namaTabungan, tabunganType, saldoAwal, start_date);
-        this.saldoSaving = saldoSaving;
+        this.saldoSaving = saldoAwal;
         this.jangkaWaktu = jangkaWaktu;
         this.targetSaldo = targetSaldo;
     }
