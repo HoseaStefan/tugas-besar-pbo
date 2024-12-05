@@ -4,21 +4,21 @@ import javax.swing.*;
 
 import model.CurrentUser;
 import model.User;
-import model.Admin;
+import model.Nasabah;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 
-public class MenuAdmin {
+public class MenuNasabah {
 
     private JFrame frame;
 
-    public MenuAdmin() {
-        showMenuAdmin();
+    public MenuNasabah() {
+        showMenuNasabah();
     }
 
-    public void showMenuAdmin() {
+    public void showMenuNasabah() {
         CurrentUser currentUser = CurrentUser.getInstance();
-        Admin admin = currentUser.getAdmin();
+        Nasabah nasabah = currentUser.getNasabah();
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
 
@@ -33,7 +33,7 @@ public class MenuAdmin {
 
         Font buttonFont = new Font("SansSerif", Font.BOLD, 18);
 
-        frame = new JFrame("Admin Dashboard");
+        frame = new JFrame("Homepage");
         frame.setUndecorated(true);
         frame.setBounds(start_x, start_y, FRAME_WIDTH, FRAME_HEIGHT);
         frame.setShape(new RoundRectangle2D.Double(0, 0, FRAME_WIDTH, FRAME_HEIGHT, 30, 30));
@@ -44,11 +44,15 @@ public class MenuAdmin {
         panel.setBackground(Color.getHSBColor(0.6f, 0.7f, 0.9f));
         panel.setBounds(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
 
-        JLabel welcomeTitle = new JLabel("Welcome Admin, " + admin.getName());
-        welcomeTitle.setBounds(50, 50, 400, 25);
+        JLabel welcomeTitle = new JLabel("Welcome, " + nasabah.getName());
+        welcomeTitle.setBounds(50, 50, 200, 25);
         welcomeTitle.setFont(new Font("SansSerif", Font.BOLD, 24));
         welcomeTitle.setForeground(Color.WHITE);
         panel.add(welcomeTitle);
+
+        JLabel saldoLabel = new JLabel("Current saldo : " + nasabah.getSaldo());
+        saldoLabel.setBounds(50, 80, 500, 50);
+        panel.add(saldoLabel);
 
         JButton exitButton = new JButton("Logout");
         exitButton.setBounds(120, 600, 260, 50);
