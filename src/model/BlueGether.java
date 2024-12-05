@@ -4,29 +4,19 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 
 public class BlueGether extends Tabungan {
-    private String tabungan_ID;
     private String owner_ID;
     private Double saldoGether;
     private double targetSaldo;
     private ArrayList<Nasabah> listNasabah;
 
     public BlueGether(String tabungan_id, String user_id, String namaTabungan, TabunganType tabunganType,
-            double saldoAwal, Timestamp start_date, String tabungan_ID2, String owner_ID, Double saldoGether,
-            double targetSaldo, ArrayList<Nasabah> listNasabah) {
+            double saldoAwal, Timestamp start_date, String owner_ID, Double saldoGether, double targetSaldo,
+            ArrayList<Nasabah> listNasabah) {
         super(tabungan_id, user_id, namaTabungan, tabunganType, saldoAwal, start_date);
-        tabungan_ID = tabungan_ID2;
         this.owner_ID = owner_ID;
         this.saldoGether = saldoGether;
         this.targetSaldo = targetSaldo;
         this.listNasabah = listNasabah;
-    }
-
-    public String getTabungan_ID() {
-        return tabungan_ID;
-    }
-
-    public void setTabungan_ID(String tabungan_ID) {
-        this.tabungan_ID = tabungan_ID;
     }
 
     public String getOwner_ID() {
