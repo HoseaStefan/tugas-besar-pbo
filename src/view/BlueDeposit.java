@@ -50,6 +50,7 @@ public class BlueDeposit {
         panel.add(wanitaRadio);
 
         frame.setVisible(true);
+        //tes
     }
 
     public static void main(String[] args) {
