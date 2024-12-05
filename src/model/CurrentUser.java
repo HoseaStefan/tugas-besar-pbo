@@ -3,6 +3,8 @@ package model;
 public class CurrentUser {
     private static CurrentUser instance;
     private User user;
+    private Nasabah nasabah;
+    private Admin admin;
 
     private CurrentUser() {}
 
@@ -23,6 +25,24 @@ public class CurrentUser {
 
     public void clearUser() {
         this.user = null;
+        this.nasabah = null;
+        this.admin = null;
+    }
+
+    public Nasabah getNasabah() {
+        return nasabah;
+    }
+
+    public void setNasabah(Nasabah nasabah) {
+        this.nasabah = nasabah;
+    }
+
+    public Admin getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Admin admin) {
+        this.admin = admin;
     }
 
     public boolean isLoggedIn() {

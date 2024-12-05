@@ -40,14 +40,20 @@ public class UserController {
                 String userId = rs.getString("user_id");
 
                 User loggedInUser = null;
+                Nasabah loggedInNasabah = null;
+                Admin loggedInAdmin = null;
                 if ("NASABAH".equals(userType)) {
                     loggedInUser = fetchNasabah(userId, rs);
+                    loggedInNasabah = fetchNasabah(userId, rs);
                 } else if ("ADMIN".equals(userType)) {
                     loggedInUser = fetchAdmin(userId, rs);
+                    loggedInAdmin = fetchAdmin(userId, rs);
                 }
 
                 if (loggedInUser != null) {
                     CurrentUser.getInstance().setUser(loggedInUser);
+                    CurrentUser.getInstance().setNasabah(loggedInNasabah);
+                    CurrentUser.getInstance().setAdmin(loggedInAdmin);
                 }
                 return loggedInUser;
             }
@@ -96,7 +102,7 @@ public class UserController {
                 return false; 
             }
 
-            String insertQuery = "INSERT INTO users (user_id, name, username, email, user_type, password) VALUES (?, ?, ?, ?, ?, ?)";
+            String insertQuery = "INSERT INTO users (user_id, name, username, email, user_type, password, saldo) VALUES (?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement insertStmt = conn.con.prepareStatement(insertQuery);
             insertStmt.setString(1, generateUniqueId());
             insertStmt.setString(2, username);
@@ -104,6 +110,7 @@ public class UserController {
             insertStmt.setString(4, email);
             insertStmt.setString(5, "NASABAH");
             insertStmt.setString(6, password);
+            insertStmt.setDouble(7, 0);
 
             int rowsInserted = insertStmt.executeUpdate();
             return rowsInserted > 0;
