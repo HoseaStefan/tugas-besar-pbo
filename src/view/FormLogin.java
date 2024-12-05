@@ -77,7 +77,9 @@ public class FormLogin {
 
             if (!username.isEmpty() && !password.isEmpty()) {
                 User verifying = UserController.verifyUser(username, password);
-                if (verifying.getUserType() == UserType.NASABAH) {
+                if (verifying == null) {
+                    JOptionPane.showMessageDialog(frame, "Salah username/password!");
+                } else if (verifying.getUserType() == UserType.NASABAH) {
                     System.out.println("nasabah");
                     frame.dispose();
                     new MenuNasabah();
@@ -85,9 +87,7 @@ public class FormLogin {
                     System.out.println("admin");
                     frame.dispose();
                     new MenuAdmin();
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Salah username/password!");
-                }
+                } 
             } else {
                 JOptionPane.showMessageDialog(frame, "Isi terlebih dahulu kawan!");
             }
