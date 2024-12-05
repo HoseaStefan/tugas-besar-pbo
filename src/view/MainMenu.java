@@ -37,7 +37,7 @@ public class MainMenu {
         panel.setBounds(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
 
         JLabel title = new JLabel("WELCOME TO BLUE!");
-        title.setBounds(130, 150, 500, 50);
+        title.setBounds(130, 100, 500, 50);
         title.setFont(new Font("SansSerif", Font.BOLD, 24));
         title.setForeground(Color.WHITE);
         panel.add(title);
@@ -45,8 +45,8 @@ public class MainMenu {
         Font buttonFont = new Font("SansSerif", Font.BOLD, 18);
 
         JButton loginButton = new JButton("LOGIN");
-        loginButton.setBounds(125, 300, 260, 50);
-        styleButton(loginButton, new Color(3, 123, 252), buttonFont); 
+        loginButton.setBounds(120, 275, 260, 50);
+        Component.styleButton(loginButton, new Color(3, 123, 252), buttonFont); 
         loginButton.addActionListener(e -> {
             frame.dispose();
             new FormLogin(); 
@@ -54,8 +54,8 @@ public class MainMenu {
         panel.add(loginButton);
 
         JButton registerButton = new JButton("REGISTER");
-        registerButton.setBounds(125, 370, 260, 50);
-        styleButton(registerButton, new Color(3, 123, 252), buttonFont); 
+        registerButton.setBounds(120, 345, 260, 50);
+        Component.styleButton(registerButton, new Color(3, 123, 252), buttonFont); 
         registerButton.addActionListener(e -> {
             frame.dispose();
             new FormRegister(); 
@@ -63,8 +63,8 @@ public class MainMenu {
         panel.add(registerButton);
 
         JButton lupaPassButton = new JButton("LUPA PASSWORD");
-        lupaPassButton.setBounds(125, 440, 260, 50);
-        styleButton(lupaPassButton, new Color(3, 123, 252), buttonFont); 
+        lupaPassButton.setBounds(120, 415, 260, 50);
+        Component.styleButton(lupaPassButton, new Color(3, 123, 252), buttonFont); 
         lupaPassButton.addActionListener(e -> {
             frame.dispose();
             new FormLupaPassword(); 
@@ -72,8 +72,8 @@ public class MainMenu {
         panel.add(lupaPassButton);
 
         JButton exitButton = new JButton("EXIT");
-        exitButton.setBounds(125, 600, 260, 50);
-        styleButton(exitButton, new Color(255, 69, 58), buttonFont);
+        exitButton.setBounds(120, 600, 260, 50);
+        Component.styleButton(exitButton, new Color(255, 69, 58), buttonFont);
         exitButton.addActionListener(e -> {
             frame.dispose();
         });
@@ -81,26 +81,6 @@ public class MainMenu {
 
         frame.add(panel);
         frame.setVisible(true);
-    }
-
-    private void styleButton(JButton button, Color backgroundColor, Font font) {
-        button.setFont(font);
-        button.setBackground(backgroundColor);
-        button.setForeground(Color.WHITE);
-        button.setFocusPainted(false); 
-        button.setBorder(BorderFactory.createLineBorder(backgroundColor.darker(), 2)); // Subtle border
-
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                button.setBackground(backgroundColor.brighter()); // Lighter on hover
-            }
-
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                button.setBackground(backgroundColor); // Original color
-            }
-        });
     }
 
     public static void main(String[] args) {
