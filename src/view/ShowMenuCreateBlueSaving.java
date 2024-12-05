@@ -127,16 +127,17 @@ public class ShowMenuCreateBlueSaving {
                         return;
                     }
 
-                    JOptionPane.showMessageDialog(frame, "Blue Saving Created Successfully!");
-
+                    
                     // Hitung jangka waktu
                     int jangkaWaktu = (int) Math.ceil(targetSaldo / saldoAwal);
-
+                    
                     System.out.println("hehe");
                     // Membuat objek BlueSaving
                     BlueSaving blueSaving = new BlueSaving("", user.getUser_id(), namaTabungan, TabunganType.BLUESAVING,
-                            saldoAwal, startDate, saldoAwal, jangkaWaktu, targetSaldo);
+                    saldoAwal, startDate, saldoAwal, jangkaWaktu, targetSaldo);
                     blueSaving.createBlueSaving();
+                    
+                    JOptionPane.showMessageDialog(frame, "Blue Saving Created Successfully!");
 
                 } catch (NumberFormatException ex) {
 
