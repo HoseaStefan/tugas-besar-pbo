@@ -7,7 +7,7 @@ import controller.TransaksiController;
 import model.CurrentUser;
 import model.Nasabah;
 import model.TransaksiType;
-import model.TopUpType; // Assuming there's a TopUpType enum
+import model.TopUpType;
 
 public class FormTopUpEmoney {
 
@@ -28,7 +28,7 @@ public class FormTopUpEmoney {
         int screenHeight = screenSize.height;
 
         final int FRAME_WIDTH = 500;
-        final int FRAME_HEIGHT = 750; // Adjusted height for the form
+        final int FRAME_HEIGHT = 750;
 
         int start_x = screenWidth / 2 - (FRAME_WIDTH / 2);
         int start_y = screenHeight / 2 - (FRAME_HEIGHT / 2);
