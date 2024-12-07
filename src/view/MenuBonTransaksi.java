@@ -12,6 +12,7 @@ import java.awt.geom.RoundRectangle2D;
 import controller.TransaksiController;
 import model.CurrentUser;
 import model.Nasabah;
+import model.TopUpType;
 import model.TransaksiType;
 
 public class MenuBonTransaksi {
@@ -19,12 +20,12 @@ public class MenuBonTransaksi {
     private JFrame frame;
 
     public MenuBonTransaksi(TransaksiType transaksiType, Boolean promo, Double amount, int norekTujuan,
-            Double biayaAdmin) {
-        showMenuBonTransaksi(transaksiType, promo, amount, norekTujuan, biayaAdmin);
+            Double biayaAdmin, TopUpType topUpType) {
+        showMenuBonTransaksi(transaksiType, promo, amount, norekTujuan, biayaAdmin, topUpType);
     }
 
     public void showMenuBonTransaksi(TransaksiType transaksiType, Boolean promo, Double amount, int norekTujuan,
-            Double biayaAdmin) {
+            Double biayaAdmin, TopUpType topUpType) {
         CurrentUser currentUser = CurrentUser.getInstance();
         Nasabah nasabah = currentUser.getNasabah();
 
@@ -64,21 +65,31 @@ public class MenuBonTransaksi {
         saldoLabel.setForeground(Color.WHITE);
         panel.add(saldoLabel);
 
+        JLabel norekLabel = new JLabel("Nomor Rekening Tujuan: " + norekTujuan);
+        if (transaksiType == TransaksiType.TOPUP) {
+            norekLabel.setText("Nomor Emoney " + topUpType + " : " + norekTujuan);
+        } else {
+            norekLabel.setText("Nomor Rekening Tujuan: " + norekTujuan);
+        }
+        norekLabel.setBounds(50, 140, 400, 30);
+        norekLabel.setForeground(Color.WHITE);
+        panel.add(norekLabel);
+
         JLabel adminLabel = new JLabel("Potongan Biaya Admin (-): " + biayaAdmin);
-        adminLabel.setBounds(50, 150, 400, 30);
+        adminLabel.setBounds(50, 180, 400, 30);
         adminLabel.setForeground(Color.WHITE);
         panel.add(adminLabel);
-        
+
         double total = 0;
         if (transaksiType == TransaksiType.SETOR) {
             total += amount - biayaAdmin;
         } else {
             total += amount + biayaAdmin;
         }
-        
+
         if (promo) {
             JLabel promoLabel = new JLabel("Promo Terpakai (+): " + biayaAdmin);
-            promoLabel.setBounds(50, 200, 400, 30);
+            promoLabel.setBounds(50, 230, 400, 30);
             promoLabel.setForeground(Color.WHITE);
             panel.add(promoLabel);
             if (transaksiType == TransaksiType.SETOR) {
@@ -94,19 +105,29 @@ public class MenuBonTransaksi {
         } else {
             totalLabel.setText("Total saldo yang akan terpotong : " + total);
         }
-        totalLabel.setBounds(50, 250, 400, 30);
+        totalLabel.setBounds(50, 280, 400, 30);
         totalLabel.setForeground(Color.WHITE);
         panel.add(totalLabel);
 
         JButton confirmButton = new JButton("KONFIRMASI");
-        confirmButton.setBounds(120, 300, 260, 50);
+        confirmButton.setBounds(120, 330, 260, 50);
         Component.styleButton(confirmButton, new Color(3, 123, 252), buttonFont);
         confirmButton.addActionListener(e -> {
             try {
-                double totalcalculated = amount - biayaAdmin;
-                if (promo) {
-                    totalcalculated += biayaAdmin;
+                double totalcalculated = 0;
+
+                if (transaksiType == TransaksiType.SETOR) {
+                    totalcalculated += amount - biayaAdmin;
+                    if (promo) {
+                        totalcalculated += biayaAdmin;
+                    }
+                } else {
+                    totalcalculated += amount + biayaAdmin;
+                    if (promo) {
+                        totalcalculated -= biayaAdmin;
+                    }
                 }
+
                 boolean success = TransaksiController.createTransaksi(
                         transaksiType,
                         amount,
@@ -114,7 +135,7 @@ public class MenuBonTransaksi {
                         nasabah,
                         norekTujuan,
                         biayaAdmin,
-                        null);
+                        topUpType);
 
                 if (success) {
                     double updatedSaldo = transaksiType == TransaksiType.SETOR
@@ -138,7 +159,7 @@ public class MenuBonTransaksi {
         panel.add(confirmButton);
 
         JButton exitButton = new JButton("Cancel");
-        exitButton.setBounds(120, 400, 260, 50);
+        exitButton.setBounds(120, 420, 260, 50);
         Component.styleButton(exitButton, new Color(255, 69, 58), buttonFont);
         exitButton.addActionListener(e -> {
             frame.dispose();

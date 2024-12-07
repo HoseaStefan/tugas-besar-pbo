@@ -87,7 +87,7 @@ public class MenuTransaksi {
         Component.styleButton(topUpButton, new Color(3, 123, 252), buttonFont); 
         topUpButton.addActionListener(e -> {
             frame.dispose();
-            // new FormLupaPassword(); 
+            new FormTopUpEmoney(); 
         });
         panel.add(topUpButton);
 

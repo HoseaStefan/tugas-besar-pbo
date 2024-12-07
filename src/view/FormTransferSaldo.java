@@ -108,9 +108,19 @@ public class FormTransferSaldo {
                 }
 
                 boolean promoValid = TransaksiController.verifyKodePromo(promoCode, TransaksiType.TRANSFER);
+                if (amount > nasabah.getSaldo()) {
+                    JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak mencukupi.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if (!promoValid) {
+                    if (amount + 2500 > nasabah.getSaldo()) {
+                        JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak mencukupi.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
                 if (promoValid || promoCode.isEmpty()) {
                     frame.dispose();
-                    new MenuBonTransaksi(TransaksiType.TRANSFER, promoValid, amount, rekeningTujuan, 2500.0);
+                    new MenuBonTransaksi(TransaksiType.TRANSFER, promoValid, amount, rekeningTujuan, 2500.0, null);
                 } else {
                     JOptionPane.showMessageDialog(frame, "Kode promo tidak valid.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
