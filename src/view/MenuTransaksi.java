@@ -78,7 +78,7 @@ public class MenuTransaksi {
         Component.styleButton(transferButton, new Color(3, 123, 252), buttonFont); 
         transferButton.addActionListener(e -> {
             frame.dispose();
-            // new FormRegister(); 
+            new FormTransferSaldo(); 
         });
         panel.add(transferButton);
 

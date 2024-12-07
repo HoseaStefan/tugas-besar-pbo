@@ -18,11 +18,13 @@ public class MenuBonTransaksi {
 
     private JFrame frame;
 
-    public MenuBonTransaksi(TransaksiType transaksiType, Boolean promo, Double amount, Double biayaAdmin) {
-        showMenuBonTransaksi(transaksiType, promo, amount, biayaAdmin);
+    public MenuBonTransaksi(TransaksiType transaksiType, Boolean promo, Double amount, int norekTujuan,
+            Double biayaAdmin) {
+        showMenuBonTransaksi(transaksiType, promo, amount, norekTujuan, biayaAdmin);
     }
 
-    public void showMenuBonTransaksi(TransaksiType transaksiType, Boolean promo, Double amount, Double biayaAdmin) {
+    public void showMenuBonTransaksi(TransaksiType transaksiType, Boolean promo, Double amount, int norekTujuan,
+            Double biayaAdmin) {
         CurrentUser currentUser = CurrentUser.getInstance();
         Nasabah nasabah = currentUser.getNasabah();
 
@@ -57,7 +59,7 @@ public class MenuBonTransaksi {
         title.setForeground(Color.WHITE);
         panel.add(title);
 
-        JLabel saldoLabel = new JLabel("Amount "+ transaksiType + " : " + amount);
+        JLabel saldoLabel = new JLabel("Amount " + transaksiType + " : " + amount);
         saldoLabel.setBounds(50, 100, 400, 30);
         saldoLabel.setForeground(Color.WHITE);
         panel.add(saldoLabel);
@@ -66,14 +68,24 @@ public class MenuBonTransaksi {
         adminLabel.setBounds(50, 150, 400, 30);
         adminLabel.setForeground(Color.WHITE);
         panel.add(adminLabel);
-
-        double total = amount - biayaAdmin;
+        
+        double total = 0;
+        if (transaksiType == TransaksiType.SETOR) {
+            total += amount - biayaAdmin;
+        } else {
+            total += amount + biayaAdmin;
+        }
+        
         if (promo) {
             JLabel promoLabel = new JLabel("Promo Terpakai (+): " + biayaAdmin);
             promoLabel.setBounds(50, 200, 400, 30);
             promoLabel.setForeground(Color.WHITE);
             panel.add(promoLabel);
-            total += biayaAdmin; 
+            if (transaksiType == TransaksiType.SETOR) {
+                total += biayaAdmin;
+            } else {
+                total -= biayaAdmin;
+            }
         }
 
         JLabel totalLabel = new JLabel();
@@ -100,7 +112,7 @@ public class MenuBonTransaksi {
                         amount,
                         promo ? "VALID_PROMO" : "",
                         nasabah,
-                        null,
+                        norekTujuan,
                         biayaAdmin,
                         null);
 

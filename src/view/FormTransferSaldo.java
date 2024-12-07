@@ -1,32 +1,22 @@
 package view;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
-import controller.TransaksiController;
-
+import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
-
+import controller.TransaksiController;
 import model.CurrentUser;
 import model.Nasabah;
-import model.Transaksi;
 import model.TransaksiType;
 
-public class FormSetorSaldo {
+public class FormTransferSaldo {
 
     private JFrame frame;
 
-    public FormSetorSaldo() {
-        showFormSetorSaldo();
+    public FormTransferSaldo() {
+        showFormTransferSaldo();
     }
 
-    public void showFormSetorSaldo() {
+    public void showFormTransferSaldo() {
         CurrentUser currentUser = CurrentUser.getInstance();
         Nasabah nasabah = currentUser.getNasabah();
 
@@ -37,14 +27,14 @@ public class FormSetorSaldo {
         int screenHeight = screenSize.height;
 
         final int FRAME_WIDTH = 500;
-        final int FRAME_HEIGHT = 700;
+        final int FRAME_HEIGHT = 750; // Adjusted height for the form
 
         int start_x = screenWidth / 2 - (FRAME_WIDTH / 2);
         int start_y = screenHeight / 2 - (FRAME_HEIGHT / 2);
 
         Font buttonFont = new Font("SansSerif", Font.BOLD, 18);
 
-        frame = new JFrame("Setor Saldo");
+        frame = new JFrame("Transfer Saldo");
         frame.setUndecorated(true);
         frame.setBounds(start_x, start_y, FRAME_WIDTH, FRAME_HEIGHT);
         frame.setShape(new RoundRectangle2D.Double(0, 0, FRAME_WIDTH, FRAME_HEIGHT, 30, 30));
@@ -61,7 +51,7 @@ public class FormSetorSaldo {
         title.setForeground(Color.WHITE);
         panel.add(title);
 
-        JLabel saldoLabel = new JLabel("Input Jumlah Saldo Yang Ingin Di Setor : ");
+        JLabel saldoLabel = new JLabel("Input Jumlah Saldo Yang Ingin Di Transfer : ");
         saldoLabel.setBounds(120, 200, 500, 50);
         saldoLabel.setForeground(Color.WHITE);
         panel.add(saldoLabel);
@@ -72,53 +62,70 @@ public class FormSetorSaldo {
         inputSaldo.setBounds(120, 240, 260, 50);
         panel.add(inputSaldo);
 
+        JLabel rekeningLabel = new JLabel("Nomor Rekening Tujuan : ");
+        rekeningLabel.setBounds(120, 280, 500, 50);
+        rekeningLabel.setForeground(Color.WHITE);
+        panel.add(rekeningLabel);
+
+        JTextField inputRekening = new JTextField(16);
+        inputRekening.setHorizontalAlignment(JTextField.CENTER);
+        inputRekening.setBorder(BorderFactory.createEmptyBorder());
+        inputRekening.setBounds(120, 320, 260, 50);
+        panel.add(inputRekening);
+
         JLabel promoLabel = new JLabel("Promo Code (optional) : ");
-        promoLabel.setBounds(120, 280, 500, 50);
+        promoLabel.setBounds(120, 360, 500, 50);
         promoLabel.setForeground(Color.WHITE);
         panel.add(promoLabel);
 
         JTextField inputPromo = new JTextField(16);
         inputPromo.setHorizontalAlignment(JTextField.CENTER);
         inputPromo.setBorder(BorderFactory.createEmptyBorder());
-        inputPromo.setBounds(120, 320, 260, 50);
+        inputPromo.setBounds(120, 400, 260, 50);
         panel.add(inputPromo);
 
-        JButton topUpButton = new JButton("SETOR!");
-        topUpButton.setBounds(120, 380, 260, 50);
-        Component.styleButton(topUpButton, new Color(3, 123, 252), buttonFont);
-        topUpButton.addActionListener(e -> {
+        JButton transferButton = new JButton("TRANSFER!");
+        transferButton.setBounds(120, 460, 260, 50);
+        Component.styleButton(transferButton, new Color(3, 123, 252), buttonFont);
+        transferButton.addActionListener(e -> {
             try {
                 String promoCode = inputPromo.getText();
                 String saldoInput = inputSaldo.getText();
+                String rekeningInput = inputRekening.getText();
                 double amount = Double.parseDouble(saldoInput);
 
                 if (amount < 0) {
-                    JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak boleh negatif.", "Error",
-                            JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak boleh negatif.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
-                boolean promoValid = TransaksiController.verifyKodePromo(promoCode, TransaksiType.SETOR);
+                int rekeningTujuan = Integer.parseInt(rekeningInput);
+
+                System.out.println(rekeningTujuan);
+                if (TransaksiController.verifyNomorRekeningTujuan(rekeningTujuan)) { 
+                    JOptionPane.showMessageDialog(frame, "Nomor rekening tujuan tidak valid.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                boolean promoValid = TransaksiController.verifyKodePromo(promoCode, TransaksiType.TRANSFER);
                 if (promoValid || promoCode.isEmpty()) {
                     frame.dispose();
-                    System.out.println(promoValid);
-                    new MenuBonTransaksi(TransaksiType.SETOR, promoValid, amount, nasabah.getNomorRekening(), 5000.0);
+                    new MenuBonTransaksi(TransaksiType.TRANSFER, promoValid, amount, rekeningTujuan, 2500.0);
                 } else {
                     JOptionPane.showMessageDialog(frame, "Kode promo tidak valid.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(frame, "Input saldo harus berupa angka.", "Error",
-                        JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(frame, "Input saldo harus berupa angka.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
-        panel.add(topUpButton);
+        panel.add(transferButton);
 
         JButton exitButton = new JButton("Back To Homepage");
         exitButton.setBounds(120, 600, 260, 50);
         Component.styleButton(exitButton, new Color(255, 69, 58), buttonFont);
         exitButton.addActionListener(e -> {
             frame.dispose();
-            new MenuNasabah();
+            new MenuNasabah(); 
         });
         panel.add(exitButton);
 
