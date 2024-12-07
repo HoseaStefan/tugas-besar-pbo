@@ -1,12 +1,10 @@
 package view;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
@@ -75,7 +73,7 @@ public class MenuBonTransaksi {
             promoLabel.setBounds(50, 200, 400, 30);
             promoLabel.setForeground(Color.WHITE);
             panel.add(promoLabel);
-            total += biayaAdmin; // Promo mengurangi biaya admin
+            total += biayaAdmin; 
         }
 
         JLabel totalLabel = new JLabel();
