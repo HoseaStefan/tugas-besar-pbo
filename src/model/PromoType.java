@@ -1,5 +1,5 @@
 package model;
 
 public enum PromoType {
-    TOPUP, TRANSFER;
+    TOPUP, TRANSFER, SETOR;
 }

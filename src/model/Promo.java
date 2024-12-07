@@ -1,6 +1,6 @@
 package model;
 
-public abstract class Promo {
+public class Promo {
     private String promo_id;
     private String kode_promo;
     private PromoType promoType;

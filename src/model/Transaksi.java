@@ -9,21 +9,19 @@ public abstract class Transaksi {
     private double biayaAdmin;
     private Timestamp transaksiDate;
     private String kodePromo;
-    private double jumlahSaldoTerpotong;
     private StatusType statusType;
-
+    
     public Transaksi(){
     }
-
+    
     public Transaksi(String transaksi_id, String nasabah_id, TransaksiType transaksiType, double biayaAdmin,
-            Timestamp transaksiDate, String kodePromo, double jumlahSaldoTerpotong, StatusType statusType) {
+            Timestamp transaksiDate, String kodePromo, StatusType statusType) {
         this.transaksi_id = transaksi_id;
         this.nasabah_id = nasabah_id;
         this.transaksiType = transaksiType;
         this.biayaAdmin = biayaAdmin;
         this.transaksiDate = transaksiDate;
         this.kodePromo = kodePromo;
-        this.jumlahSaldoTerpotong = jumlahSaldoTerpotong;
         this.statusType = statusType;
     }
 
@@ -75,14 +73,6 @@ public abstract class Transaksi {
         this.kodePromo = kodePromo;
     }
 
-    public double getJumlahSaldoTerpotong() {
-        return jumlahSaldoTerpotong;
-    }
-
-    public void setJumlahSaldoTerpotong(double jumlahSaldoTerpotong) {
-        this.jumlahSaldoTerpotong = jumlahSaldoTerpotong;
-    }
-
     public StatusType getStatusType() {
         return statusType;
     }
@@ -90,4 +80,5 @@ public abstract class Transaksi {
     public void setStatusType(StatusType statusType) {
         this.statusType = statusType;
     }
+    
 }

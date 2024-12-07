@@ -6,10 +6,8 @@ public class SetorSaldo extends Transaksi{
     private double jumlahSaldoDitambah;
 
     public SetorSaldo(String transaksi_id, String nasabah_id, TransaksiType transaksiType, double biayaAdmin,
-            Timestamp transaksiDate, String kodePromo, double jumlahSaldoTerpotong, StatusType statusType,
-            double jumlahSaldoDitambah) {
-        super(transaksi_id, nasabah_id, transaksiType, biayaAdmin, transaksiDate, kodePromo, jumlahSaldoTerpotong,
-                statusType);
+            Timestamp transaksiDate, String kodePromo, StatusType statusType, double jumlahSaldoDitambah) {
+        super(transaksi_id, nasabah_id, transaksiType, biayaAdmin, transaksiDate, kodePromo, statusType);
         this.jumlahSaldoDitambah = jumlahSaldoDitambah;
     }
 

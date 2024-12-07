@@ -50,6 +50,16 @@ public class MenuAdmin {
         welcomeTitle.setForeground(Color.WHITE);
         panel.add(welcomeTitle);
 
+        JButton createPromo = new JButton("Create Kode Promo");
+        createPromo.setBounds(120, 240, 260, 50);
+        Component.styleButton(createPromo, new Color(3, 123, 252), buttonFont);
+        panel.add(createPromo);
+
+        createPromo.addActionListener(e -> {
+            frame.dispose();
+            new MenuTransaksi();
+        });
+
         JButton exitButton = new JButton("Logout");
         exitButton.setBounds(120, 600, 260, 50);
         Component.styleButton(exitButton, new Color(255, 69, 58), buttonFont);
