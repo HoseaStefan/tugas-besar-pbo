@@ -10,7 +10,8 @@ public class Component {
         button.setBackground(backgroundColor);
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false); 
-        button.setBorder(BorderFactory.createLineBorder(backgroundColor.darker(), 2)); // Subtle border
+        button.setBorder(BorderFactory.createLineBorder(backgroundColor.darker(), 2));
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override

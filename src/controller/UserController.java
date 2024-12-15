@@ -74,8 +74,7 @@ public class UserController {
                 userRs.getInt("pin"),
                 userRs.getInt("nomor_rekening"),
                 userRs.getDouble("saldo"),
-                null 
-        );
+                null);
     }
 
     public static Admin fetchAdmin(String userId, ResultSet userRs) throws SQLException {
@@ -84,8 +83,7 @@ public class UserController {
                 userRs.getString("name"),
                 userRs.getString("username"),
                 userRs.getString("email"),
-                UserType.ADMIN
-        );
+                UserType.ADMIN);
     }
 
     public static boolean verifyRegister(String username, String email, String password) {
@@ -99,18 +97,20 @@ public class UserController {
 
             ResultSet rs = checkStmt.executeQuery();
             if (rs.next()) {
-                return false; 
+                return false;
             }
 
-            String insertQuery = "INSERT INTO users (user_id, name, username, email, user_type, password, saldo) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String insertQuery = "INSERT INTO users (user_id, name, username, email, user_type, password, saldo, nomor_rekening) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement insertStmt = conn.con.prepareStatement(insertQuery);
-            insertStmt.setString(1, generateUniqueId());
+            String userUniqueId = generateUniqueId();
+            insertStmt.setString(1, "USR" + userUniqueId);
             insertStmt.setString(2, username);
             insertStmt.setString(3, username);
             insertStmt.setString(4, email);
             insertStmt.setString(5, "NASABAH");
             insertStmt.setString(6, password);
             insertStmt.setDouble(7, 0);
+            insertStmt.setString(8, userUniqueId);
 
             int rowsInserted = insertStmt.executeUpdate();
             return rowsInserted > 0;
@@ -121,6 +121,6 @@ public class UserController {
     }
 
     public static String generateUniqueId() {
-        return "USR" + System.currentTimeMillis();
+        return "" + (System.currentTimeMillis() % 1000000);
     }
 }

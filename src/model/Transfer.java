@@ -2,31 +2,30 @@ package model;
 
 import java.sql.Timestamp;
 
-
 public class Transfer extends Transaksi {
-    private String topup_id;
+    private double jumlahSaldoTerpotong;
     private int nomorRekeningTujuan;
 
-    public Transfer(String topup_id, int nomorRekeningTujuan) {
-        this.topup_id = topup_id;
-        this.nomorRekeningTujuan = nomorRekeningTujuan;
-    }
-
     public Transfer(String transaksi_id, String nasabah_id, TransaksiType transaksiType, double biayaAdmin,
-            Timestamp transaksiDate, String kodePromo, double jumlahSaldoTerpotong, StatusType statusType,
-            String topup_id, int nomorRekeningTujuan) {
-        super(transaksi_id, nasabah_id, transaksiType, biayaAdmin, transaksiDate, kodePromo, jumlahSaldoTerpotong,
-                statusType);
-        this.topup_id = topup_id;
+            Timestamp transaksiDate, String kodePromo, StatusType statusType, double jumlahSaldoTerpotong,
+            int nomorRekeningTujuan) {
+        super(transaksi_id, nasabah_id, transaksiType, biayaAdmin, transaksiDate, kodePromo, statusType);
+        this.jumlahSaldoTerpotong = jumlahSaldoTerpotong;
         this.nomorRekeningTujuan = nomorRekeningTujuan;
     }
 
-    public String getTopup_id() {
-        return topup_id;
+    public Transfer(double jumlahSaldoTerpotong, int nomorRekeningTujuan) {
+        this.jumlahSaldoTerpotong = jumlahSaldoTerpotong;
+        this.nomorRekeningTujuan = nomorRekeningTujuan;
     }
 
-    public void setTopup_id(String topup_id) {
-        this.topup_id = topup_id;
+
+    public double getJumlahSaldoTerpotong() {
+        return jumlahSaldoTerpotong;
+    }
+
+    public void setJumlahSaldoTerpotong(double jumlahSaldoTerpotong) {
+        this.jumlahSaldoTerpotong = jumlahSaldoTerpotong;
     }
 
     public int getNomorRekeningTujuan() {
