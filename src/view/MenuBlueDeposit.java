@@ -41,13 +41,13 @@ public class MenuBlueDeposit {
         panel.setBounds(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
 
         JLabel title = new JLabel("Blue Deposito");
-        title.setBounds(170, 50, 500, 50);
+        title.setBounds(170, 150, 500, 50);
         title.setFont(new Font("SansSerif", Font.BOLD, 24));
         title.setForeground(Color.WHITE);
         panel.add(title);
 
         JButton btnTarik = new JButton("Tarik");
-        btnTarik.setBounds(150, 150, 200, 100);
+        btnTarik.setBounds(150, 250, 200, 100);
         Component.styleButton(btnTarik, new Color(3, 123, 252), buttonFont); 
         panel.add(btnTarik);
         
@@ -60,7 +60,7 @@ public class MenuBlueDeposit {
             @Override
             public void actionPerformed(ActionEvent e) {
                 frame.dispose(); 
-                new MenuTarikBlueSaving();
+                new MenuTarikBlueDeposit();
             }
         });
         
