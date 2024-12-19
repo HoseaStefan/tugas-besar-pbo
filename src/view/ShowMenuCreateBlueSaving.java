@@ -12,6 +12,7 @@ import model.BlueSaving;
 import model.CurrentUser;
 import model.TabunganType;
 import model.User;
+import model.Nasabah;
 
 public class ShowMenuCreateBlueSaving {
 
@@ -25,6 +26,7 @@ public class ShowMenuCreateBlueSaving {
 
         CurrentUser currentUser = CurrentUser.getInstance();
         User user = currentUser.getUser();
+        Nasabah nasabah = currentUser.getNasabah();
 
         Timestamp startDate = new Timestamp(System.currentTimeMillis());
 
@@ -127,18 +129,19 @@ public class ShowMenuCreateBlueSaving {
                         return;
                     }
 
-                    
                     // Hitung jangka waktu
                     int jangkaWaktu = (int) Math.ceil(targetSaldo / saldoAwal);
-                    
+
                     System.out.println("hehe");
                     // Membuat objek BlueSaving
-                    BlueSaving blueSaving = new BlueSaving("", user.getUser_id(), namaTabungan, TabunganType.BLUESAVING,
-                    saldoAwal, startDate, saldoAwal, jangkaWaktu, targetSaldo);
+                    BlueSaving blueSaving = new BlueSaving("", nasabah.getUser_id(), namaTabungan,
+                            TabunganType.BLUESAVING,
+                            saldoAwal, startDate, saldoAwal, jangkaWaktu, targetSaldo);
                     blueSaving.createBlueSaving();
-                    
+
                     JOptionPane.showMessageDialog(frame, "Blue Saving Created Successfully!");
 
+                    JOptionPane.showMessageDialog(frame, "Blue Saving Created Successfully!");
                 } catch (NumberFormatException ex) {
 
                     JOptionPane.showMessageDialog(frame,
@@ -156,7 +159,7 @@ public class ShowMenuCreateBlueSaving {
 
         exitButton.addActionListener(e -> {
             frame.dispose();
-            new MainMenu();
+            new MenuNasabah();
         });
 
         frame.add(panel);
