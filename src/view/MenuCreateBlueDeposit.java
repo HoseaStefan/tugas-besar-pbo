@@ -16,6 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
+import model.MenuTabungan;
+
 public class MenuCreateBlueDeposit {
 
     private static JFrame frame;
@@ -121,11 +123,12 @@ public class MenuCreateBlueDeposit {
         btnBack.setForeground(Color.WHITE);
         panel.add(btnBack);
 
-        JButton Close  = new JButton("EXIT");
+        JButton Close  = new JButton("Back to Menu Tabungan");
         Close.setBounds(130, 600, 260, 50);
         Component.styleButton(Close, new Color(255, 69, 58), buttonFont);
         Close.addActionListener(e -> {
             frame.dispose();
+            new MenuTabungan();
         });
         panel.add(Close);
         

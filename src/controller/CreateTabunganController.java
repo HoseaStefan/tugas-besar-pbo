@@ -6,7 +6,8 @@ import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
 
-import model.*;
+import model.BlueSaving;
+import model.BlueDeposito;
 
 public class CreateTabunganController {
 
