@@ -65,6 +65,16 @@ public class MenuNasabah {
         saldoLabel.setForeground(Color.WHITE);
         panel.add(saldoLabel);
 
+        JButton createSavingButton = new JButton("Tabungan");
+        createSavingButton.setBounds(120, 300, 260, 50);
+        Component.styleButton(createSavingButton, new Color(3, 123, 252), buttonFont);
+        panel.add(createSavingButton);
+
+        createSavingButton.addActionListener(e -> {
+            frame.dispose();
+            new MenuTabungan();
+        });
+
         JButton transaksiButton = new JButton("Transaksi");
         transaksiButton.setBounds(120, 400, 260, 50);
         Component.styleButton(transaksiButton, new Color(3, 123, 252), buttonFont);
@@ -73,15 +83,6 @@ public class MenuNasabah {
         transaksiButton.addActionListener(e -> {
             frame.dispose();
             new MenuTransaksi();
-        });
-
-        JButton CreateSaving = new JButton("Create Blue Saving");
-        CreateSaving.setBounds(120, 240, 260, 50);
-        panel.add(CreateSaving);
-
-        CreateSaving.addActionListener(e -> {
-            frame.dispose();
-            new ShowMenuCreateBlueSaving();
         });
 
         JButton exitButton = new JButton("Logout");

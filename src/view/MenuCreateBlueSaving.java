@@ -6,23 +6,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
 import java.sql.Timestamp;
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import model.BlueSaving;
 import model.CurrentUser;
 import model.TabunganType;
 import model.User;
 import model.Nasabah;
+import controller.CreateTabunganController;
 
-public class ShowMenuCreateBlueSaving {
+public class MenuCreateBlueSaving {
 
     private JFrame frame;
 
-    public ShowMenuCreateBlueSaving() {
-        showCreateBlueSaving();
+    public MenuCreateBlueSaving() {
+        showMenuCreateBlueSaving();
     }
 
-    public void showCreateBlueSaving() {
+    public void showMenuCreateBlueSaving() {
 
         CurrentUser currentUser = CurrentUser.getInstance();
         User user = currentUser.getUser();
@@ -61,32 +61,41 @@ public class ShowMenuCreateBlueSaving {
 
         // Nama Tabungan
         JLabel namaTabunganLabel = new JLabel("Input Nama Tabungan:");
-        namaTabunganLabel.setBounds(130, 180, 300, 30);
+        namaTabunganLabel.setBounds(130, 150, 300, 30);
         panel.add(namaTabunganLabel);
 
         JTextField namaTabunganField = new JTextField();
-        namaTabunganField.setBounds(130, 220, 260, 30);
+        namaTabunganField.setBounds(130, 200, 260, 30);
         panel.add(namaTabunganField);
 
         // Saldo Awal
         JLabel saldoAwalLabel = new JLabel("Input Saldo Awal:");
-        saldoAwalLabel.setBounds(130, 260, 300, 30);
+        saldoAwalLabel.setBounds(130, 220, 300, 30);
         panel.add(saldoAwalLabel);
 
         JFormattedTextField saldoAwalField = new JFormattedTextField(NumberFormat.getNumberInstance());
-        saldoAwalField.setBounds(130, 300, 260, 30);
+        saldoAwalField.setBounds(130, 260, 260, 30);
         saldoAwalField.setColumns(10);
         panel.add(saldoAwalField);
 
         // Target Saldo
         JLabel targetSaldoLabel = new JLabel("Input Target Saldo:");
-        targetSaldoLabel.setBounds(130, 340, 300, 30);
+        targetSaldoLabel.setBounds(130, 300, 300, 30);
         panel.add(targetSaldoLabel);
 
         JFormattedTextField targetSaldoField = new JFormattedTextField(NumberFormat.getNumberInstance());
-        targetSaldoField.setBounds(130, 380, 260, 30);
+        targetSaldoField.setBounds(130, 340, 260, 30);
         targetSaldoField.setColumns(10);
         panel.add(targetSaldoField);
+
+        JLabel jangakaWaktuLabel = new JLabel("Input Jangka Waktu Saldo:");
+        jangakaWaktuLabel.setBounds(130, 360, 300, 30);
+        panel.add(jangakaWaktuLabel);
+
+        JFormattedTextField jangkaWaktuField = new JFormattedTextField(NumberFormat.getNumberInstance());
+        jangkaWaktuField.setBounds(130, 400, 260, 30);
+        jangkaWaktuField.setColumns(10);
+        panel.add(jangkaWaktuField);
 
         JButton createButton = new JButton("Create");
         createButton.setBounds(130, 450, 260, 40);
@@ -100,6 +109,7 @@ public class ShowMenuCreateBlueSaving {
                     String namaTabungan = namaTabunganField.getText().trim();
                     String saldoAwalStr = saldoAwalField.getText().replace(",", "").trim();
                     String targetSaldoStr = targetSaldoField.getText().replace(",", "").trim();
+                    String jangkaWaktuStr = jangkaWaktuField.getText().replace(",", "").trim();
 
                     // Validasi input kosong
                     if (namaTabungan.isEmpty() || saldoAwalStr.isEmpty() || targetSaldoStr.isEmpty()) {
@@ -112,11 +122,12 @@ public class ShowMenuCreateBlueSaving {
                     // Parsing nilai input
                     double saldoAwal = Double.parseDouble(saldoAwalStr);
                     double targetSaldo = Double.parseDouble(targetSaldoStr);
+                    int jangkaWaktu = Integer.parseInt(jangkaWaktuStr);
 
                     // Validasi nilai harus positif
-                    if (saldoAwal <= 0 || targetSaldo <= 0) {
+                    if (targetSaldo <= 0 || jangkaWaktu <= 0) {
                         JOptionPane.showMessageDialog(frame,
-                                "Saldo Awal dan Target Saldo harus lebih besar dari 0.",
+                                "Target Saldo dan Jangka Waktu harus lebih besar dari 0.",
                                 "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
@@ -129,25 +140,38 @@ public class ShowMenuCreateBlueSaving {
                         return;
                     }
 
-                    // Hitung jangka waktu
-                    int jangkaWaktu = (int) Math.ceil(targetSaldo / saldoAwal);
+                    // Create an instance of BlueSaving
+                    BlueSaving blueSavingTemp = new BlueSaving("", nasabah.getUser_id(), namaTabungan,
+                            TabunganType.BLUESAVING, saldoAwal, startDate, saldoAwal, jangkaWaktu, targetSaldo, 0);
 
-                    System.out.println("hehe");
-                    // Membuat objek BlueSaving
+                    // Calculate tabunganHarian using the instance
+                    double tabunganHarian = blueSavingTemp.hitungTabunganHarian(saldoAwal, targetSaldo, jangkaWaktu);
+
+                    // Now, create the final BlueSaving object with the calculated tabunganHarian
                     BlueSaving blueSaving = new BlueSaving("", nasabah.getUser_id(), namaTabungan,
-                            TabunganType.BLUESAVING,
-                            saldoAwal, startDate, saldoAwal, jangkaWaktu, targetSaldo);
-                    blueSaving.createBlueSaving();
+                            TabunganType.BLUESAVING, saldoAwal, startDate, saldoAwal, jangkaWaktu, targetSaldo,
+                            tabunganHarian);
 
-                    JOptionPane.showMessageDialog(frame, "Blue Saving Created Successfully!");
+                    // Calculate tabunganHarian and set it afterward
 
-                    JOptionPane.showMessageDialog(frame, "Blue Saving Created Successfully!");
+                    // Memanggil Controller
+                    CreateTabunganController controller = new CreateTabunganController();
+                    boolean isCreated = controller.createBlueSaving(blueSaving);
+
+                    // Beri notifikasi berdasarkan hasil
+                    if (isCreated) {
+                        JOptionPane.showMessageDialog(frame, "Blue Saving Created Successfully!");
+                        frame.dispose(); // Tutup form jika berhasil
+                        new MenuBlueSaving(); // Kembali ke menu utama
+                    } else {
+                        JOptionPane.showMessageDialog(frame,
+                                "Failed to create Blue Saving. Please try again.",
+                                "Error", JOptionPane.ERROR_MESSAGE);
+                    }
                 } catch (NumberFormatException ex) {
-
                     JOptionPane.showMessageDialog(frame,
-                            "Please enter valid numeric values for Saldo Awal and Target Saldo.",
+                            "Please enter valid numeric values for Saldo Awal, Target Saldo, and Jangka Waktu.",
                             "Error", JOptionPane.ERROR_MESSAGE);
-
                 }
             }
         });
@@ -159,7 +183,7 @@ public class ShowMenuCreateBlueSaving {
 
         exitButton.addActionListener(e -> {
             frame.dispose();
-            new MenuNasabah();
+            new MenuBlueSaving();
         });
 
         frame.add(panel);
