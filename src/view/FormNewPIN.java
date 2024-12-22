@@ -113,11 +113,20 @@ public class FormNewPIN {
         exitButton.setForeground(Color.WHITE);
         exitButton.setFocusPainted(false);
 
-        exitButton.addActionListener(e -> {
-            frame.dispose();
-            JOptionPane.showMessageDialog(null, "PIN input cancelled.");
-            new MainMenu();
-        });
+        if (nasabah.getPin() == 0) {
+            exitButton.addActionListener(e -> {
+                JOptionPane.showMessageDialog(null, "PIN input cancelled.");
+                frame.dispose();
+                new MainMenu();
+            });
+        } else {
+            exitButton.addActionListener(e -> {
+                JOptionPane.showMessageDialog(null, "PIN input cancelled.");
+                frame.dispose();
+                new MenuNasabah();
+            });
+        }
+        
 
         panel.add(exitButton);
 

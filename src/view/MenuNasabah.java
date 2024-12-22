@@ -95,6 +95,23 @@ public class MenuNasabah {
             new MenuHistoryTransaksi();
         });
 
+        JButton gantiPIN = new JButton("Ganti PIN");
+        gantiPIN.setBounds(120, 520, 260, 50);
+        Component.styleButton(gantiPIN, new Color(3, 123, 252), buttonFont);
+        panel.add(gantiPIN);
+
+        gantiPIN.addActionListener(e -> {
+            FormInputPIN formInputPIN = new FormInputPIN();
+            boolean isVerified = formInputPIN.showInputPIN(nasabah);
+            if (isVerified) {
+                frame.dispose();
+                new FormNewPIN();
+                return;
+            } else {
+                frame.dispose();
+                new MenuNasabah();
+            }
+        });
 
         JButton exitButton = new JButton("Logout");
         exitButton.setBounds(120, 600, 260, 50);
