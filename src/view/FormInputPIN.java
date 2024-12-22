@@ -71,6 +71,7 @@ public class FormInputPIN {
             JButton numberButton = new JButton(String.valueOf(i));
             numberButton.setBounds(x, y, 80, 50);
             numberButton.setFont(buttonFont);
+            Component.styleButton(numberButton, new Color(3, 123, 252), buttonFont);
             panel.add(numberButton);
             numberButton.addActionListener(buttonListener);
 
@@ -84,6 +85,7 @@ public class FormInputPIN {
         JButton zeroButton = new JButton("0");
         zeroButton.setBounds(210, y, 80, 50);
         zeroButton.setFont(buttonFont);
+        Component.styleButton(zeroButton, new Color(3, 123, 252), buttonFont);
         panel.add(zeroButton);
         zeroButton.addActionListener(buttonListener);
 

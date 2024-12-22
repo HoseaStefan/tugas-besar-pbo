@@ -1,6 +1,5 @@
 package main;
 
-import view.FormNewPIN;
 import view.MainMenu;
 
 public class Main {

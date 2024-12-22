@@ -115,42 +115,52 @@ public class MenuBonTransaksi {
         confirmButton.addActionListener(e -> {
             try {
                 double totalcalculated = 0;
+                System.out.println("nasabah");
 
-                if (transaksiType == TransaksiType.SETOR) {
-                    totalcalculated += amount - biayaAdmin;
-                    if (promo) {
-                        totalcalculated += biayaAdmin;
+                FormInputPIN formInputPIN = new FormInputPIN();
+                boolean isVerified = formInputPIN.showInputPIN(nasabah);
+                if (isVerified) {
+                    if (transaksiType == TransaksiType.SETOR) {
+                        totalcalculated += amount - biayaAdmin;
+                        if (promo) {
+                            totalcalculated += biayaAdmin;
+                        }
+                    } else {
+                        totalcalculated += amount + biayaAdmin;
+                        if (promo) {
+                            totalcalculated -= biayaAdmin;
+                        }
                     }
+
+                    boolean success = TransaksiController.createTransaksi(
+                            transaksiType,
+                            amount,
+                            promo ? "VALID_PROMO" : "",
+                            nasabah,
+                            norekTujuan,
+                            biayaAdmin,
+                            topUpType);
+
+                    if (success) {
+                        double updatedSaldo = transaksiType == TransaksiType.SETOR
+                                ? nasabah.getSaldo() + totalcalculated
+                                : nasabah.getSaldo() - totalcalculated;
+
+                        nasabah.setSaldo(updatedSaldo);
+                        JOptionPane.showMessageDialog(frame, "Transaksi berhasil! Saldo baru: Rp. " + updatedSaldo,
+                                "Success", JOptionPane.INFORMATION_MESSAGE);
+                        frame.dispose();
+                        new MenuNasabah();
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Transaksi gagal, coba lagi.", "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                    return;
                 } else {
-                    totalcalculated += amount + biayaAdmin;
-                    if (promo) {
-                        totalcalculated -= biayaAdmin;
-                    }
-                }
-
-                boolean success = TransaksiController.createTransaksi(
-                        transaksiType,
-                        amount,
-                        promo ? "VALID_PROMO" : "",
-                        nasabah,
-                        norekTujuan,
-                        biayaAdmin,
-                        topUpType);
-
-                if (success) {
-                    double updatedSaldo = transaksiType == TransaksiType.SETOR
-                            ? nasabah.getSaldo() + totalcalculated
-                            : nasabah.getSaldo() - totalcalculated;
-
-                    nasabah.setSaldo(updatedSaldo);
-                    JOptionPane.showMessageDialog(frame, "Transaksi berhasil! Saldo baru: Rp. " + updatedSaldo,
-                            "Success", JOptionPane.INFORMATION_MESSAGE);
                     frame.dispose();
                     new MenuNasabah();
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Transaksi gagal, coba lagi.", "Error",
-                            JOptionPane.ERROR_MESSAGE);
                 }
+
             } catch (Exception ex) {
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(frame, "Terjadi kesalahan.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -158,7 +168,8 @@ public class MenuBonTransaksi {
         });
         panel.add(confirmButton);
 
-        JButton exitButton = new JButton("Cancel");
+        JButton exitButton = new JButton(
+                "Cancel");
         exitButton.setBounds(120, 420, 260, 50);
         Component.styleButton(exitButton, new Color(255, 69, 58), buttonFont);
         exitButton.addActionListener(e -> {

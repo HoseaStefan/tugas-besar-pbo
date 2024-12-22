@@ -85,6 +85,17 @@ public class MenuNasabah {
             new MenuTransaksi();
         });
 
+        JButton historyTransaktiButton = new JButton("History Transaksi");
+        historyTransaktiButton.setBounds(120, 460, 260, 50);
+        Component.styleButton(historyTransaktiButton, new Color(3, 123, 252), buttonFont);
+        panel.add(historyTransaktiButton);
+
+        historyTransaktiButton.addActionListener(e -> {
+            frame.dispose();
+            new MenuHistoryTransaksi();
+        });
+
+
         JButton exitButton = new JButton("Logout");
         exitButton.setBounds(120, 600, 260, 50);
         Component.styleButton(exitButton, new Color(255, 69, 58), buttonFont);
