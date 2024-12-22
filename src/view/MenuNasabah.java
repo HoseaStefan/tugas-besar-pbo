@@ -16,12 +16,12 @@ public class MenuNasabah {
     private JFrame frame;
 
     public MenuNasabah() {
-        showMenuNasabah();
-    }
-
-    public void showMenuNasabah() {
         CurrentUser currentUser = CurrentUser.getInstance();
         Nasabah nasabah = currentUser.getNasabah();
+        showMenuNasabah(nasabah);
+    }
+
+    public void showMenuNasabah(Nasabah nasabah) {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
 

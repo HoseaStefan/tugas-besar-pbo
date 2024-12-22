@@ -25,6 +25,48 @@ public class UserController {
         return instance;
     }
 
+    public boolean verifyPIN(Nasabah nasabah, String inputPin) {
+        try {
+            conn.connect();
+            String query = "SELECT pin FROM users WHERE user_id = ?";
+            PreparedStatement stmt = conn.con.prepareStatement(query);
+            stmt.setString(1, nasabah.getUser_id());
+            ResultSet rs = stmt.executeQuery();
+    
+            if (rs.next()) {
+                int storedPin = rs.getInt("pin");
+                return storedPin == Integer.parseInt(inputPin);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            conn.disconnect();
+        }
+        return false; 
+    }
+    
+
+    public static void insertNewPIN(Nasabah nasabah, String newPIN){
+        try {
+            conn.connect();
+            String query = "UPDATE users SET pin = ? WHERE user_id = ?";
+            PreparedStatement stmt = conn.con.prepareStatement(query);
+            stmt.setString(1, newPIN);
+            stmt.setString(2, nasabah.getUser_id());
+
+            int rowsUpdated = stmt.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("PIN updated successfully for user ID: " + nasabah.getUser_id());
+            } else {
+                System.out.println("Failed to update PIN. User ID not found: " + nasabah.getUser_id());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            conn.disconnect();
+        }
+    }
+
     public static User verifyUser(String username, String password) {
         try {
             conn.connect();
