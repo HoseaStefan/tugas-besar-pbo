@@ -33,26 +33,23 @@ public class UserController {
         try {
             conn.connect();
 
-            // Query to update the password for the given email
             String query = "UPDATE users SET password = ? WHERE email = ?";
             PreparedStatement stmt = conn.con.prepareStatement(query);
             stmt.setString(1, newPassword);
             stmt.setString(2, email);
 
-            // Execute the update
             int rowsUpdated = stmt.executeUpdate();
 
-            // Check if the update was successful
             if (rowsUpdated > 0) {
-                return true; // Password updated successfully
+                return true; 
             } else {
-                return false; // Password update failed
+                return false; 
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false; // Return false in case of an exception
+            return false; 
         } finally {
-            conn.disconnect(); // Ensure the connection is closed
+            conn.disconnect(); 
         }
     }
 

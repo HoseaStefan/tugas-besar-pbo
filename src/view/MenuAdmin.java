@@ -59,6 +59,16 @@ public class MenuAdmin {
             // new FormCreatePromo();
         });
 
+        JButton cekPendapatanButton = new JButton("Cek Pendapatan Admin");
+        cekPendapatanButton.setBounds(120, 300, 260, 50);
+        Component.styleButton(cekPendapatanButton, new Color(3, 123, 252), buttonFont);
+        panel.add(cekPendapatanButton);
+
+        cekPendapatanButton.addActionListener(e -> {
+            frame.dispose();
+            new MenuPendapatanAdmin();
+        });
+
         JButton exitButton = new JButton("Logout");
         exitButton.setBounds(120, 600, 260, 50);
         Component.styleButton(exitButton, new Color(255, 69, 58), buttonFont);
