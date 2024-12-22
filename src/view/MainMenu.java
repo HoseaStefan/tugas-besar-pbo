@@ -67,7 +67,7 @@ public class MainMenu {
         Component.styleButton(lupaPassButton, new Color(3, 123, 252), buttonFont); 
         lupaPassButton.addActionListener(e -> {
             frame.dispose();
-            new FormLupaPassword(); 
+            new FormVerifikasiEmail(); 
         });
         panel.add(lupaPassButton);
 

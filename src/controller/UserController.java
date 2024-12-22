@@ -25,6 +25,53 @@ public class UserController {
         return instance;
     }
 
+    public static boolean changePassword(String email, String newPassword) {
+        if (!isEmailInDatabase(email)) {
+            return false; 
+        }
+
+        try {
+            conn.connect();
+
+            // Query to update the password for the given email
+            String query = "UPDATE users SET password = ? WHERE email = ?";
+            PreparedStatement stmt = conn.con.prepareStatement(query);
+            stmt.setString(1, newPassword);
+            stmt.setString(2, email);
+
+            // Execute the update
+            int rowsUpdated = stmt.executeUpdate();
+
+            // Check if the update was successful
+            if (rowsUpdated > 0) {
+                return true; // Password updated successfully
+            } else {
+                return false; // Password update failed
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // Return false in case of an exception
+        } finally {
+            conn.disconnect(); // Ensure the connection is closed
+        }
+    }
+
+    public static boolean isEmailInDatabase(String email) {
+        try {
+            conn.connect();
+            String query = "SELECT * FROM users WHERE email = ?";
+            PreparedStatement stmt = conn.con.prepareStatement(query);
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            conn.disconnect();
+        }
+        return false;
+    }
+
     public boolean verifyPIN(Nasabah nasabah, String inputPin) {
         try {
             conn.connect();
@@ -32,7 +79,7 @@ public class UserController {
             PreparedStatement stmt = conn.con.prepareStatement(query);
             stmt.setString(1, nasabah.getUser_id());
             ResultSet rs = stmt.executeQuery();
-    
+
             if (rs.next()) {
                 int storedPin = rs.getInt("pin");
                 return storedPin == Integer.parseInt(inputPin);
@@ -42,11 +89,10 @@ public class UserController {
         } finally {
             conn.disconnect();
         }
-        return false; 
+        return false;
     }
-    
 
-    public static void insertNewPIN(Nasabah nasabah, String newPIN){
+    public static void insertNewPIN(Nasabah nasabah, String newPIN) {
         try {
             conn.connect();
             String query = "UPDATE users SET pin = ? WHERE user_id = ?";
