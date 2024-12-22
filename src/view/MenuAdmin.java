@@ -3,7 +3,6 @@ package view;
 import javax.swing.*;
 
 import model.CurrentUser;
-import model.User;
 import model.Admin;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
@@ -46,7 +45,7 @@ public class MenuAdmin {
 
         JLabel welcomeTitle = new JLabel("Welcome Admin, " + admin.getName());
         welcomeTitle.setBounds(50, 50, 400, 25);
-        welcomeTitle.setFont(new Font("SansSerif", Font.BOLD, 24));
+        welcomeTitle.setFont(new Font("Roboto", Font.BOLD, 24));
         welcomeTitle.setForeground(Color.WHITE);
         panel.add(welcomeTitle);
 
@@ -57,7 +56,7 @@ public class MenuAdmin {
 
         createPromo.addActionListener(e -> {
             frame.dispose();
-            new MenuTransaksi();
+            // new FormCreatePromo();
         });
 
         JButton exitButton = new JButton("Logout");
