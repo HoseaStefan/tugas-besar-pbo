@@ -29,8 +29,8 @@ public class FormInputPIN {
         panel.setBackground(Color.getHSBColor(0.6f, 0.7f, 0.9f));
         panel.setBounds(0, 0, 500, 700);
 
-        JLabel title = new JLabel("Input PIN");
-        title.setBounds(180, 50, 500, 50);
+        JLabel title = new JLabel("INPUT PIN");
+        title.setBounds(190, 50, 500, 50);
         title.setFont(new Font("SansSerif", Font.BOLD, 24));
         title.setForeground(Color.WHITE);
         panel.add(title);
@@ -110,8 +110,8 @@ public class FormInputPIN {
         exitButton.setFocusPainted(false);
         exitButton.addActionListener(e -> {
             isVerified = false;
-            dialog.dispose(); 
             JOptionPane.showMessageDialog(null, "PIN input cancelled.");
+            dialog.dispose(); 
         });
         panel.add(exitButton);
 
