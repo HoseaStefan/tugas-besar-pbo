@@ -12,12 +12,11 @@ import java.awt.geom.RoundRectangle2D;
 public class FormInputPIN {
 
     private StringBuilder pinBuilder = new StringBuilder();
-    private boolean isVerified = false; // Stores the verification result
+    private boolean isVerified = false; 
 
     public boolean showInputPIN(Nasabah nasabah) {
         Font buttonFont = new Font("SansSerif", Font.BOLD, 18);
 
-        // Create a modal JDialog instead of JFrame
         JDialog dialog = new JDialog((Frame) null, "Input PIN", true);
         dialog.setUndecorated(true);
         dialog.setBounds(0, 0, 500, 700);
@@ -54,7 +53,6 @@ public class FormInputPIN {
                 }
 
                 if (pinBuilder.length() == 4) {
-                    // Verify PIN
                     isVerified = UserController.getInstance().verifyPIN(nasabah, pinBuilder.toString());
                     if (isVerified) {
                         JOptionPane.showMessageDialog(dialog, "PIN verified successfully.");
