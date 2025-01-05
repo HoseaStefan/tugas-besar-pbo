@@ -2,10 +2,8 @@ package view;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.List;
-
+import javax.swing.border.Border;
 import model.CurrentUser;
 import model.Nasabah;
 import model.BlueSaving;
@@ -40,17 +38,10 @@ public class MenuBlueSaving {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Gradient background panel
-        JPanel panel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2d = (Graphics2D) g;
-                GradientPaint gp = new GradientPaint(0, 0, new Color(108, 92, 231), 0, getHeight(),
-                        new Color(255, 175, 204));
-                g2d.setPaint(gp);
-                g2d.fillRect(0, 0, getWidth(), getHeight());
-            }
-        };
+        JPanel panel = new JPanel();
         panel.setLayout(null);
+        panel.setBackground(Color.getHSBColor(0.6f, 0.7f, 0.9f));
+        panel.setBounds(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
 
         // Title Label
         JLabel titleLabel = new JLabel("Blue Saving", SwingConstants.CENTER);
@@ -62,7 +53,7 @@ public class MenuBlueSaving {
         // Total Dana Label
         double totalDana = BlueSavingController.getTotalDanaByUserId(nasabah.getUser_id());
         JLabel totalDanaLabel = new JLabel("Total Dana: Rp. " + String.format("%,.2f", totalDana));
-        totalDanaLabel.setBounds(50, 70, 400, 30);
+        totalDanaLabel.setBounds(50, 90, 400, 30);
         totalDanaLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
         totalDanaLabel.setForeground(Color.WHITE);
         panel.add(totalDanaLabel);
@@ -70,24 +61,26 @@ public class MenuBlueSaving {
         // Scrollable Blue Saving List
         displayBlueSavings(panel);
 
-        // Create Blue Saving Button
+        // Create Blue Saving Button with decorator
         JButton createButton = new JButton("Create New Blue Saving");
-        styleRoundedButton(createButton, new Color(0, 102, 204), Color.WHITE);
-        createButton.setBounds(120, 450, 260, 50);
+        Component.styleRoundedButton(createButton, new Color(0, 102, 204), Color.WHITE);
+        createButton.setBounds(120, 500, 260, 50);
         createButton.addActionListener(e -> {
             frame.dispose();
             new MenuCreateBlueSaving();
         });
+        Component.addHoverEffect(createButton, new Color(0, 102, 204), new Color(0, 123, 180));
         panel.add(createButton);
 
-        // Back Button
+        // Back Button with decorator
         JButton backButton = new JButton("Back to Menu Tabungan");
-        styleRoundedButton(backButton, new Color(255, 69, 58), Color.WHITE);
+        Component.styleRoundedButton(backButton, new Color(255, 69, 58), Color.WHITE);
         backButton.setBounds(120, 600, 260, 50);
         backButton.addActionListener(e -> {
             frame.dispose();
             new MenuTabungan();
         });
+        Component.addHoverEffect(backButton, new Color(255, 69, 58), new Color(255, 82, 82));
         panel.add(backButton);
 
         // Add panel to frame
@@ -108,7 +101,7 @@ public class MenuBlueSaving {
         blueSavingPanel.setBackground(new Color(34, 59, 94)); // Warna biru tua elegan
 
         JScrollPane scrollPane = new JScrollPane(blueSavingPanel);
-        scrollPane.setBounds(50, 100, 400, 300);
+        scrollPane.setBounds(50, 120, 400, 300);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
 
@@ -127,23 +120,7 @@ public class MenuBlueSaving {
                 itemPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(34, 59, 94)));
 
                 JButton nameButton = new JButton(blueSaving.getNamaTabungan());
-                nameButton.setFont(new Font("SansSerif", Font.BOLD, 16));
-                nameButton.setForeground(Color.WHITE);
-                nameButton.setBackground(new Color(0, 153, 204)); // Warna biru lebih cerah
-                nameButton.setFocusPainted(false);
-                nameButton.setBorderPainted(false);
-                nameButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-                // Hover Effect
-                nameButton.addMouseListener(new java.awt.event.MouseAdapter() {
-                    public void mouseEntered(java.awt.event.MouseEvent evt) {
-                        nameButton.setBackground(new Color(0, 123, 180));
-                    }
-
-                    public void mouseExited(java.awt.event.MouseEvent evt) {
-                        nameButton.setBackground(new Color(0, 153, 204));
-                    }
-                });
+                Component.styleButtonWithHoverEffect(nameButton);
 
                 nameButton.addActionListener(e -> {
                     frame.dispose();
@@ -160,15 +137,5 @@ public class MenuBlueSaving {
             noDataLabel.setForeground(Color.WHITE);
             blueSavingPanel.add(noDataLabel);
         }
-    }
-
-    private void styleRoundedButton(JButton button, Color bgColor, Color fgColor) {
-        button.setBackground(bgColor);
-        button.setForeground(fgColor);
-        button.setFont(new Font("SansSerif", Font.BOLD, 16));
-        button.setFocusPainted(false);
-        button.setBorderPainted(false);
-        button.setOpaque(true);
-        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
     }
 }

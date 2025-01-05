@@ -1,6 +1,10 @@
 package view;
 
 import javax.swing.*;
+
+import controller.BlueGetherController;
+import controller.BlueSavingController;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -35,6 +39,8 @@ public class MenuTabungan {
         int start_x = screenWidth / 2 - (FRAME_WIDTH / 2);
         int start_y = screenHeight / 2 - (FRAME_HEIGHT / 2);
 
+        Font buttonFont = new Font("SansSerif", Font.BOLD, 18);
+
         // Frame setup
         frame = new JFrame("Home Tabungan");
         frame.setUndecorated(true);
@@ -42,19 +48,10 @@ public class MenuTabungan {
         frame.setShape(new RoundRectangle2D.Double(0, 0, FRAME_WIDTH, FRAME_HEIGHT, 30, 30));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Main Panel with Gradient
-        JPanel panel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2d = (Graphics2D) g;
-                Color color1 = new Color(108, 92, 231);
-                Color color2 = new Color(255, 175, 204);
-                GradientPaint gp = new GradientPaint(0, 0, color1, 0, getHeight(), color2);
-                g2d.setPaint(gp);
-                g2d.fillRect(0, 0, getWidth(), getHeight());
-            }
-        };
+        JPanel panel = new JPanel();
         panel.setLayout(null);
+        panel.setBackground(Color.getHSBColor(0.6f, 0.7f, 0.9f));
+        panel.setBounds(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
 
         // Title Label
         JLabel welcomeTitle = new JLabel("Menu Tabungan", SwingConstants.CENTER);
@@ -63,32 +60,50 @@ public class MenuTabungan {
         welcomeTitle.setForeground(Color.WHITE);
         panel.add(welcomeTitle);
 
+        double totalSimpanan = nasabah.getSaldo()
+                + BlueGetherController.getTotalDanaGetherByUserId(nasabah.getUser_id())
+                + BlueSavingController.getTotalDanaByUserId(nasabah.getUser_id());
         // Saldo Label
-        JLabel saldoLabel = new JLabel("Total Simpanan: Rp." + nasabah.getSaldo(), SwingConstants.CENTER);
+        JLabel saldoLabel = new JLabel("Total Simpanan: Rp." + totalSimpanan, SwingConstants.CENTER);
         saldoLabel.setBounds(0, 100, FRAME_WIDTH, 30);
         saldoLabel.setFont(new Font("SansSerif", Font.PLAIN, 18));
         saldoLabel.setForeground(Color.WHITE);
         panel.add(saldoLabel);
 
-        // Buttons
-        addStyledButton(panel, "Blue Saving", 200, e -> {
+        JButton BlueSavingButton = new JButton("Blue Saving");
+        BlueSavingButton.setBounds(120, 280, 260, 50);
+        Component.styleButton(BlueSavingButton, new Color(3, 123, 252), buttonFont);
+        panel.add(BlueSavingButton);
+
+        BlueSavingButton.addActionListener(e -> {
             frame.dispose();
             new MenuBlueSaving();
         });
 
-        addStyledButton(panel, "Blue Gether", 280, e -> {
-            JOptionPane.showMessageDialog(frame, "Fitur Blue Gether belum tersedia.");
+        JButton BlueGetherButton = new JButton("Blue Gether");
+        BlueGetherButton.setBounds(120, 350, 260, 50);
+        Component.styleButton(BlueGetherButton, new Color(3, 123, 252), buttonFont);
+        panel.add(BlueGetherButton);
+
+        BlueGetherButton.addActionListener(e -> {
+            frame.dispose();
+            new MenuBlueGether();
         });
 
-        addStyledButton(panel, "Blue Deposit", 360, e -> {
+        JButton BlueDepositoButton = new JButton("Blue Deposito");
+        BlueDepositoButton.setBounds(120, 420, 260, 50);
+        Component.styleButton(BlueDepositoButton, new Color(3, 123, 252), buttonFont);
+        panel.add(BlueDepositoButton);
+
+        BlueDepositoButton.addActionListener(e -> {
             frame.dispose();
             new MenuBlueDeposit();
         });
 
         // Exit Button
         JButton exitButton = new JButton("Back to Menu Nasabah");
-        styleRoundedButton(exitButton, new Color(255, 69, 58), Color.WHITE);
-        exitButton.setBounds(100, 550, 300, 50);
+        exitButton.setBounds(120, 600, 260, 50);
+        Component.styleButton(exitButton, new Color(255, 69, 58), buttonFont);
         panel.add(exitButton);
 
         exitButton.addActionListener(e -> {
@@ -101,36 +116,4 @@ public class MenuTabungan {
         frame.setVisible(true);
     }
 
-    private void addStyledButton(JPanel panel, String text, int yPosition,
-            java.awt.event.ActionListener actionListener) {
-        JButton button = new JButton(text);
-        button.setBounds(100, yPosition, 300, 50);
-        styleRoundedButton(button, new Color(255, 255, 255), new Color(108, 92, 231));
-        button.addActionListener(actionListener);
-
-        // Hover Effect
-        button.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                button.setBackground(new Color(230, 230, 250));
-            }
-
-            public void mouseExited(MouseEvent e) {
-                button.setBackground(Color.WHITE);
-            }
-        });
-
-        panel.add(button);
-    }
-
-    private void styleRoundedButton(JButton button, Color bgColor, Color fgColor) {
-        button.setBackground(bgColor);
-        button.setForeground(fgColor);
-        button.setFocusPainted(false);
-        button.setBorderPainted(false);
-        button.setFont(new Font("SansSerif", Font.BOLD, 18));
-        button.setOpaque(true);
-        button.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(108, 92, 231), 2, true),
-                BorderFactory.createEmptyBorder(10, 20, 10, 20)));
-    }
 }

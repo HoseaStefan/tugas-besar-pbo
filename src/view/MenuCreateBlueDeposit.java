@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-import model.MenuTabungan;
+// import model.MenuTabungan;
 
 public class MenuCreateBlueDeposit {
 
@@ -114,7 +114,6 @@ public class MenuCreateBlueDeposit {
         btnSubmit.setForeground(Color.BLUE);
         panel.add(btnSubmit);
 
-    
         // Tombol Back
         JButton btnBack = new JButton("Back");
         btnBack.setBounds(270, 320, 180, 40);
@@ -123,7 +122,7 @@ public class MenuCreateBlueDeposit {
         btnBack.setForeground(Color.WHITE);
         panel.add(btnBack);
 
-        JButton Close  = new JButton("Back to Menu Tabungan");
+        JButton Close = new JButton("Back to Menu Tabungan");
         Close.setBounds(130, 600, 260, 50);
         Component.styleButton(Close, new Color(255, 69, 58), buttonFont);
         Close.addActionListener(e -> {
@@ -131,7 +130,7 @@ public class MenuCreateBlueDeposit {
             new MenuTabungan();
         });
         panel.add(Close);
-        
+
         // Label output
         JLabel lblOutput = new JLabel();
         lblOutput.setBounds(50, 380, 400, 30);
@@ -155,7 +154,8 @@ public class MenuCreateBlueDeposit {
                 }
 
                 if (depositType.isEmpty()) {
-                    JOptionPane.showMessageDialog(frame, "Pilih tipe deposito terlebih dahulu!", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(frame, "Pilih tipe deposito terlebih dahulu!", "Error",
+                            JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
@@ -163,12 +163,15 @@ public class MenuCreateBlueDeposit {
                     double nominal = Double.parseDouble(input);
                     if (nominal > 0) {
                         lblOutput.setText("Nominal disimpan: Rp " + nominal + " (" + depositType + ")");
-                        JOptionPane.showMessageDialog(frame, "Deposit berhasil dibuat!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(frame, "Deposit berhasil dibuat!", "Sukses",
+                                JOptionPane.INFORMATION_MESSAGE);
                     } else {
-                        JOptionPane.showMessageDialog(frame, "Nominal harus lebih dari 0!", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(frame, "Nominal harus lebih dari 0!", "Error",
+                                JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(frame, "Input tidak valid! Masukkan angka.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(frame, "Input tidak valid! Masukkan angka.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -181,9 +184,6 @@ public class MenuCreateBlueDeposit {
                 new MenuBlueDeposit();
             }
         });
-
-
-        
 
         // Menambahkan panel ke frame dan menampilkan frame
         frame.add(panel);
