@@ -84,7 +84,6 @@ public class BlueSaving extends Tabungan {
 
     @Override
     public void createBlueSaving() {
-        // Logika untuk menyimpan Blue Saving ke database
         System.out.println("Creating Blue Saving...");
         System.out.println("Tabungan ID: " + getTabungan_id());
         System.out.println("User ID: " + getuser_id());
@@ -92,11 +91,6 @@ public class BlueSaving extends Tabungan {
         System.out.println("Saldo Awal: " + getSaldoAwal());
         System.out.println("Jangka Waktu (bulan): " + getJangkaWaktu());
         System.out.println("Target Saldo: " + getTargetSaldo());
-
-        // Tambahkan logika untuk query ke database di sini
-        // Contoh:
-        // BlueSavingController controller = new BlueSavingController();
-        // controller.createBlueSaving(this);
     }
 
     @Override
@@ -109,13 +103,13 @@ public class BlueSaving extends Tabungan {
         throw new UnsupportedOperationException("BlueDeposito is not supported in BlueSaving class.");
     }
 
-    public double hitungTabunganHarian(double saldoAwal, double targetSaldo, int jangkaWaktuBulan) {
+    public static double hitungTabunganHarian(double saldo, double targetSaldo, int jangkaWaktuBulan) {
         LocalDate startDate = LocalDate.now();
         LocalDate endDate = startDate.plusMonths(jangkaWaktuBulan);
 
         long jumlahHari = ChronoUnit.DAYS.between(startDate, endDate);
 
-        double tabunganHarian = (targetSaldo - saldoAwal) / jumlahHari;
+        double tabunganHarian = (targetSaldo - saldo) / jumlahHari;
 
         DecimalFormat df = new DecimalFormat("#.##");
         tabunganHarian = Double.parseDouble(df.format(tabunganHarian));

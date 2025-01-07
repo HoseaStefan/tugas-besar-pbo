@@ -55,4 +55,9 @@ public class Report {
     public void setStatusReport(StatusReport statusReport) {
         this.statusReport = statusReport;
     }
+
+    public static boolean updateStatusReport(Report report, String selectedStatus) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updateStatusReport'");
+    }
 }

@@ -3,6 +3,8 @@ package view;
 import javax.swing.*;
 
 import controller.UserController;
+import model.CurrentUser;
+import model.Nasabah;
 import model.User;
 import model.UserType;
 import java.awt.*;
@@ -82,13 +84,27 @@ public class FormLogin {
                     JOptionPane.showMessageDialog(frame, "Salah username/password!");
                 } else if (verifying.getUserType() == UserType.NASABAH) {
                     System.out.println("nasabah");
-                    frame.dispose();
-                    new MenuNasabah();
+                    CurrentUser currentUser = CurrentUser.getInstance();
+                    Nasabah nasabah = currentUser.getNasabah();
+                    if (nasabah.getPin() == 0) {
+                        new FormNewPIN();
+                    } else {
+                        FormInputPIN formInputPIN = new FormInputPIN();
+                        boolean isVerified = formInputPIN.showInputPIN(nasabah);
+                        if (isVerified) {
+                            frame.dispose();
+                            new MenuNasabah();
+                            return;
+                        } else {
+                            frame.dispose();
+                            new MainMenu();
+                        }
+                    }
                 } else if (verifying.getUserType() == UserType.ADMIN) {
                     System.out.println("admin");
                     frame.dispose();
                     new MenuAdmin();
-                } 
+                }
             } else {
                 JOptionPane.showMessageDialog(frame, "Isi terlebih dahulu kawan!");
             }

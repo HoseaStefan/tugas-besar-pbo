@@ -12,6 +12,7 @@ import model.CurrentUser;
 import model.TabunganType;
 import model.User;
 import model.Nasabah;
+import controller.BlueSavingController;
 import controller.CreateTabunganController;
 
 public class MenuCreateBlueSaving {
@@ -54,51 +55,57 @@ public class MenuCreateBlueSaving {
         panel.setBounds(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
 
         JLabel title = new JLabel("Create New Blue Saving!");
-        title.setBounds(120, 100, 500, 50);
+        title.setBounds(110, 60, 500, 50);
         title.setFont(new Font("SansSerif", Font.BOLD, 24));
         title.setForeground(Color.WHITE);
         panel.add(title);
 
         // Nama Tabungan
         JLabel namaTabunganLabel = new JLabel("Input Nama Tabungan:");
-        namaTabunganLabel.setBounds(130, 150, 300, 30);
+        namaTabunganLabel.setBounds(120, 110, 300, 30);
         panel.add(namaTabunganLabel);
 
         JTextField namaTabunganField = new JTextField();
-        namaTabunganField.setBounds(130, 200, 260, 30);
+        namaTabunganField.setBounds(120, 140, 260, 30);
         panel.add(namaTabunganField);
 
         // Saldo Awal
         JLabel saldoAwalLabel = new JLabel("Input Saldo Awal:");
-        saldoAwalLabel.setBounds(130, 220, 300, 30);
+        saldoAwalLabel.setBounds(120, 180, 300, 30);
         panel.add(saldoAwalLabel);
 
         JFormattedTextField saldoAwalField = new JFormattedTextField(NumberFormat.getNumberInstance());
-        saldoAwalField.setBounds(130, 260, 260, 30);
+        saldoAwalField.setBounds(120, 210, 260, 30);
         saldoAwalField.setColumns(10);
         panel.add(saldoAwalField);
 
         // Target Saldo
         JLabel targetSaldoLabel = new JLabel("Input Target Saldo:");
-        targetSaldoLabel.setBounds(130, 300, 300, 30);
+        targetSaldoLabel.setBounds(120, 250, 300, 30);
         panel.add(targetSaldoLabel);
 
         JFormattedTextField targetSaldoField = new JFormattedTextField(NumberFormat.getNumberInstance());
-        targetSaldoField.setBounds(130, 340, 260, 30);
+        targetSaldoField.setBounds(120, 280, 260, 30);
         targetSaldoField.setColumns(10);
         panel.add(targetSaldoField);
 
         JLabel jangakaWaktuLabel = new JLabel("Input Jangka Waktu Saldo:");
-        jangakaWaktuLabel.setBounds(130, 360, 300, 30);
+        jangakaWaktuLabel.setBounds(120, 320, 300, 30);
         panel.add(jangakaWaktuLabel);
 
         JFormattedTextField jangkaWaktuField = new JFormattedTextField(NumberFormat.getNumberInstance());
-        jangkaWaktuField.setBounds(130, 400, 260, 30);
+        jangkaWaktuField.setBounds(120, 350, 260, 30);
         jangkaWaktuField.setColumns(10);
         panel.add(jangkaWaktuField);
 
-        JButton createButton = new JButton("Create");
-        createButton.setBounds(130, 450, 260, 40);
+        JButton createButton = new JButton("Create New Blue Saving");
+        Component.styleRoundedButton(createButton, new Color(0, 102, 204), Color.WHITE);
+        createButton.setBounds(120, 500, 260, 50);
+        createButton.addActionListener(e -> {
+            frame.dispose();
+            new MenuCreateBlueGether();
+        });
+        Component.addHoverEffect(createButton, new Color(0, 102, 204), new Color(0, 123, 180));
         panel.add(createButton);
 
         createButton.addActionListener(new ActionListener() {
@@ -140,25 +147,33 @@ public class MenuCreateBlueSaving {
                         return;
                     }
 
-                    // Create an instance of BlueSaving
-                    BlueSaving blueSavingTemp = new BlueSaving("", nasabah.getUser_id(), namaTabungan,
-                            TabunganType.BLUESAVING, saldoAwal, startDate, saldoAwal, jangkaWaktu, targetSaldo, 0);
+                    double tabunganHarian = BlueSaving.hitungTabunganHarian(saldoAwal, targetSaldo, jangkaWaktu);
+                    double saldoSaving = 0;
 
-                    // Calculate tabunganHarian using the instance
-                    double tabunganHarian = blueSavingTemp.hitungTabunganHarian(saldoAwal, targetSaldo, jangkaWaktu);
-
-                    // Now, create the final BlueSaving object with the calculated tabunganHarian
                     BlueSaving blueSaving = new BlueSaving("", nasabah.getUser_id(), namaTabungan,
-                            TabunganType.BLUESAVING, saldoAwal, startDate, saldoAwal, jangkaWaktu, targetSaldo,
+                            TabunganType.BLUESAVING, saldoAwal, startDate, saldoSaving, jangkaWaktu, targetSaldo,
                             tabunganHarian);
 
-                    // Calculate tabunganHarian and set it afterward
-
-                    // Memanggil Controller
                     CreateTabunganController controller = new CreateTabunganController();
                     boolean isCreated = controller.createBlueSaving(blueSaving);
 
-                    // Beri notifikasi berdasarkan hasil
+                    String userId = nasabah.getUser_id();
+                    String tabunganId = blueSaving.getTabungan_id();
+                    double nominal = saldoAwal;
+
+                    boolean success = BlueSavingController.pindahSaldo(userId, nominal, tabunganId);
+                    if (success) {
+
+                        double newSaldoUser = nasabah.getSaldo() - nominal;
+                        CurrentUser.getInstance().getNasabah().setSaldo(newSaldoUser);
+
+                        blueSaving.setSaldoSaving(blueSaving.getSaldoSaving() + nominal);
+
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Saldo tidak mencukupi atau terjadi kesalahan.", "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+
                     if (isCreated) {
                         JOptionPane.showMessageDialog(frame, "Blue Saving Created Successfully!");
                         frame.dispose(); // Tutup form jika berhasil
@@ -177,11 +192,13 @@ public class MenuCreateBlueSaving {
         });
 
         // Tombol Exit
-        JButton exitButton = new JButton("Back to Main Menu");
-        exitButton.setBounds(130, 510, 260, 40);
-        panel.add(exitButton);
+        JButton backButton = new JButton("Back to Menu Tabungan");
+        Component.styleRoundedButton(backButton, new Color(255, 69, 58), Color.WHITE);
+        backButton.setBounds(120, 600, 260, 50);
+        Component.addHoverEffect(backButton, new Color(255, 69, 58), new Color(255, 82, 82));
+        panel.add(backButton);
 
-        exitButton.addActionListener(e -> {
+        backButton.addActionListener(e -> {
             frame.dispose();
             new MenuBlueSaving();
         });
@@ -189,4 +206,5 @@ public class MenuCreateBlueSaving {
         frame.add(panel);
         frame.setVisible(true);
     }
+
 }

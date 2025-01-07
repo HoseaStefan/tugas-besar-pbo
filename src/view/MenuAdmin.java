@@ -3,7 +3,6 @@ package view;
 import javax.swing.*;
 
 import model.CurrentUser;
-import model.User;
 import model.Admin;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
@@ -46,18 +45,48 @@ public class MenuAdmin {
 
         JLabel welcomeTitle = new JLabel("Welcome Admin, " + admin.getName());
         welcomeTitle.setBounds(50, 50, 400, 25);
-        welcomeTitle.setFont(new Font("SansSerif", Font.BOLD, 24));
+        welcomeTitle.setFont(new Font("Roboto", Font.BOLD, 24));
         welcomeTitle.setForeground(Color.WHITE);
         panel.add(welcomeTitle);
 
-        JButton createPromo = new JButton("Create Kode Promo");
+        JButton deletePromo = new JButton("Hapus Kode Promo");
+        deletePromo.setBounds(120, 180, 260, 50);
+        Component.styleButton(deletePromo, new Color(3, 123, 252), buttonFont);
+        panel.add(deletePromo);
+
+        deletePromo.addActionListener(e -> {
+            frame.dispose();
+            new FormDeletePromoCode();
+        });
+
+        JButton createPromo = new JButton("Buat Kode Promo Baru");
         createPromo.setBounds(120, 240, 260, 50);
         Component.styleButton(createPromo, new Color(3, 123, 252), buttonFont);
         panel.add(createPromo);
 
         createPromo.addActionListener(e -> {
             frame.dispose();
-            new MenuTransaksi();
+            new FormNewPromoCode();
+        });
+
+        JButton cekPendapatanButton = new JButton("Cek Pendapatan Admin");
+        cekPendapatanButton.setBounds(120, 300, 260, 50);
+        Component.styleButton(cekPendapatanButton, new Color(3, 123, 252), buttonFont);
+        panel.add(cekPendapatanButton);
+
+        cekPendapatanButton.addActionListener(e -> {
+            frame.dispose();
+            new MenuPendapatanAdmin();
+        });
+
+        JButton cekReportButton = new JButton("Cek Report");
+        cekReportButton.setBounds(120, 360, 260, 50);
+        Component.styleButton(cekReportButton, new Color(3, 123, 252), buttonFont);
+        panel.add(cekReportButton);
+
+        cekReportButton.addActionListener(e -> {
+            frame.dispose();
+            new MenuReportAdmin();
         });
 
         JButton exitButton = new JButton("Logout");

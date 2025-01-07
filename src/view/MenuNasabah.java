@@ -11,12 +11,12 @@ public class MenuNasabah {
     private JFrame frame;
 
     public MenuNasabah() {
-        showMenuNasabah();
-    }
-
-    public void showMenuNasabah() {
         CurrentUser currentUser = CurrentUser.getInstance();
         Nasabah nasabah = currentUser.getNasabah();
+        showMenuNasabah(nasabah);
+    }
+
+    public void showMenuNasabah(Nasabah nasabah) {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
 
@@ -88,6 +88,34 @@ public class MenuNasabah {
         transaksiButton.addActionListener(e -> {
             frame.dispose();
             new MenuTransaksi();
+        });
+
+        JButton historyTransaktiButton = new JButton("History Transaksi");
+        historyTransaktiButton.setBounds(120, 460, 260, 50);
+        Component.styleButton(historyTransaktiButton, new Color(3, 123, 252), buttonFont);
+        panel.add(historyTransaktiButton);
+
+        historyTransaktiButton.addActionListener(e -> {
+            frame.dispose();
+            new MenuHistoryTransaksi();
+        });
+
+        JButton gantiPIN = new JButton("Ganti PIN");
+        gantiPIN.setBounds(120, 520, 260, 50);
+        Component.styleButton(gantiPIN, new Color(3, 123, 252), buttonFont);
+        panel.add(gantiPIN);
+
+        gantiPIN.addActionListener(e -> {
+            FormInputPIN formInputPIN = new FormInputPIN();
+            boolean isVerified = formInputPIN.showInputPIN(nasabah);
+            if (isVerified) {
+                frame.dispose();
+                new FormNewPIN();
+                return;
+            } else {
+                frame.dispose();
+                new MenuNasabah();
+            }
         });
 
         JButton exitButton = new JButton("Logout");

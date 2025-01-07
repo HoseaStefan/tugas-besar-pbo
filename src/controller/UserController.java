@@ -17,12 +17,98 @@ public class UserController {
     public static UserController getInstance() {
         if (instance == null) {
             synchronized (UserController.class) {
+
                 if (instance == null) {
                     instance = new UserController();
                 }
             }
         }
         return instance;
+    }
+
+    public static boolean changePassword(String email, String newPassword) {
+        if (!isEmailInDatabase(email)) {
+            return false;
+        }
+
+        try {
+            conn.connect();
+
+            String query = "UPDATE users SET password = ? WHERE email = ?";
+            PreparedStatement stmt = conn.con.prepareStatement(query);
+            stmt.setString(1, newPassword);
+            stmt.setString(2, email);
+
+            int rowsUpdated = stmt.executeUpdate();
+
+            if (rowsUpdated > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            conn.disconnect();
+        }
+    }
+
+    public static boolean isEmailInDatabase(String email) {
+        try {
+            conn.connect();
+            String query = "SELECT * FROM users WHERE email = ?";
+            PreparedStatement stmt = conn.con.prepareStatement(query);
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            conn.disconnect();
+        }
+        return false;
+    }
+
+    public boolean verifyPIN(Nasabah nasabah, String inputPin) {
+        try {
+            conn.connect();
+            String query = "SELECT pin FROM users WHERE user_id = ?";
+            PreparedStatement stmt = conn.con.prepareStatement(query);
+            stmt.setString(1, nasabah.getUser_id());
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                int storedPin = rs.getInt("pin");
+                return storedPin == Integer.parseInt(inputPin);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            conn.disconnect();
+        }
+        return false;
+    }
+
+    public static void insertNewPIN(Nasabah nasabah, String newPIN) {
+        try {
+            conn.connect();
+            String query = "UPDATE users SET pin = ? WHERE user_id = ?";
+            PreparedStatement stmt = conn.con.prepareStatement(query);
+            stmt.setString(1, newPIN);
+            stmt.setString(2, nasabah.getUser_id());
+
+            int rowsUpdated = stmt.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("PIN updated successfully for user ID: " + nasabah.getUser_id());
+            } else {
+                System.out.println("Failed to update PIN. User ID not found: " + nasabah.getUser_id());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            conn.disconnect();
+        }
     }
 
     public static User verifyUser(String username, String password) {
@@ -38,11 +124,12 @@ public class UserController {
             if (rs.next()) {
                 String userType = rs.getString("user_type");
                 String userId = rs.getString("user_id");
+                String status = rs.getString("status");
 
                 User loggedInUser = null;
                 Nasabah loggedInNasabah = null;
                 Admin loggedInAdmin = null;
-                if ("NASABAH".equals(userType)) {
+                if ("NASABAH".equals(userType) && status.equals("ALLOWED")) {
                     loggedInUser = fetchNasabah(userId, rs);
                     loggedInNasabah = fetchNasabah(userId, rs);
                 } else if ("ADMIN".equals(userType)) {
@@ -100,7 +187,7 @@ public class UserController {
                 return false;
             }
 
-            String insertQuery = "INSERT INTO users (user_id, name, username, email, user_type, password, saldo, nomor_rekening) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            String insertQuery = "INSERT INTO users (user_id, name, username, email, user_type, password, saldo, nomor_rekening, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement insertStmt = conn.con.prepareStatement(insertQuery);
             String userUniqueId = generateUniqueId();
             insertStmt.setString(1, "USR" + userUniqueId);
@@ -111,6 +198,7 @@ public class UserController {
             insertStmt.setString(6, password);
             insertStmt.setDouble(7, 0);
             insertStmt.setString(8, userUniqueId);
+            insertStmt.setString(9, "ALLOWED");
 
             int rowsInserted = insertStmt.executeUpdate();
             return rowsInserted > 0;

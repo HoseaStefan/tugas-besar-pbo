@@ -227,11 +227,10 @@ public class MenuCreateBlueDeposit {
             }
         });
 
-        frame.add(panel);
+        // Menambahkan panel ke frame dan menampilkan frame
         frame.setVisible(true);
 
     }
-
     public Timestamp calculateEndDate(Timestamp startDate, int depoUpdate) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(startDate.getTime());

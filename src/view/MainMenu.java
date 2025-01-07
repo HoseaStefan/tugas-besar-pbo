@@ -46,30 +46,39 @@ public class MainMenu {
 
         JButton loginButton = new JButton("LOGIN");
         loginButton.setBounds(120, 275, 260, 50);
-        Component.styleButton(loginButton, new Color(3, 123, 252), buttonFont); 
+        Component.styleButton(loginButton, new Color(3, 123, 252), buttonFont);
         loginButton.addActionListener(e -> {
             frame.dispose();
-            new FormLogin(); 
+            new FormLogin();
         });
         panel.add(loginButton);
 
         JButton registerButton = new JButton("REGISTER");
         registerButton.setBounds(120, 345, 260, 50);
-        Component.styleButton(registerButton, new Color(3, 123, 252), buttonFont); 
+        Component.styleButton(registerButton, new Color(3, 123, 252), buttonFont);
         registerButton.addActionListener(e -> {
             frame.dispose();
-            new FormRegister(); 
+            new FormRegister();
         });
         panel.add(registerButton);
 
         JButton lupaPassButton = new JButton("LUPA PASSWORD");
         lupaPassButton.setBounds(120, 415, 260, 50);
-        Component.styleButton(lupaPassButton, new Color(3, 123, 252), buttonFont); 
+        Component.styleButton(lupaPassButton, new Color(3, 123, 252), buttonFont);
         lupaPassButton.addActionListener(e -> {
             frame.dispose();
-            new FormLupaPassword(); 
+            new FormVerifikasiEmail();
         });
         panel.add(lupaPassButton);
+
+        JButton reportButton = new JButton("Report");
+        reportButton.setBounds(120, 485, 260, 50);
+        Component.styleButton(reportButton, new Color(3, 123, 252), buttonFont);
+        reportButton.addActionListener(e -> {
+            frame.dispose();
+            new FormReportUser();
+        });
+        panel.add(reportButton);
 
         JButton exitButton = new JButton("EXIT");
         exitButton.setBounds(120, 600, 260, 50);

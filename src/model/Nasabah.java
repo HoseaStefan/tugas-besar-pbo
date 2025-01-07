@@ -30,6 +30,10 @@ public class Nasabah extends User {
         this.loyalty = loyalty;
     }
 
+    public Nasabah(int nomorRekening) {
+        this.nomorRekening = nomorRekening;
+    }
+
     public String getFullName() {
         return fullName;
     }
