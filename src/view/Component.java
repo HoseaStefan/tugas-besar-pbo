@@ -1,8 +1,7 @@
 package view;
 
-import javax.swing.*;
-
 import java.awt.*;
+import javax.swing.*;
 
 public class Component {
     public static void styleButton(JButton button, Color backgroundColor, Font font) {

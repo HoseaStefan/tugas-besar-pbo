@@ -1,15 +1,10 @@
 package view;
 
-import javax.swing.*;
-
-import controller.UserController;
-import model.CurrentUser;
-import model.Nasabah;
-import model.User;
-import model.UserType;
-
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
+import javax.swing.*;
+import model.CurrentUser;
+import model.Nasabah;
 
 public class MenuNasabah {
 
@@ -64,6 +59,16 @@ public class MenuNasabah {
         saldoLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
         saldoLabel.setForeground(Color.WHITE);
         panel.add(saldoLabel);
+
+        JButton btnLoyalty = new JButton("Loyalty");
+        btnLoyalty.setBounds(120, 200, 260, 50);
+        Component.styleButton(btnLoyalty, new Color(3, 123, 252), buttonFont);
+        panel.add(btnLoyalty);
+
+        btnLoyalty.addActionListener((actionEvent) -> {
+            frame.dispose();
+            new MenuBeliLoyalty();
+        });
 
         JButton createSavingButton = new JButton("Tabungan");
         createSavingButton.setBounds(120, 300, 260, 50);

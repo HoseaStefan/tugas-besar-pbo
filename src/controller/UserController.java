@@ -4,10 +4,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import model.Admin;
+import model.CurrentUser;
 import model.Nasabah;
 import model.User;
 import model.UserType;
-import model.CurrentUser;
 
 public class UserController {
 
@@ -123,4 +123,21 @@ public class UserController {
     public static String generateUniqueId() {
         return "" + (System.currentTimeMillis() % 1000000);
     }
+
+    public static boolean updateUserSaldo(String userId, double nominal) {
+        conn.connect();
+        try {
+            String query = "UPDATE users SET saldo = saldo + ? WHERE user_id = ?";
+            PreparedStatement stmt = conn.con.prepareStatement(query);
+            stmt.setDouble(1, nominal);
+            stmt.setString(2, userId);
+    
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
 }

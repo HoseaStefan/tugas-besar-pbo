@@ -1,9 +1,10 @@
 package controller;
 
-import model.BlueDeposito; // Define this model class similar to BlueSaving
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import model.BlueDeposito;
+import model.DepositoType;
 
 public class BlueDepositoController {
     static DatabaseHandler conn = new DatabaseHandler();
@@ -22,13 +23,15 @@ public class BlueDepositoController {
             while (rs.next()) {
                 BlueDeposito deposito = new BlueDeposito(
                         rs.getString("tabungan_id"),
-                        rs.getString("deposito_type"),
+                        rs.getString("user_id"),
+                        rs.getString("nama_tabungan"), // Mengambil nama tabungan
+                        null, // Parsing enum untuk tabungan_type
                         rs.getDouble("saldo_awal"),
+                        rs.getTimestamp("start_date"), // Parsing enum untuk deposito_type
+                        DepositoType.valueOf(rs.getString("deposito_type").toUpperCase()),
                         rs.getDouble("saldo_akhir"),
                         rs.getTimestamp("end_date"),
-                        rs.getBoolean("complete"),
-                        rs.getString("user_id")
-                );
+                        rs.getBoolean("complete"));
 
                 deposits.add(deposito);
             }
@@ -38,23 +41,95 @@ public class BlueDepositoController {
         return deposits;
     }
 
-    // Calculate the total saldo_akhir for a specific user
-    public static double getTotalSaldoAkhirByUserId(String userId) {
+    public static boolean hasBlueDeposito(String userId) {
         conn.connect();
-        double totalSaldoAkhir = 0.0;
 
         try {
-            String query = "SELECT saldo_akhir FROM blue_deposito WHERE user_id = ?";
+            String query = "SELECT COUNT(*) FROM blue_deposito WHERE user_id = ? AND complete = false";
             PreparedStatement stmt = conn.con.prepareStatement(query);
             stmt.setString(1, userId);
-            ResultSet rs = stmt.executeQuery();
 
-            while (rs.next()) {
-                totalSaldoAkhir += rs.getDouble("saldo_akhir");
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0; // Mengembalikan true jika ada Blue Deposito yang belum selesai
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return totalSaldoAkhir;
+
+        return false;
     }
+
+    public static void deleteBlueDeposito(String userId) {
+        conn.connect();
+        try {
+            String query = "DELETE FROM blue_deposito WHERE user_id = ?";
+
+            PreparedStatement stmt = conn.con.prepareStatement(query);
+
+            stmt.setString(1, userId);
+            
+            int rowsDeleted = stmt.executeUpdate();
+            
+            if (rowsDeleted > 0) {
+                System.out.println("success");
+            } else {
+                System.out.println("gagal");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+    }
+    
+    
+    public static boolean updateBlueDepositoSaldo(String userId, double newSaldoAwal) {
+        conn.connect();
+    
+        try {
+            String query = "UPDATE blue_deposito SET saldo_awal = ? WHERE user_id = ?";
+            
+            // Buat koneksi ke database dan persiapkan statement
+            
+            PreparedStatement stmt = conn.con.prepareStatement(query);
+            
+            stmt.setDouble(1, newSaldoAwal);  // Set nilai saldo baru
+            stmt.setString(2, userId);        // Set user_id berdasarkan input
+            
+            int affectedRows = stmt.executeUpdate();
+            return affectedRows > 0;  // Kembalikan true jika update berhasil
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;  // Jika terjadi error, kembalikan false
+        }
+    }
+
+
+    public boolean updateCompleteStatus(String userId, String tabunganId) {
+        conn.connect();
+        try {
+            String updateQuery = "UPDATE blue_deposito SET complete = ? WHERE user_id = ? AND tabungan_id = ?";
+            PreparedStatement stmt = conn.con.prepareStatement(updateQuery);
+
+            stmt.setBoolean(1, true);
+            stmt.setString(2, tabunganId);
+            stmt.setString(3, userId);
+
+            int rowsUpdated = stmt.executeUpdate();
+
+            if (rowsUpdated > 0) {
+                System.out.println("Status complete berhasil diperbarui untuk tabungan_id: " + tabunganId);
+                return true;
+            } else {
+                System.out.println("Gagal memperbarui status complete untuk tabungan_id: " + tabunganId);
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
 }

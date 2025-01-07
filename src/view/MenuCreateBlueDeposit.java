@@ -1,5 +1,6 @@
 package view;
 
+import controller.CreateTabunganController;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -7,6 +8,8 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
+import java.sql.Timestamp;
+import java.util.Calendar;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -15,8 +18,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
-
-import model.MenuTabungan;
+import model.BlueDeposito;
+import model.CurrentUser;
+import model.DepositoType;
+import model.Nasabah;
+import model.TabunganType;
+import model.User;
 
 public class MenuCreateBlueDeposit {
 
@@ -27,7 +34,13 @@ public class MenuCreateBlueDeposit {
     }
 
     public void menuCreateBlueDeposit() {
-        // Mendapatkan ukuran layar
+
+        CurrentUser currentUser = CurrentUser.getInstance();
+        User user = currentUser.getUser();
+        Nasabah nasabah = currentUser.getNasabah();
+
+        Timestamp startDate = new Timestamp(System.currentTimeMillis());
+
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
 
@@ -42,7 +55,6 @@ public class MenuCreateBlueDeposit {
 
         Font buttonFont = new Font("SansSerif", Font.BOLD, 18);
 
-        // Mengatur frame
         frame = new JFrame("Blue Deposit");
         frame.setUndecorated(true);
         frame.setBounds(start_x, start_y, FRAME_WIDTH, FRAME_HEIGHT);
@@ -69,9 +81,9 @@ public class MenuCreateBlueDeposit {
         panel.add(lblCreate);
 
         // TextField nominal
-        JTextField txtCreate = new JTextField();
-        txtCreate.setBounds(50, 190, 400, 30);
-        panel.add(txtCreate);
+        JTextField saldoawaField = new JTextField();
+        saldoawaField.setBounds(50, 190, 400, 30);
+        panel.add(saldoawaField);
 
         // Label tipe deposito
         JLabel lblDepositType = new JLabel("Pilih tipe deposito:");
@@ -114,7 +126,6 @@ public class MenuCreateBlueDeposit {
         btnSubmit.setForeground(Color.BLUE);
         panel.add(btnSubmit);
 
-    
         // Tombol Back
         JButton btnBack = new JButton("Back");
         btnBack.setBounds(270, 320, 180, 40);
@@ -123,7 +134,7 @@ public class MenuCreateBlueDeposit {
         btnBack.setForeground(Color.WHITE);
         panel.add(btnBack);
 
-        JButton Close  = new JButton("Back to Menu Tabungan");
+        JButton Close = new JButton("Back to Menu Tabungan");
         Close.setBounds(130, 600, 260, 50);
         Component.styleButton(Close, new Color(255, 69, 58), buttonFont);
         Close.addActionListener(e -> {
@@ -131,7 +142,7 @@ public class MenuCreateBlueDeposit {
             new MenuTabungan();
         });
         panel.add(Close);
-        
+
         // Label output
         JLabel lblOutput = new JLabel();
         lblOutput.setBounds(50, 380, 400, 30);
@@ -143,33 +154,67 @@ public class MenuCreateBlueDeposit {
         btnSubmit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String input = txtCreate.getText();
-                String depositType = "";
-
-                if (depo3Bulan.isSelected()) {
-                    depositType = "3 Bulan";
-                } else if (depo6Bulan.isSelected()) {
-                    depositType = "6 Bulan";
-                } else if (depo12Bulan.isSelected()) {
-                    depositType = "12 Bulan";
-                }
-
-                if (depositType.isEmpty()) {
-                    JOptionPane.showMessageDialog(frame, "Pilih tipe deposito terlebih dahulu!", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
                 try {
-                    double nominal = Double.parseDouble(input);
-                    if (nominal > 0) {
-                        lblOutput.setText("Nominal disimpan: Rp " + nominal + " (" + depositType + ")");
-                        JOptionPane.showMessageDialog(frame, "Deposit berhasil dibuat!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-                    } else {
-                        JOptionPane.showMessageDialog(frame, "Nominal harus lebih dari 0!", "Error", JOptionPane.ERROR_MESSAGE);
+                    String saldoAwal = saldoawaField.getText().replace(",", "").trim();
+                    if (saldoAwal.isEmpty()) {
+                        JOptionPane.showMessageDialog(frame,
+                                "Please fill all fields with valid numeric values.",
+                                "Error", JOptionPane.ERROR_MESSAGE);
                     }
+
+                    Timestamp endDate = null;
+                    DepositoType depoType = null;
+
+                    if (depo3Bulan.isSelected()) {
+                        depoType = DepositoType.TIGABULAN;
+                        endDate = calculateEndDate(startDate, 3);
+
+                    } else if (depo6Bulan.isSelected()) {
+                        depoType = DepositoType.ENAMBULAN;
+                        endDate = calculateEndDate(startDate, 6);
+
+                    } else if (depo12Bulan.isSelected()) {
+                        depoType = DepositoType.SETAHUN;
+                        endDate = calculateEndDate(startDate, 12);
+
+                    } else {
+                        JOptionPane.showMessageDialog(frame,
+                                "Input error ",
+                                "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+
+                    double saldo_awal = Double.parseDouble(saldoAwal);
+
+                    BlueDeposito blueDeposito = new BlueDeposito("", nasabah.getUser_id(), null,
+                            TabunganType.BLUEDEPOSITO, saldo_awal, startDate, depoType, saldo_awal, endDate, false);
+
+                    CreateTabunganController controller = new CreateTabunganController();
+                    boolean isCreated = controller.createBlueDeposito(blueDeposito);
+
+                    
+                    if (isCreated) {
+                        JOptionPane.showMessageDialog(frame,
+                                "Deposito berhasil dibuat",
+                                "Info", JOptionPane.INFORMATION_MESSAGE);
+                        frame.dispose();
+                        new MenuBlueDeposit(); // Kembali ke menu utama
+                    } else {
+                        JOptionPane.showMessageDialog(frame,
+                                "Deposito tidak bisa dibuat. Please try again.",
+                                "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                    frame.dispose();
+                    new MenuTabungan();
+
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(frame, "Input tidak valid! Masukkan angka.", "Error", JOptionPane.ERROR_MESSAGE);
+                    // JOptionPane.showMessageDialog(frame,
+                    // "Input tidak valid!",
+                    // "Error", JOptionPane.ERROR_MESSAGE);
                 }
+
+                frame.dispose();
+                new MenuBlueDeposit();
+
             }
         });
 
@@ -182,15 +227,15 @@ public class MenuCreateBlueDeposit {
             }
         });
 
-
-        
-
-        // Menambahkan panel ke frame dan menampilkan frame
         frame.add(panel);
         frame.setVisible(true);
+
     }
 
-    public static void main(String[] args) {
-        new MenuCreateBlueDeposit();
+    public Timestamp calculateEndDate(Timestamp startDate, int depoUpdate) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(startDate.getTime());
+        calendar.add(Calendar.MONTH, depoUpdate);
+        return new Timestamp(calendar.getTimeInMillis());
     }
 }

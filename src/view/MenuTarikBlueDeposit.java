@@ -1,10 +1,18 @@
 package view;
 
+import controller.BlueDepositoController;
+import controller.UserController;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
+import java.sql.Timestamp;
+import java.util.List;
 import javax.swing.*;
+import model.BlueDeposito;
+import model.CurrentUser;
+import model.Nasabah;
+import model.User;
 
 public class MenuTarikBlueDeposit {
 
@@ -15,6 +23,13 @@ public class MenuTarikBlueDeposit {
     }
 
     public void menuTarikBlueSaving() {
+
+        CurrentUser currentUser = CurrentUser.getInstance();
+        User user = currentUser.getUser();
+        Nasabah nasabah = currentUser.getNasabah();
+
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+
         // Mengambil ukuran layar
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
@@ -86,35 +101,125 @@ public class MenuTarikBlueDeposit {
         panel.add(lblOutput);
 
         // Tombol Close
-        JButton btnClose = new JButton("EXIT");
+        JButton btnClose = new JButton("Back to Menu Tabungan");
         btnClose.setFont(buttonFont);
         btnClose.setBackground(new Color(255, 69, 58));
         btnClose.setForeground(Color.WHITE);
         btnClose.setBounds(50, 600, 400, 40);
         panel.add(btnClose);
 
+        btnClose.addActionListener(e -> {
+            frame.dispose();
+            new MenuBlueDeposit();
+        });
+
         // ActionListener tombol Submit
         btnSubmit.addActionListener(e -> {
             String input = txtTarik.getText();
+
             try {
+                // Ambil data deposito berdasarkan user_id
+                List<BlueDeposito> blueDepositos = BlueDepositoController.getDepositsByUserId(nasabah.getUser_id());
                 double nominal = Double.parseDouble(input);
-                if (nominal > 0) {
-                    lblOutput.setText("Nominal berhasil ditarik: Rp " + nominal);
-                    JOptionPane.showMessageDialog(frame, "Penarikan berhasil dilakukan!", "Sukses",
+
+                // Validasi jika data deposito tidak ditemukan
+                if (!BlueDepositoController.hasBlueDeposito(nasabah.getUser_id())) {
+                    JOptionPane.showMessageDialog(frame, "Data deposito tidak ditemukan!", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Pilih deposito pertama dari daftar
+                BlueDeposito blueDeposito = blueDepositos.get(0);
+                double saldoAwal = blueDeposito.getSaldoAwal();
+                double saldoAkhir = blueDeposito.getSaldoAkhir();
+                Timestamp endDate = blueDeposito.getEndDate();
+
+                // Validasi nominal yang diinput
+                if (nominal > saldoAwal) {
+                    // Jika input lebih besar dari saldo awal
+                    JOptionPane.showMessageDialog(frame, "Nominal tidak valid! Saldo tidak mencukupi.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    frame.dispose();
+                    new MenuBlueDeposit();
+
+                } else if (nominal < saldoAwal) {
+                    // Jika input lebih kecil dari saldo awal
+                    JOptionPane.showMessageDialog(frame, "Penarikan sebesar Rp " + nominal + " berhasil dilakukan!",
+                            "Sukses",
                             JOptionPane.INFORMATION_MESSAGE);
+
+                    double newSaldoAwal = saldoAwal - nominal;
+
+                    // Update saldo di BlueDeposito di database
+                    boolean updated = BlueDepositoController.updateBlueDepositoSaldo(nasabah.getUser_id(),
+                            newSaldoAwal);
+
+                    // Tambahkan nominal ke saldo nasabah
+                    if (!updated) {
+                        JOptionPane.showMessageDialog(frame, "Gagal memperbarui saldo nasabah!", "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+
+                    frame.dispose();
+                    new MenuBlueDeposit();
+
+
+                } else if (nominal == saldoAwal) {
+                    // Jika input sama dengan saldo awal
+                    if (now.after(endDate) || now.equals(endDate)) {
+                        // Jika waktu saat ini lebih besar atau sama dengan end_date
+                        JOptionPane.showMessageDialog(frame,
+                                "Saldo akhir sebesar Rp " + saldoAkhir + " dikembalikan karena deposito telah selesai.",
+                                "Sukses", JOptionPane.INFORMATION_MESSAGE);
+
+                        // Tambahkan saldo akhir ke saldo nasabah
+                        boolean updated = UserController.updateUserSaldo(nasabah.getUser_id(), saldoAkhir);
+                        if (!updated) {
+                            JOptionPane.showMessageDialog(frame, "Gagal memperbarui saldo nasabah!", "Error",
+                                    JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+
+                        BlueDepositoController.deleteBlueDeposito(nasabah.getUser_id());
+                        frame.dispose();
+                        new MenuBlueDeposit();
+
+                        
+                    } else {
+                        // Jika waktu saat ini belum mencapai end_date
+                        JOptionPane.showMessageDialog(frame,
+                                "Saldo awal sebesar Rp " + saldoAwal + " dikembalikan.", "Sukses",
+                                JOptionPane.INFORMATION_MESSAGE);
+
+                        // Tambahkan saldo awal ke saldo nasabah
+                        boolean updated = UserController.updateUserSaldo(nasabah.getUser_id(), saldoAwal);
+                        if (!updated) {
+                            JOptionPane.showMessageDialog(frame, "Gagal memperbarui saldo nasabah!", "Error",
+                                    JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+
+                        BlueDepositoController.deleteBlueDeposito(nasabah.getUser_id());
+                        frame.dispose();
+                        new MenuBlueDeposit();
+    
+                    }
                 } else {
-                    JOptionPane.showMessageDialog(frame, "Nominal harus lebih dari 0!", "Error",
+                    // Jika input tidak valid
+                    JOptionPane.showMessageDialog(frame, "Input tidak valid! Masukkan nominal yang sesuai.", "Error",
                             JOptionPane.ERROR_MESSAGE);
                 }
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(frame, "Input tidak valid! Masukkan angka.", "Error",
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(frame, "Terjadi kesalahan: " + ex.getMessage(), "Error",
                         JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
             }
         });
 
         btnBack.addActionListener(new ActionListener() {
             @Override
-            public  void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
                 frame.dispose();
                 new MenuBlueDeposit();
             }
@@ -127,9 +232,5 @@ public class MenuTarikBlueDeposit {
         // Tambahkan panel ke frame
         frame.add(panel);
         frame.setVisible(true);
-    }
-
-    public static void main(String[] args) {
-        new MenuTarikBlueDeposit();
     }
 }

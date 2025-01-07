@@ -1,10 +1,15 @@
 package view;
 
+import controller.BlueDepositoController;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
 import javax.swing.*;
+import model.CurrentUser;
+import model.Nasabah;
+import model.User;
+import view.MenuTabungan;
 
 public class MenuBlueDeposit {
 
@@ -15,6 +20,11 @@ public class MenuBlueDeposit {
     }
 
     public void menuBlueDeposito() {
+
+        CurrentUser currentUser = CurrentUser.getInstance();
+        User user = currentUser.getUser();
+        Nasabah nasabah = currentUser.getNasabah();
+
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
 
@@ -48,31 +58,59 @@ public class MenuBlueDeposit {
 
         JButton btnTarik = new JButton("Tarik");
         btnTarik.setBounds(150, 250, 200, 100);
-        Component.styleButton(btnTarik, new Color(3, 123, 252), buttonFont); 
+        Component.styleButton(btnTarik, new Color(3, 123, 252), buttonFont);
         panel.add(btnTarik);
-        
+
         JButton btnCreate = new JButton("Create");
-        btnCreate.setBounds(150,400 , 200, 100);
-        Component.styleButton(btnCreate, new Color(3, 123, 252), buttonFont); 
+        btnCreate.setBounds(150, 400, 200, 100);
+        Component.styleButton(btnCreate, new Color(3, 123, 252), buttonFont);
         panel.add(btnCreate);
+
+        JButton Close = new JButton("Back to Menu Tabungan");
+        Close.setBounds(130, 600, 260, 50);
+        Component.styleButton(Close, new Color(255, 69, 58), buttonFont);
+        Close.addActionListener(e -> {
+            frame.dispose();
+            new MenuTabungan();
+        });
+        panel.add(Close);
 
         btnTarik.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                frame.dispose(); 
-                new MenuTarikBlueDeposit();
-            }
-        });
-        
-        btnCreate.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.dispose(); 
-                new MenuCreateBlueDeposit();
+                
+                BlueDepositoController controller = new BlueDepositoController();
+
+                if (!controller.hasBlueDeposito(nasabah.getUser_id())) {
+                    JOptionPane.showMessageDialog(null,
+                            "Anda belum memiliki Blue Deposito aktif.",
+                            "Peringatan",
+                            JOptionPane.WARNING_MESSAGE);
+                } else {
+                    frame.dispose();
+                    new MenuTarikBlueDeposit();
+                }
             }
         });
 
-        // Add panel to frame
+        btnCreate.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                BlueDepositoController controller = new BlueDepositoController();
+
+                if (controller.hasBlueDeposito(nasabah.getUser_id())) {
+                    JOptionPane.showMessageDialog(null,
+                            "Anda sudah memiliki Blue Deposito aktif.",
+                            "Peringatan",
+                            JOptionPane.WARNING_MESSAGE);
+                } else {
+                    frame.dispose();
+                    new MenuCreateBlueDeposit();
+                }
+            }
+        });
+
         frame.add(panel);
         frame.setVisible(true);
     }
