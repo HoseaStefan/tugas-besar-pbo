@@ -1,7 +1,5 @@
 package controller;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,39 +16,38 @@ public class TransaksiController {
     public static void loadTransactionData(DefaultTableModel tableModel, String nasabahId) {
         try {
             conn.connect();
-            
+
             String targetAccount = nasabahId.substring(3);
-    
+
             String query = "SELECT transaksi_type, transaksi_date, " +
                     "CASE " +
-                    "   WHEN transaksi_type = 'SETOR' THEN jumlah_saldo_ditambah " +  
-                    "   WHEN transaksi_type = 'TRANSFER' AND nomor_rekening_tujuan = ? THEN jumlah_saldo_ditambah " +  
-                    "   WHEN transaksi_type = 'TRANSFER' THEN -jumlah_saldo_terpotong " + 
-                    "   WHEN transaksi_type = 'TOPUP' THEN -jumlah_saldo_terpotong " + 
-                    "   ELSE 0 " + 
+                    "   WHEN transaksi_type = 'SETOR' THEN jumlah_saldo_ditambah " +
+                    "   WHEN transaksi_type = 'TRANSFER' AND nomor_rekening_tujuan = ? THEN jumlah_saldo_ditambah " +
+                    "   WHEN transaksi_type = 'TRANSFER' THEN -jumlah_saldo_terpotong " +
+                    "   WHEN transaksi_type = 'TOPUP' THEN -jumlah_saldo_terpotong " +
+                    "   ELSE 0 " +
                     "END AS total, " +
                     "status_type " +
                     "FROM transaksi WHERE nasabah_id = ? OR nomor_rekening_tujuan = ? ORDER BY transaksi_date DESC";
-            
+
             PreparedStatement stmt = conn.con.prepareStatement(query);
-            stmt.setString(1, targetAccount); 
-            stmt.setString(2, nasabahId); 
+            stmt.setString(1, targetAccount);
+            stmt.setString(2, nasabahId);
             stmt.setString(3, targetAccount);
             ResultSet rs = stmt.executeQuery();
-    
+
             while (rs.next()) {
                 String type = rs.getString("transaksi_type");
                 String date = rs.getString("transaksi_date");
                 double total = rs.getDouble("total");
                 String status = rs.getString("status_type");
-    
-                tableModel.addRow(new Object[] {type, date, total, status });
+
+                tableModel.addRow(new Object[] { type, date, total, status });
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error loading transaction data: " + e.getMessage());
         }
     }
-    
 
     public static Boolean verifyNomorRekeningTujuan(int rekening) {
         try {
@@ -73,7 +70,7 @@ public class TransaksiController {
             int norekTujuan, Double biayaAdmin, TopUpType topUpType) {
         try {
             conn.connect();
-            conn.con.setAutoCommit(false); 
+            conn.con.setAutoCommit(false);
 
             double saldoDitambah = 0;
             double saldoTerpotong = 0;

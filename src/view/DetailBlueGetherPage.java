@@ -91,19 +91,26 @@ public class DetailBlueGetherPage {
                 double nominal = Double
                         .parseDouble(JOptionPane.showInputDialog("Masukkan nominal yang ingin dipindahkan:"));
 
-                boolean success = BlueGetherController.pindahSaldo(userId, nominal, tabunganId);
-                if (success) {
-                    JOptionPane.showMessageDialog(frame, "Saldo berhasil dipindahkan!");
+                FormInputPIN formInputPIN = new FormInputPIN();
+                boolean isVerified = formInputPIN.showInputPIN(nasabah);
+                if (isVerified) {
 
-                    double newSaldoUser = nasabah.getSaldo() - nominal;
-                    CurrentUser.getInstance().getNasabah().setSaldo(newSaldoUser);
-                    blueGether.setSaldoGether(blueGether.getSaldoGether() + nominal);
+                    boolean success = BlueGetherController.pindahSaldo(userId, nominal, tabunganId);
+                    if (success) {
+                        JOptionPane.showMessageDialog(frame, "Saldo berhasil dipindahkan!");
 
-                    frame.dispose();
-                    new DetailBlueGetherPage(blueGether);
+                        double newSaldoUser = nasabah.getSaldo() - nominal;
+                        CurrentUser.getInstance().getNasabah().setSaldo(newSaldoUser);
+                        blueGether.setSaldoGether(blueGether.getSaldoGether() + nominal);
+
+                        frame.dispose();
+                        new DetailBlueGetherPage(blueGether);
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Saldo tidak mencukupi atau terjadi kesalahan.", "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
                 } else {
-                    JOptionPane.showMessageDialog(frame, "Saldo tidak mencukupi atau terjadi kesalahan.", "Error",
-                            JOptionPane.ERROR_MESSAGE);
+                    return;
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(frame, "Input nominal tidak valid.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -180,19 +187,27 @@ public class DetailBlueGetherPage {
                     double nominal = Double
                             .parseDouble(JOptionPane.showInputDialog("Masukkan nominal yang ingin ditarik:"));
 
-                    boolean success = BlueGetherController.tarikSaldoGether(userId, nominal, tabunganId);
-                    if (success) {
-                        JOptionPane.showMessageDialog(frame, "Saldo berhasil ditarik!");
+                    FormInputPIN formInputPIN = new FormInputPIN();
+                    boolean isVerified = formInputPIN.showInputPIN(nasabah);
+                    if (isVerified) {
 
-                        double newSaldo = nasabah.getSaldo() + nominal;
-                        CurrentUser.getInstance().getNasabah().setSaldo(newSaldo);
-                        blueGether.setSaldoGether(blueGether.getSaldoGether() - nominal);
+                        boolean success = BlueGetherController.tarikSaldoGether(userId, nominal, tabunganId);
+                        if (success) {
+                            JOptionPane.showMessageDialog(frame, "Saldo berhasil ditarik!");
 
-                        frame.dispose();
-                        new DetailBlueGetherPage(blueGether);
+                            double newSaldo = nasabah.getSaldo() + nominal;
+                            CurrentUser.getInstance().getNasabah().setSaldo(newSaldo);
+                            blueGether.setSaldoGether(blueGether.getSaldoGether() - nominal);
+
+                            frame.dispose();
+                            new DetailBlueGetherPage(blueGether);
+                        } else {
+                            JOptionPane.showMessageDialog(frame,
+                                    "Saldo BlueGether tidak mencukupi atau terjadi kesalahan.",
+                                    "Error", JOptionPane.ERROR_MESSAGE);
+                        }
                     } else {
-                        JOptionPane.showMessageDialog(frame, "Saldo BlueGether tidak mencukupi atau terjadi kesalahan.",
-                                "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
                     }
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(frame, "Input nominal tidak valid.", "Error",

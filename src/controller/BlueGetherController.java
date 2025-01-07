@@ -1,6 +1,5 @@
 package controller;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,8 +9,6 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import model.BlueGether;
-import model.BlueSaving;
-import model.Nasabah;
 import model.TabunganType;
 
 public class BlueGetherController {
@@ -24,10 +21,10 @@ public class BlueGetherController {
         ResultSet rs = null;
 
         try {
-            String query = "SELECT bg.tabungan_id, bg.user_id, bg.namaTabungan, bg.saldoAwal, bg.dateCreated, bg.saldoGether, bg.jangkaWaktu, bg.targetSaldo, bg.tabunganHarian "
+            String query = "SELECT bg.tabungan_id, bg.nasabah_id, bg.namaTabungan, bg.saldoAwal, bg.dateCreated, bg.saldoGether, bg.jangkaWaktu, bg.targetSaldo, bg.tabunganHarian "
                     + "FROM bluegether bg "
                     + "LEFT JOIN listnasabah ln ON bg.tabungan_id = ln.tabungan_id "
-                    + "WHERE bg.user_id = ? OR ln.user_id = ?";
+                    + "WHERE bg.nasabah_id = ? OR ln.nasabah_id = ?";
 
             stmt = conn.con.prepareStatement(query);
             stmt.setString(1, userId);
@@ -38,7 +35,7 @@ public class BlueGetherController {
                 // Mengambil data dari ResultSet dan membuat objek BlueGether
                 BlueGether blueGether = new BlueGether(
                         rs.getString("tabungan_id"),
-                        rs.getString("user_id"),
+                        rs.getString("nasabah_id"),
                         rs.getString("namaTabungan"),
                         TabunganType.BLUEGETHER, // Sesuaikan jika jenis tabungan tetap
                         rs.getDouble("saldoAwal"),
@@ -144,7 +141,7 @@ public class BlueGetherController {
     public static boolean tambahNasabahToListNasabah(String tabunganId, String userId) {
         conn.connect();
         try {
-            String query = "INSERT INTO listnasabah (tabungan_id, user_id) VALUES (?, ?)";
+            String query = "INSERT INTO listnasabah (tabungan_id, nasabah_id) VALUES (?, ?)";
             PreparedStatement stmt = conn.con.prepareStatement(query);
             stmt.setString(1, tabunganId);
             stmt.setString(2, userId);
@@ -160,14 +157,14 @@ public class BlueGetherController {
     public static String getUserIdNasabah(int noRekening) {
         conn.connect();
         try {
-            String query = "SELECT user_id FROM users WHERE nomor_rekening = ?";
+            String query = "SELECT nasabah_id FROM users WHERE nomor_rekening = ?";
             PreparedStatement stmt = conn.con.prepareStatement(query);
             stmt.setInt(1, noRekening);
 
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                String userId = rs.getString("user_id");
+                String userId = rs.getString("nasabah_id");
                 return userId;
             } else {
                 JOptionPane.showMessageDialog(null, "User tidak ditemukan di sistem.", "Error",
@@ -186,7 +183,7 @@ public class BlueGetherController {
         double totalDana = 0.0;
 
         try {
-            String query = "SELECT saldoGether FROM bluegether WHERE user_id = ?";
+            String query = "SELECT saldoGether FROM bluegether WHERE nasabah_id = ?";
             PreparedStatement stmt = conn.con.prepareStatement(query);
             stmt.setString(1, userId);
             ResultSet rs = stmt.executeQuery();
@@ -200,16 +197,16 @@ public class BlueGetherController {
         return totalDana;
     }
 
-    public static boolean cekOwnerBlueGether(String tabungan_id, String user_id) {
+    public static boolean cekOwnerBlueGether(String tabungan_id, String nasabah_id) {
         conn.connect();
-        String query = "SELECT user_id FROM bluegether WHERE tabungan_id = ?";
+        String query = "SELECT nasabah_id FROM bluegether WHERE tabungan_id = ?";
 
         try (PreparedStatement stmt = conn.con.prepareStatement(query)) {
             stmt.setString(1, tabungan_id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    String userId = rs.getString("user_id");
-                    return userId.equals(user_id);
+                    String userId = rs.getString("nasabah_id");
+                    return userId.equals(nasabah_id);
                 }
             }
         } catch (SQLException e) {
@@ -356,9 +353,9 @@ public class BlueGetherController {
         conn.connect();
         try {
             // Query untuk mengecek apakah nama tabungan sudah ada untuk user ini
-            String query = "SELECT COUNT(*) FROM bluegether WHERE user_id = ? AND namaTabungan = ?";
+            String query = "SELECT COUNT(*) FROM bluegether WHERE nasabah_id = ? AND namaTabungan = ?";
             PreparedStatement stmt = conn.con.prepareStatement(query);
-            stmt.setString(1, userId); // Set user_id
+            stmt.setString(1, userId); // Set nasabah_id
             stmt.setString(2, newName); // Set nama tabungan baru
 
             ResultSet rs = stmt.executeQuery();

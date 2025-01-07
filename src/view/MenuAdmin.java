@@ -79,6 +79,16 @@ public class MenuAdmin {
             new MenuPendapatanAdmin();
         });
 
+        JButton cekReportButton = new JButton("Cek Report");
+        cekReportButton.setBounds(120, 360, 260, 50);
+        Component.styleButton(cekReportButton, new Color(3, 123, 252), buttonFont);
+        panel.add(cekReportButton);
+
+        cekReportButton.addActionListener(e -> {
+            frame.dispose();
+            new MenuReportAdmin();
+        });
+
         JButton exitButton = new JButton("Logout");
         exitButton.setBounds(120, 600, 260, 50);
         Component.styleButton(exitButton, new Color(255, 69, 58), buttonFont);

@@ -17,6 +17,7 @@ public class UserController {
     public static UserController getInstance() {
         if (instance == null) {
             synchronized (UserController.class) {
+
                 if (instance == null) {
                     instance = new UserController();
                 }
@@ -27,7 +28,7 @@ public class UserController {
 
     public static boolean changePassword(String email, String newPassword) {
         if (!isEmailInDatabase(email)) {
-            return false; 
+            return false;
         }
 
         try {
@@ -41,15 +42,15 @@ public class UserController {
             int rowsUpdated = stmt.executeUpdate();
 
             if (rowsUpdated > 0) {
-                return true; 
+                return true;
             } else {
-                return false; 
+                return false;
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false; 
+            return false;
         } finally {
-            conn.disconnect(); 
+            conn.disconnect();
         }
     }
 
@@ -123,11 +124,12 @@ public class UserController {
             if (rs.next()) {
                 String userType = rs.getString("user_type");
                 String userId = rs.getString("user_id");
+                String status = rs.getString("status");
 
                 User loggedInUser = null;
                 Nasabah loggedInNasabah = null;
                 Admin loggedInAdmin = null;
-                if ("NASABAH".equals(userType)) {
+                if ("NASABAH".equals(userType) && status.equals("ALLOWED")) {
                     loggedInUser = fetchNasabah(userId, rs);
                     loggedInNasabah = fetchNasabah(userId, rs);
                 } else if ("ADMIN".equals(userType)) {
@@ -185,7 +187,7 @@ public class UserController {
                 return false;
             }
 
-            String insertQuery = "INSERT INTO users (user_id, name, username, email, user_type, password, saldo, nomor_rekening) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            String insertQuery = "INSERT INTO users (user_id, name, username, email, user_type, password, saldo, nomor_rekening, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement insertStmt = conn.con.prepareStatement(insertQuery);
             String userUniqueId = generateUniqueId();
             insertStmt.setString(1, "USR" + userUniqueId);
@@ -196,6 +198,7 @@ public class UserController {
             insertStmt.setString(6, password);
             insertStmt.setDouble(7, 0);
             insertStmt.setString(8, userUniqueId);
+            insertStmt.setString(9, "ALLOWED");
 
             int rowsInserted = insertStmt.executeUpdate();
             return rowsInserted > 0;

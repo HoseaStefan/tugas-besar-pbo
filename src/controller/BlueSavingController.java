@@ -17,7 +17,7 @@ public class BlueSavingController {
         List<BlueSaving> blueSavings = new ArrayList<>();
 
         try {
-            String query = "SELECT * FROM bluesaving WHERE user_id = ?";
+            String query = "SELECT * FROM bluesaving WHERE nasabah_id = ?";
             PreparedStatement stmt = conn.con.prepareStatement(query);
             stmt.setString(1, userId);
             ResultSet rs = stmt.executeQuery();
@@ -25,7 +25,7 @@ public class BlueSavingController {
             while (rs.next()) {
                 BlueSaving blueSaving = new BlueSaving(
                         rs.getString("tabungan_id"),
-                        rs.getString("user_id"),
+                        rs.getString("nasabah_id"),
                         rs.getString("namaTabungan"),
                         TabunganType.BLUESAVING, // TabunganType jika diperlukan, sesuaikan dengan model Anda
                         rs.getDouble("saldoAwal"),
@@ -48,7 +48,7 @@ public class BlueSavingController {
         double totalDana = 0.0;
 
         try {
-            String query = "SELECT saldoSaving FROM bluesaving WHERE user_id = ?";
+            String query = "SELECT saldoSaving FROM bluesaving WHERE nasabah_id = ?";
             PreparedStatement stmt = conn.con.prepareStatement(query);
             stmt.setString(1, userId);
             ResultSet rs = stmt.executeQuery();
@@ -165,6 +165,8 @@ public class BlueSavingController {
             double saldoSaving = rs.getDouble("saldoSaving");
             if (saldoSaving < nominal) {
                 conn.con.rollback();
+                System.out.println("Saldo Saving saat ini: " + saldoSaving);
+                System.out.println("Nominal yang ingin ditarik: " + nominal);
                 return false; // Saldo BlueSaving tidak cukup
             }
 
@@ -200,7 +202,7 @@ public class BlueSavingController {
         conn.connect();
         try {
             // Query untuk mengecek apakah nama tabungan sudah ada untuk user ini
-            String query = "SELECT COUNT(*) FROM bluesaving WHERE user_id = ? AND namaTabungan = ?";
+            String query = "SELECT COUNT(*) FROM bluesaving WHERE nasabah_id = ? AND namaTabungan = ?";
             PreparedStatement stmt = conn.con.prepareStatement(query);
             stmt.setString(1, userId); // Set user_id
             stmt.setString(2, newName); // Set nama tabungan baru

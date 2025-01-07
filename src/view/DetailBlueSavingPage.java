@@ -90,19 +90,25 @@ public class DetailBlueSavingPage {
             double nominal = Double
                     .parseDouble(JOptionPane.showInputDialog("Masukkan nominal yang ingin dipindahkan:"));
 
-            boolean success = BlueSavingController.pindahSaldo(userId, nominal, tabunganId);
-            if (success) {
-                JOptionPane.showMessageDialog(frame, "Saldo berhasil dipindahkan!");
+            FormInputPIN formInputPIN = new FormInputPIN();
+            boolean isVerified = formInputPIN.showInputPIN(nasabah);
+            if (isVerified) {
+                boolean success = BlueSavingController.pindahSaldo(userId, nominal, tabunganId);
+                if (success) {
+                    JOptionPane.showMessageDialog(frame, "Saldo berhasil dipindahkan!");
 
-                double newSaldoUser = nasabah.getSaldo() - nominal;
-                CurrentUser.getInstance().getNasabah().setSaldo(newSaldoUser);
-                blueSaving.setSaldoSaving(blueSaving.getSaldoSaving() + nominal);
+                    double newSaldoUser = nasabah.getSaldo() - nominal;
+                    CurrentUser.getInstance().getNasabah().setSaldo(newSaldoUser);
+                    blueSaving.setSaldoSaving(blueSaving.getSaldoSaving() + nominal);
 
-                frame.dispose();
-                new DetailBlueSavingPage(blueSaving);
+                    frame.dispose();
+                    new DetailBlueSavingPage(blueSaving);
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Saldo tidak mencukupi atau terjadi kesalahan.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
             } else {
-                JOptionPane.showMessageDialog(frame, "Saldo tidak mencukupi atau terjadi kesalahan.", "Error",
-                        JOptionPane.ERROR_MESSAGE);
+                return;
             }
         });
         panel.add(pindahSaldoButton);
@@ -121,19 +127,27 @@ public class DetailBlueSavingPage {
             String tabunganId = blueSaving.getTabungan_id();
             double nominal = Double.parseDouble(JOptionPane.showInputDialog("Masukkan nominal yang ingin ditarik:"));
 
-            boolean success = BlueSavingController.tarikSaldo(userId, nominal, tabunganId);
-            if (success) {
-                JOptionPane.showMessageDialog(frame, "Saldo berhasil ditarik!");
+            FormInputPIN formInputPIN = new FormInputPIN();
+            boolean isVerified = formInputPIN.showInputPIN(nasabah);
+            if (isVerified) {
 
-                double newSaldo = nasabah.getSaldo() + nominal;
-                CurrentUser.getInstance().getNasabah().setSaldo(newSaldo);
-                blueSaving.setSaldoSaving(blueSaving.getSaldoSaving() - nominal);
+                boolean success = BlueSavingController.tarikSaldo(userId, nominal, tabunganId);
 
-                frame.dispose();
-                new DetailBlueSavingPage(blueSaving);
+                if (success) {
+                    JOptionPane.showMessageDialog(frame, "Saldo berhasil ditarik!");
+
+                    double newSaldo = nasabah.getSaldo() + nominal;
+                    CurrentUser.getInstance().getNasabah().setSaldo(newSaldo);
+                    blueSaving.setSaldoSaving(blueSaving.getSaldoSaving() - nominal);
+
+                    frame.dispose();
+                    new DetailBlueSavingPage(blueSaving);
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Saldo BlueSaving tidak mencukupi atau terjadi kesalahan.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
             } else {
-                JOptionPane.showMessageDialog(frame, "Saldo BlueSaving tidak mencukupi atau terjadi kesalahan.",
-                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
             }
         });
         panel.add(tarikSaldoButton);
