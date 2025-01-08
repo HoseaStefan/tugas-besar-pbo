@@ -1,3 +1,4 @@
+
 package view;
 
 import controller.BlueDepositoController;
@@ -64,6 +65,15 @@ public class MenuTarikBlueDeposit {
         title.setForeground(Color.WHITE);
         panel.add(title);
 
+        // Saldo label yang awalnya menampilkan saldo
+        final JLabel saldoLabel = new JLabel(
+                "Deposit saldo: Rp." + BlueDepositoController.getSaldoAwalDepo(nasabah.getUser_id()),
+                SwingConstants.CENTER);
+        saldoLabel.setBounds(50, 105, 400, 25);
+        saldoLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        saldoLabel.setForeground(Color.WHITE);
+        panel.add(saldoLabel);
+
         // Label untuk input nominal
         JLabel lblTarik = new JLabel("Masukkan nominal untuk ditarik:");
         lblTarik.setBounds(50, 150, 400, 30);
@@ -114,6 +124,7 @@ public class MenuTarikBlueDeposit {
         });
 
         // ActionListener tombol Submit
+        // ActionListener tombol Submit
         btnSubmit.addActionListener(e -> {
             String input = txtTarik.getText();
 
@@ -146,8 +157,7 @@ public class MenuTarikBlueDeposit {
                 } else if (nominal < saldoAwal) {
                     // Jika input lebih kecil dari saldo awal
                     JOptionPane.showMessageDialog(frame, "Penarikan sebesar Rp " + nominal + " berhasil dilakukan!",
-                            "Sukses",
-                            JOptionPane.INFORMATION_MESSAGE);
+                            "Sukses", JOptionPane.INFORMATION_MESSAGE);
 
                     double newSaldoAwal = saldoAwal - nominal;
 
@@ -155,15 +165,21 @@ public class MenuTarikBlueDeposit {
                     boolean updated = BlueDepositoController.updateBlueDepositoSaldo(nasabah.getUser_id(),
                             newSaldoAwal);
 
-                    // Tambahkan nominal ke saldo nasabah
-                    if (!updated) {
+                    // Tambahkan nominal ke saldo nasabah jika berhasil
+                    if (updated) {
+                        // Update saldo nasabah
+                        double newSaldoNasabah = nasabah.getSaldo() + nominal;
+                        nasabah.setSaldo(newSaldoNasabah); // Update saldo nasabah
+
+                        // Mengupdate saldo label nasabah di GUI
+                        saldoLabel.setText("Current saldo: Rp." + nasabah.getSaldo());
+                    } else {
                         JOptionPane.showMessageDialog(frame, "Gagal memperbarui saldo nasabah!", "Error",
                                 JOptionPane.ERROR_MESSAGE);
                     }
 
                     frame.dispose();
                     new MenuBlueDeposit();
-
 
                 } else if (nominal == saldoAwal) {
                     // Jika input sama dengan saldo awal
@@ -185,7 +201,6 @@ public class MenuTarikBlueDeposit {
                         frame.dispose();
                         new MenuBlueDeposit();
 
-                        
                     } else {
                         // Jika waktu saat ini belum mencapai end_date
                         JOptionPane.showMessageDialog(frame,
@@ -203,7 +218,7 @@ public class MenuTarikBlueDeposit {
                         BlueDepositoController.deleteBlueDeposito(nasabah.getUser_id());
                         frame.dispose();
                         new MenuBlueDeposit();
-    
+
                     }
                 } else {
                     // Jika input tidak valid
@@ -223,7 +238,6 @@ public class MenuTarikBlueDeposit {
                 frame.dispose();
                 new MenuBlueDeposit();
             }
-
         });
 
         // ActionListener tombol Close

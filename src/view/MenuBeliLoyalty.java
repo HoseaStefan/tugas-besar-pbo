@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import model.CurrentUser;
 import model.Nasabah;
@@ -23,6 +24,8 @@ public class MenuBeliLoyalty {
     }
 
     public void menuMembeliLoyalty() {
+
+        LoyaltyController loyaltyController =  new LoyaltyController();
 
         Font buttonFont = new Font("SansSerif", Font.BOLD, 18);
         
@@ -61,21 +64,30 @@ public class MenuBeliLoyalty {
         saldoLabel.setForeground(Color.WHITE);
         panel.add(saldoLabel);
 
-        JButton btnBuyLoyalty = new JButton("BUY NOW ONLY 99k !!");
-        btnBuyLoyalty.setBounds(120, 300, 260, 50);
-        Component.styleButton(btnBuyLoyalty, new Color(3, 123, 252), buttonFont);
-        panel.add(btnBuyLoyalty);
-        btnBuyLoyalty.addActionListener((actionEvent) -> {
-            try {
-                LoyaltyController loyaltyController = new LoyaltyController();
-                if (loyaltyController.buyLoyaltyByUserId(nasabah.getUser_id())) {
+        if (loyaltyController.getLoyaltyByUserId(nasabah.getUser_id()) == true) {
+            JButton btnBuyLoyalty = new JButton("BUY NOW ONLY 99k !!");
+            btnBuyLoyalty.setBounds(120, 300, 260, 50);
+            Component.styleButton(btnBuyLoyalty, new Color(3, 123, 252), buttonFont);
+            panel.add(btnBuyLoyalty);
+            btnBuyLoyalty.addActionListener((actionEvent) -> {
+                try {
+                    if (loyaltyController.buyLoyaltyByUserId(nasabah.getUser_id())) {
+                        JOptionPane.showMessageDialog(frame, "Success","info",JOptionPane.INFORMATION_MESSAGE);
+                        
+                    }
                     
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+            });   
+        } else {
+            JButton btnBuyLoyalty = new JButton("Your Loyalty is Active !!");
+            btnBuyLoyalty.setBounds(120, 300, 260, 50);
+            Component.styleButton(btnBuyLoyalty, new Color(3, 123, 252), buttonFont);
+            JOptionPane.showMessageDialog(frame, "Loyalty is already exist","info",JOptionPane.INFORMATION_MESSAGE);
+            panel.add(btnBuyLoyalty);
+
+        }
 
         JButton btnBack = new JButton("Back to Main Menu");
         btnBack.setBounds(130, 600, 260, 50);

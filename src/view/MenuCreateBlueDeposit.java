@@ -73,6 +73,13 @@ public class MenuCreateBlueDeposit {
         title.setForeground(Color.WHITE);
         panel.add(title);
 
+        JLabel saldoLabel = new JLabel("Current saldo : Rp." + nasabah.getSaldo());
+        saldoLabel.setBounds(0, 105, FRAME_WIDTH, 25);
+        saldoLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        saldoLabel.setForeground(Color.WHITE);
+        saldoLabel.setHorizontalAlignment(JLabel.CENTER);
+        panel.add(saldoLabel);
+
         // Label nominal
         JLabel lblCreate = new JLabel("Masukkan nominal untuk disimpan:");
         lblCreate.setBounds(50, 150, 400, 30);
@@ -191,11 +198,18 @@ public class MenuCreateBlueDeposit {
                     CreateTabunganController controller = new CreateTabunganController();
                     boolean isCreated = controller.createBlueDeposito(blueDeposito);
 
-                    
                     if (isCreated) {
+                        // Update saldo nasabah setelah deposito dibuat
+                        double updatedSaldo = nasabah.getSaldo() - saldo_awal; // Mengurangi saldo awal
+                        nasabah.setSaldo(updatedSaldo);
+
+                        // Update label saldo di GUI
+                        saldoLabel.setText("Current saldo : Rp." + updatedSaldo);
+
                         JOptionPane.showMessageDialog(frame,
                                 "Deposito berhasil dibuat",
                                 "Info", JOptionPane.INFORMATION_MESSAGE);
+
                         frame.dispose();
                         new MenuBlueDeposit(); // Kembali ke menu utama
                     } else {
@@ -203,8 +217,6 @@ public class MenuCreateBlueDeposit {
                                 "Deposito tidak bisa dibuat. Please try again.",
                                 "Error", JOptionPane.ERROR_MESSAGE);
                     }
-                    frame.dispose();
-                    new MenuTabungan();
 
                 } catch (NumberFormatException ex) {
                     // JOptionPane.showMessageDialog(frame,
@@ -227,10 +239,11 @@ public class MenuCreateBlueDeposit {
             }
         });
 
-        // Menambahkan panel ke frame dan menampilkan frame
+        frame.add(panel);
         frame.setVisible(true);
 
     }
+
     public Timestamp calculateEndDate(Timestamp startDate, int depoUpdate) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(startDate.getTime());

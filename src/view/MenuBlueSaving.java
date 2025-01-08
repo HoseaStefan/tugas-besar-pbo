@@ -1,13 +1,12 @@
 package view;
 
-import javax.swing.*;
+import controller.BlueSavingController;
 import java.awt.*;
 import java.util.List;
-import javax.swing.border.Border;
+import javax.swing.*;
+import model.BlueSaving;
 import model.CurrentUser;
 import model.Nasabah;
-import model.BlueSaving;
-import controller.BlueSavingController;
 
 public class MenuBlueSaving {
 
@@ -137,5 +136,8 @@ public class MenuBlueSaving {
             noDataLabel.setForeground(Color.WHITE);
             blueSavingPanel.add(noDataLabel);
         }
+    }
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new MenuBlueSaving());
     }
 }

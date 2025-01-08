@@ -42,17 +42,6 @@ public class LoyaltyController {
         return false; // Jika kondisi tidak terpenuhi, kembalikan false
     }
 
-    // public static boolean hasLoyaltyByUserId(String user_Id){
-    //     conn.connect();
-    //     try {
-            
-    //     } catch (Exception e) {
-           
-    //     }
-
-    //     return true;
-    // }
-
     public static Boolean buyLoyaltyByUserId(String user_id) {
         conn.connect();
         try {
@@ -116,6 +105,9 @@ public class LoyaltyController {
         return false; // Jika kondisi tidak terpenuhi
     }
 
+
+
+
     public static String generateLoyaltyId() {
         conn.connect();
         String prefix = "l-"; // Prefix untuk loyalty_id
@@ -137,4 +129,6 @@ public class LoyaltyController {
             return null;
         }
     }
+
+    
 }

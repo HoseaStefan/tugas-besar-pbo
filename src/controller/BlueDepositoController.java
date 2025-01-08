@@ -41,6 +41,44 @@ public class BlueDepositoController {
         return deposits;
     }
 
+    public static double getSaldoAwalDepo(String user_id) {
+        // Pastikan koneksi ke database telah terhubung
+        conn.connect(); // Asumsi `conn` adalah objek koneksi ke database
+        try {
+            // Periksa apakah user memiliki Blue Deposito
+            if (hasBlueDeposito(user_id) == true) {
+                // Query SQL untuk mendapatkan saldo_awal berdasarkan user_id
+                String query = "SELECT saldo_awal FROM blue_deposito WHERE user_id = ? LIMIT 1";
+    
+                // Siapkan pernyataan untuk eksekusi query
+                PreparedStatement stmt = conn.con.prepareStatement(query);
+    
+                // Set parameter user_id dalam query
+                stmt.setString(1, user_id);
+    
+                // Eksekusi query
+                ResultSet rs = stmt.executeQuery();
+    
+                // Jika data ditemukan, ambil saldo_awal
+                if (rs.next()) {
+                    return rs.getDouble("saldo_awal");
+                }
+    
+                // Tutup ResultSet dan PreparedStatement
+                rs.close();
+                stmt.close();
+            } else {
+                System.out.println("Blue Deposito tidak ditemukan untuk user_id: " + user_id);
+            }
+        } catch (Exception e) {
+            // Cetak error jika terjadi masalah
+            e.printStackTrace();
+        }
+        // Kembalikan 0 jika tidak ditemukan atau terjadi kesalahan
+        return 0;
+    }
+    
+
     public static boolean hasBlueDeposito(String userId) {
         conn.connect();
 
