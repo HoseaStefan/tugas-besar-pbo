@@ -1,59 +1,108 @@
 package model;
 
+import java.sql.Timestamp;
+
 public class Loyalty {
     private String loyalty_id;
     private String nasabah_id;
-    private LoyaltyType loyaltyType;
     private double hargaLoyalty;
-    private int banyakKodePromo;
-
-    public Loyalty(String loyalty_id, String nasabah_id, LoyaltyType loyaltyType, double hargaLoyalty,
-            int banyakKodePromo) {
-        this.loyalty_id = loyalty_id;
-        this.nasabah_id = nasabah_id;
-        this.loyaltyType = loyaltyType;
-        this.hargaLoyalty = hargaLoyalty;
-        this.banyakKodePromo = banyakKodePromo;
-    }
+    private int banyakVoucherSetor;
+    private int banyakVoucherTransfer;
+    private int banyakVoucherTopup;
+    private boolean loyaltyActive;
+    private Timestamp expiredDate;
 
     public String getLoyalty_id() {
         return loyalty_id;
     }
 
+
     public void setLoyalty_id(String loyalty_id) {
         this.loyalty_id = loyalty_id;
     }
+
 
     public String getNasabah_id() {
         return nasabah_id;
     }
 
+
     public void setNasabah_id(String nasabah_id) {
         this.nasabah_id = nasabah_id;
     }
 
-    public LoyaltyType getLoyaltyType() {
-        return loyaltyType;
-    }
-
-    public void setLoyaltyType(LoyaltyType loyaltyType) {
-        this.loyaltyType = loyaltyType;
-    }
-
+    
     public double getHargaLoyalty() {
         return hargaLoyalty;
     }
+
 
     public void setHargaLoyalty(double hargaLoyalty) {
         this.hargaLoyalty = hargaLoyalty;
     }
 
-    public int getBanyakKodePromo() {
-        return banyakKodePromo;
+
+    public int getBanyakVoucherSetor() {
+        return banyakVoucherSetor;
     }
 
-    public void setBanyakKodePromo(int banyakKodePromo) {
-        this.banyakKodePromo = banyakKodePromo;
+
+    public void setBanyakVoucherSetor(int banyakVoucherSetor) {
+        this.banyakVoucherSetor = banyakVoucherSetor;
     }
 
+
+    public int getBanyakVoucherTransfer() {
+        return banyakVoucherTransfer;
+    }
+
+
+    public void setBanyakVoucherTransfer(int banyakVoucherTransfer) {
+        this.banyakVoucherTransfer = banyakVoucherTransfer;
+    }
+
+
+    public int getBanyakVoucherTopup() {
+        return banyakVoucherTopup;
+    }
+
+
+    public void setBanyakVoucherTopup(int banyakVoucherTopup) {
+        this.banyakVoucherTopup = banyakVoucherTopup;
+    }
+
+
+    public boolean isLoyaltyActive() {
+        return loyaltyActive;
+    }
+
+
+    public void setLoyaltyActive(boolean loyaltyActive) {
+        this.loyaltyActive = loyaltyActive;
+    }
+
+
+    public Timestamp getExpiredDate() {
+        return expiredDate;
+    }
+
+
+    public void setExpiredDate(Timestamp expiredDate) {
+        this.expiredDate = expiredDate;
+    }
+
+    
+    public Loyalty(String loyalty_id, String nasabah_id, double hargaLoyalty, int banyakVoucherSetor,
+            int banyakVoucherTransfer, int banyakVoucherTopup, boolean loyaltyActive, Timestamp expiredDate) {
+        this.loyalty_id = loyalty_id;
+        this.nasabah_id = nasabah_id;
+        this.hargaLoyalty = hargaLoyalty;
+        this.banyakVoucherSetor = banyakVoucherSetor;
+        this.banyakVoucherTransfer = banyakVoucherTransfer;
+        this.banyakVoucherTopup = banyakVoucherTopup;
+        this.loyaltyActive = loyaltyActive;
+        this.expiredDate = expiredDate;
+    }
+
+    
 }

@@ -77,7 +77,7 @@ public class LoyaltyController {
                         updateUserStmt.executeUpdate();
 
                         // Update loyalty atribut termasuk expired_date
-                        String updateLoyaltyQuery = "UPDATE loyalty SET banyak_voucher_topup_money = 100, banyak_voucher_transfer = 100, loyalty_active = true, expired_date = ? WHERE loyalty_id = ?";
+                        String updateLoyaltyQuery = "UPDATE loyalty SET banyak_voucher_setor, banyak_voucher_topup_money = 100, banyak_voucher_transfer = 100, loyalty_active = true, expired_date = ? WHERE loyalty_id = ?";
                         PreparedStatement updateLoyaltyStmt = conn.con.prepareStatement(updateLoyaltyQuery);
                         updateLoyaltyStmt.setTimestamp(1, expiredDate);
                         updateLoyaltyStmt.setString(2, newLoyaltyId);
