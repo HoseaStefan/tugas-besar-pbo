@@ -4,42 +4,75 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import javax.swing.JOptionPane;
+import model.Loyalty;
 
 public class LoyaltyController {
     static DatabaseHandler conn = new DatabaseHandler();
 
-    public static Boolean getLoyaltyByUserId(String userId) {
+    public static List<Loyalty> getLoyaltyByUserId(String userId) {
         conn.connect();
+        List<Loyalty> loyaltyList = new ArrayList<>();
+
         try {
-            String query = "SELECT loyalty_id FROM users WHERE user_id = ?";
+            String query = "SELECT * FROM loyalty WHERE user_id = ?";
             PreparedStatement stmt = conn.con.prepareStatement(query);
             stmt.setString(1, userId);
             ResultSet rs = stmt.executeQuery();
 
-            if (rs.next()) {
-                String loyaltyId = rs.getString("loyalty_id");
+            while (rs.next()) {
+                Loyalty loyalty = new Loyalty(
+                        rs.getString("loyalty_id"),
+                        rs.getNString("user_id"), 
+                        rs.getDouble("loyalty_value"),
+                        rs.getInt("banyak_voucher_setor"),
+                        rs.getInt("banyak_voucher_transfer"),
+                        rs.getInt("banyak_voucher_topup_money"),
+                        rs.getBoolean("loyalty_active"),
+                        rs.getTimestamp("expired_date"));
 
-                // Jika loyalty_id tidak null, cek status loyalty_active
-                if (loyaltyId != null) {
-                    String loyaltyQuery = "SELECT loyalty_active FROM loyalty WHERE loyalty_id = ?";
-                    PreparedStatement loyaltyStmt = conn.con.prepareStatement(loyaltyQuery);
-                    loyaltyStmt.setString(1, loyaltyId);
-                    ResultSet loyaltyRs = loyaltyStmt.executeQuery();
+                // Only add to the list if loyalty is active
+                loyaltyList.add(loyalty);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-                    if (loyaltyRs.next()) {
-                        boolean loyaltyActive = loyaltyRs.getBoolean("loyalty_active");
-                        if (loyaltyActive) {
-                            return true; // loyalty_active adalah true
-                        }
-                    }
-                }
+        return loyaltyList;
+    }
+
+    public static boolean hasLoyaltyActive(String user_id) {
+        conn.connect();
+        try {
+            String query = "SELECT loyalty_active FROM loyalty WHERE user ";
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    public static void deleteExpiredLoyalty(String user_id){
+        conn.connect();
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        Timestamp endDate = calculateEndDate(now);
+
+        try {
+            if (now.after(endDate)) {
+                // String query
             }
         } catch (Exception e) {
-            e.printStackTrace(); // Log error untuk debugging
+            
         }
-        return false; // Jika kondisi tidak terpenuhi, kembalikan false
+    }
+
+    public static Timestamp calculateEndDate(Timestamp startDate) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(startDate.getTime());
+        calendar.add(Calendar.MONTH, 3);
+        return new Timestamp(calendar.getTimeInMillis());
     }
 
     public static Boolean buyLoyaltyByUserId(String user_id) {
@@ -105,9 +138,6 @@ public class LoyaltyController {
         return false; // Jika kondisi tidak terpenuhi
     }
 
-
-
-
     public static String generateLoyaltyId() {
         conn.connect();
         String prefix = "l-"; // Prefix untuk loyalty_id
@@ -130,5 +160,4 @@ public class LoyaltyController {
         }
     }
 
-    
 }
