@@ -176,7 +176,7 @@ public class SettingsBlueSaving {
                 double nominal = blueSaving.getSaldoSaving(); // Mengambil saldo yang ada di Blue Saving
                 String userId = blueSaving.getuser_id(); // Mendapatkan ID pengguna yang terkait
 
-                boolean tarikSaldo = BlueSavingController.tarikSaldo(userId, nominal, blueSaving.getTabungan_id());
+                boolean tarikSaldo = BlueSavingController.tarikSaldo(userId, nominal, blueSaving);
                 if (tarikSaldo) {
                     // Jika penarikan saldo berhasil, lanjutkan untuk menutup Blue Saving
                     boolean isClosed = BlueSavingController.tutupBlueSaving(blueSaving);

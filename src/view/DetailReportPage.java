@@ -1,10 +1,12 @@
 package view;
 
 import javax.swing.*;
+import java.awt.*;
+import java.util.List;
 
 import controller.ReportController;
 
-import java.awt.*;
+import model.Nasabah;
 import model.Report;
 import model.StatusReport;
 
@@ -31,7 +33,7 @@ public class DetailReportPage {
 
         // Title Label
         JLabel titleLabel = new JLabel("Detail Report");
-        titleLabel.setBounds(120, 30, 300, 40);
+        titleLabel.setBounds(150, 30, 300, 40);
         titleLabel.setFont(new Font("SansSerif", Font.BOLD, 26));
         titleLabel.setForeground(Color.WHITE);
         panel.add(titleLabel);
@@ -58,18 +60,18 @@ public class DetailReportPage {
         emailVerifikasiLabel.setForeground(textColor);
         panel.add(emailVerifikasiLabel);
 
-        JLabel massageLabel = new JLabel("Massage: " + report.getDeskripsi());
-        massageLabel.setBounds(20, 210, 460, 50);
-        massageLabel.setFont(detailFont);
-        massageLabel.setForeground(textColor);
-        panel.add(massageLabel);
-
         // Simpan statusLabel sebagai atribut kelas
-        statusLabel = new JLabel("Status: " + report.getStatusReport());
-        statusLabel.setBounds(20, 265, 460, 25);
+        statusLabel = new JLabel("Status report: " + report.getStatusReport());
+        statusLabel.setBounds(20, 220, 460, 25);
         statusLabel.setFont(detailFont);
         statusLabel.setForeground(textColor);
         panel.add(statusLabel);
+
+        JLabel massageLabel = new JLabel("Massage: " + report.getDeskripsi());
+        massageLabel.setBounds(20, 260, 460, 25);
+        massageLabel.setFont(detailFont);
+        massageLabel.setForeground(textColor);
+        panel.add(massageLabel);
 
         JButton UbahStatus = new JButton("Ubah Status");
         Component.styleRoundedButton(UbahStatus, new Color(0, 102, 204), Color.WHITE);
@@ -114,6 +116,53 @@ public class DetailReportPage {
 
         Component.addHoverEffect(UbahStatus, new Color(0, 102, 204), new Color(0, 123, 180));
         panel.add(UbahStatus);
+
+        JButton blockNasabahButton = new JButton("Status nasabah");
+        Component.styleRoundedButton(blockNasabahButton, new Color(255, 69, 58), Color.WHITE);
+        blockNasabahButton.setBounds(300, 220, 180, 25);
+
+        blockNasabahButton.addActionListener(e -> {
+            List<Nasabah> nasabahs = ReportController.getNasabahByUserId(report.getNasabah_id());
+
+            if (nasabahs == null || nasabahs.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "Nasabah tidak ditemukan.", "Error", JOptionPane.ERROR_MESSAGE);
+            } else if (nasabahs.size() == 1) {
+                // Jika hanya ada satu Nasabah, buka halaman detail langsung
+                frame.dispose();
+                new DetailBlockNasabahPage(nasabahs.get(0)); // Kirim Nasabah pertama
+            } else {
+                // Jika ada beberapa Nasabah, tampilkan dialog untuk memilih
+                String[] nasabahNames = nasabahs.stream()
+                        .map(Nasabah::getName) // Ambil nama lengkap Nasabah
+                        .toArray(String[]::new);
+
+                // Tampilkan dialog pilihan
+                String selectedName = (String) JOptionPane.showInputDialog(
+                        frame,
+                        "Pilih Nasabah:",
+                        "Pilih Nasabah",
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        nasabahNames,
+                        nasabahNames[0]);
+
+                // Jika pengguna memilih Nasabah
+                if (selectedName != null) {
+                    // Cari Nasabah yang sesuai berdasarkan nama
+                    for (Nasabah nasabah : nasabahs) {
+                        if (nasabah.getName().equals(selectedName)) {
+                            frame.dispose();
+                            new DetailBlockNasabahPage(nasabah); // Kirim Nasabah yang dipilih
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+
+        // Adding hover effect for Back button
+        Component.addHoverEffect(blockNasabahButton, new Color(255, 69, 58), new Color(255, 82, 82));
+        panel.add(blockNasabahButton);
 
         // Back Button
         JButton backButton = new JButton("Back to Menu");

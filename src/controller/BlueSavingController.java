@@ -1,7 +1,10 @@
 package controller;
 
 import model.BlueSaving;
+import model.StatusType;
 import model.TabunganType;
+import model.TopUpType;
+import model.TransaksiType;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -93,7 +96,7 @@ public class BlueSavingController {
         }
     }
 
-    public static boolean pindahSaldo(String userId, double nominal, String tabunganId) {
+    public static boolean pindahSaldo(String userId, double nominal, BlueSaving blueSaving) {
 
         conn.connect();
 
@@ -117,6 +120,13 @@ public class BlueSavingController {
                 return false; // Saldo tidak cukup
             }
 
+            boolean transaksi = createTransaksi(TransaksiType.BLUESAVING, null, nominal, 0, blueSaving, 0.0, 0,
+                    null);
+            if (!transaksi) {
+                System.out.println("Create Transaksi gagal");
+                return false;
+            }
+
             // Kurangi saldo pengguna
             String updateUserSaldoQuery = "UPDATE users SET saldo = saldo - ? WHERE user_id = ?";
             PreparedStatement updateUserSaldoStmt = conn.con.prepareStatement(updateUserSaldoQuery);
@@ -128,7 +138,7 @@ public class BlueSavingController {
             String updateBlueSavingQuery = "UPDATE bluesaving SET saldoSaving = saldoSaving + ? WHERE tabungan_id = ?";
             PreparedStatement updateBlueSavingStmt = conn.con.prepareStatement(updateBlueSavingQuery);
             updateBlueSavingStmt.setDouble(1, nominal);
-            updateBlueSavingStmt.setString(2, tabunganId);
+            updateBlueSavingStmt.setString(2, blueSaving.getTabungan_id());
             updateBlueSavingStmt.executeUpdate();
 
             conn.con.commit(); // Commit transaksi
@@ -145,7 +155,7 @@ public class BlueSavingController {
         }
     }
 
-    public static boolean tarikSaldo(String userId, double nominal, String tabunganId) {
+    public static boolean tarikSaldo(String userId, double nominal, BlueSaving blueSaving) {
         conn.connect();
 
         try {
@@ -154,7 +164,7 @@ public class BlueSavingController {
             // Periksa saldo BlueSaving
             String cekSaldoSavingQuery = "SELECT saldoSaving FROM bluesaving WHERE tabungan_id = ?";
             PreparedStatement cekSaldoSavingStmt = conn.con.prepareStatement(cekSaldoSavingQuery);
-            cekSaldoSavingStmt.setString(1, tabunganId);
+            cekSaldoSavingStmt.setString(1, blueSaving.getTabungan_id());
             ResultSet rs = cekSaldoSavingStmt.executeQuery();
 
             if (!rs.next()) {
@@ -170,11 +180,18 @@ public class BlueSavingController {
                 return false; // Saldo BlueSaving tidak cukup
             }
 
+            boolean transaksi = createTransaksi(TransaksiType.BLUESAVING, null, 0, nominal, blueSaving, 0.0, 0,
+                    null);
+            if (!transaksi) {
+                System.out.println("Create Transaksi gagal");
+                return false;
+            }
+
             // Kurangi saldo BlueSaving
             String updateBlueSavingQuery = "UPDATE bluesaving SET saldoSaving = saldoSaving - ? WHERE tabungan_id = ?";
             PreparedStatement updateBlueSavingStmt = conn.con.prepareStatement(updateBlueSavingQuery);
             updateBlueSavingStmt.setDouble(1, nominal);
-            updateBlueSavingStmt.setString(2, tabunganId);
+            updateBlueSavingStmt.setString(2, blueSaving.getTabungan_id());
             updateBlueSavingStmt.executeUpdate();
 
             // Tambahkan saldo ke pengguna
@@ -270,6 +287,47 @@ public class BlueSavingController {
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
+            return false;
+        }
+    }
+
+    public static Boolean createTransaksi(TransaksiType tipeTransaksi, String kodePromo,
+            double saldoTerpotong, double saldoDitambah, BlueSaving blueSaving, Double biayaAdmin, int norekTujuan,
+            TopUpType topUpType) {
+
+        conn.connect(); // Memastikan koneksi berhasil
+
+        try {
+            String transaksiId = java.util.UUID.randomUUID().toString();
+            String query = "INSERT INTO transaksi (transaksi_id, nasabah_id, nomor_rekening_tujuan, transaksi_type, biaya_admin, transaksi_date, kode_promo, jumlah_saldo_terpotong, jumlah_saldo_ditambah, status_type, topup_type) "
+                    + "VALUES (?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?)";
+            PreparedStatement stmt = conn.con.prepareStatement(query);
+
+            // Set parameter untuk query
+            stmt.setString(1, transaksiId);
+            stmt.setString(2, blueSaving.getuser_id());
+            stmt.setInt(3, norekTujuan);
+            stmt.setString(4, tipeTransaksi.name());
+            stmt.setDouble(5, biayaAdmin);
+            stmt.setString(6, kodePromo != null ? kodePromo : "");
+            stmt.setDouble(7, saldoTerpotong);
+            stmt.setDouble(8, saldoDitambah);
+            stmt.setString(9, StatusType.BERHASIL.name());
+            stmt.setString(10, topUpType != null ? topUpType.name() : null);
+
+            // Eksekusi query
+            int rows = stmt.executeUpdate();
+            conn.con.setAutoCommit(false);
+
+            if (rows > 0) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error executing update: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }

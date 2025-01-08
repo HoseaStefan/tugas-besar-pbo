@@ -25,6 +25,18 @@ public class TransaksiController {
                     "   WHEN transaksi_type = 'TRANSFER' AND nomor_rekening_tujuan = ? THEN jumlah_saldo_ditambah " +
                     "   WHEN transaksi_type = 'TRANSFER' THEN -jumlah_saldo_terpotong " +
                     "   WHEN transaksi_type = 'TOPUP' THEN -jumlah_saldo_terpotong " +
+                    "   WHEN transaksi_type = 'BLUESAVING' THEN" +
+                    "        CASE" +
+                    "            WHEN jumlah_saldo_ditambah > 0 THEN jumlah_saldo_ditambah" +
+                    "            WHEN jumlah_saldo_terpotong > 0 THEN -jumlah_saldo_terpotong" +
+                    "            ELSE 0" +
+                    "        END" +
+                    "   WHEN transaksi_type = 'BLUEGETHER' THEN" +
+                    "        CASE" +
+                    "            WHEN jumlah_saldo_ditambah > 0 THEN jumlah_saldo_ditambah" +
+                    "            WHEN jumlah_saldo_terpotong > 0 THEN -jumlah_saldo_terpotong" +
+                    "            ELSE 0" +
+                    "        END" +
                     "   ELSE 0 " +
                     "END AS total, " +
                     "status_type " +

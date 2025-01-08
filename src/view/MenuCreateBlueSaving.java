@@ -158,10 +158,9 @@ public class MenuCreateBlueSaving {
                     boolean isCreated = controller.createBlueSaving(blueSaving);
 
                     String userId = nasabah.getUser_id();
-                    String tabunganId = blueSaving.getTabungan_id();
                     double nominal = saldoAwal;
 
-                    boolean success = BlueSavingController.pindahSaldo(userId, nominal, tabunganId);
+                    boolean success = BlueSavingController.pindahSaldo(userId, nominal, blueSaving);
                     if (success) {
 
                         double newSaldoUser = nasabah.getSaldo() - nominal;

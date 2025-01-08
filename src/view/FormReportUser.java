@@ -18,7 +18,7 @@ public class FormReportUser {
 
     public FormReportUser() {
         int confirmation = JOptionPane.showConfirmDialog(null,
-                "Are you sure you want to temporarily block this account?", "Confirm", JOptionPane.YES_NO_OPTION);
+                "Are you sure you want to report?", "Confirm", JOptionPane.YES_NO_OPTION);
         if (confirmation != JOptionPane.YES_OPTION) {
             new MainMenu();
             return;

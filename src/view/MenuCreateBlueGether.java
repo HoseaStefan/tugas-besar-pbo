@@ -232,10 +232,9 @@ public class MenuCreateBlueGether {
                     boolean isCreated = controller.createBlueGether(blueGether);
 
                     String userId = nasabah.getUser_id();
-                    String tabunganId = blueGether.getTabungan_id();
                     double nominal = saldoAwal;
 
-                    boolean success = BlueGetherController.pindahSaldo(userId, nominal, tabunganId);
+                    boolean success = BlueGetherController.pindahSaldoGether(userId, nominal, blueGether);
                     if (success) {
 
                         double newSaldoUser = nasabah.getSaldo() - nominal;
