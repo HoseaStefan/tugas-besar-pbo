@@ -35,6 +35,12 @@ public class TransaksiController {
                     "            WHEN jumlah_saldo_terpotong > 0 THEN -jumlah_saldo_terpotong" +
                     "            ELSE 0" +
                     "        END" +
+                    "   WHEN transaksi_type = 'BLUEDEPOSITO' THEN" +
+                    "        CASE" +
+                    "            WHEN jumlah_saldo_ditambah > 0 THEN jumlah_saldo_ditambah" +
+                    "            WHEN jumlah_saldo_terpotong > 0 THEN -jumlah_saldo_terpotong" +
+                    "            ELSE 0" +
+                    "        END" +
                     "   ELSE 0 " +
                     "END AS total, " +
                     "status_type " +

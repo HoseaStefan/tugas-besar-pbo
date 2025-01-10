@@ -8,6 +8,9 @@ import model.BlueDeposito;
 import model.BlueGether;
 import model.BlueSaving;
 import model.Nasabah;
+import model.StatusType;
+import model.TopUpType;
+import model.TransaksiType;
 
 public class CreateTabunganController {
 
@@ -104,11 +107,12 @@ public class CreateTabunganController {
                 return false;
             }
 
+            
             // Insert the new deposit record
             String query = "INSERT INTO blue_deposito (tabungan_id, user_id, nama_tabungan, tabungan_type, saldo_awal, deposito_type, start_date, saldo_akhir, end_date, complete) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement insertStmt = conn.con.prepareStatement(query);
-
+            
             insertStmt.setString(1, tabunganId);
             insertStmt.setString(2, blueDeposito.getuser_id());
             insertStmt.setString(3, blueDeposito.getNamaTabungan());
@@ -119,16 +123,23 @@ public class CreateTabunganController {
             insertStmt.setDouble(8, blueDeposito.getSaldoAkhir());
             insertStmt.setTimestamp(9, blueDeposito.getEndDate());
             insertStmt.setBoolean(10, blueDeposito.getComplete());
-
+            
+            boolean transaksi = createTransaksi(TransaksiType.BLUEDEPOSITO, null, 0, saldoAwal, blueDeposito, 0.0, 0,
+                    null);
+            if (!transaksi) {
+                System.out.println("Create Transaksi gagal");
+                return false;
+            }
+            
             int rowsInserted = insertStmt.executeUpdate();
             return rowsInserted > 0;
-
+            
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
-
+    
     public String generateTabunganIdDeposito() {
         conn.connect();
         String prefix = "d-";
@@ -239,6 +250,47 @@ public class CreateTabunganController {
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public static Boolean createTransaksi(TransaksiType tipeTransaksi, String kodePromo,
+            double saldoTerpotong, double saldoDitambah, BlueDeposito blueDeposito, Double biayaAdmin, int norekTujuan,
+            TopUpType topUpType) {
+
+        conn.connect(); // Memastikan koneksi berhasil
+
+        try {
+            String transaksiId = java.util.UUID.randomUUID().toString();
+            String query = "INSERT INTO transaksi (transaksi_id, nasabah_id, nomor_rekening_tujuan, transaksi_type, biaya_admin, transaksi_date, kode_promo, jumlah_saldo_terpotong, jumlah_saldo_ditambah, status_type, topup_type) "
+                    + "VALUES (?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?)";
+            PreparedStatement stmt = conn.con.prepareStatement(query);
+
+            // Set parameter untuk query
+            stmt.setString(1, transaksiId);
+            stmt.setString(2, blueDeposito.getuser_id());
+            stmt.setInt(3, norekTujuan);
+            stmt.setString(4, tipeTransaksi.name());
+            stmt.setDouble(5, biayaAdmin);
+            stmt.setString(6, kodePromo != null ? kodePromo : "");
+            stmt.setDouble(7, saldoTerpotong);
+            stmt.setDouble(8, saldoDitambah);
+            stmt.setString(9, StatusType.BERHASIL.name());
+            stmt.setString(10, topUpType != null ? topUpType.name() : null);
+
+            // Eksekusi query
+            int rows = stmt.executeUpdate();
+            conn.con.setAutoCommit(false);
+
+            if (rows > 0) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error executing update: " + e.getMessage());
+            e.printStackTrace();
+            return false;
         }
     }
 }
