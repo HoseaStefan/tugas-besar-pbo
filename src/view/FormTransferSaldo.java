@@ -174,7 +174,7 @@ public class FormTransferSaldo {
                             return;
                         }
                     }
-                    if (promoCode.isEmpty()) {
+                    if (promoCode.isEmpty() || promoValid) {
                         boolean response = loyaltyController.paymentLoyaltyCode(nasabah.getUser_id());
 
                         if (response == true) {

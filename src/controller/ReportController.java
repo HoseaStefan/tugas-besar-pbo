@@ -75,7 +75,7 @@ public class ReportController {
 
         try {
             // Query untuk mencari ID terakhir
-            String query = "SELECT report_id FROM report ORDER BY report_id DESC LIMIT 1";
+            String query = "SELECT report_id FROM report ORDER BY CAST(SUBSTRING_INDEX(report_id    , '-', -1) AS UNSIGNED) DESC LIMIT 1";
             PreparedStatement stmt = conn.con.prepareStatement(query);
             ResultSet rs = stmt.executeQuery();
 

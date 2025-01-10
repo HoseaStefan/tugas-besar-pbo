@@ -23,7 +23,7 @@ public class SettingsBlueGether {
     }
 
     public void showSettingsBlueGether(BlueGether blueGether, Nasabah nasabah) {
-        frame = new JFrame("Blue Gether Details");
+        frame = new JFrame("Settings Blue Gether");
         frame.setSize(500, 500);
         frame.setUndecorated(true);
         frame.setLocationRelativeTo(null);
@@ -36,7 +36,7 @@ public class SettingsBlueGether {
 
         // Title Label
         JLabel titleLabel = new JLabel("Detail Blue Gether");
-        titleLabel.setBounds(120, 30, 300, 40);
+        titleLabel.setBounds(130, 30, 300, 40);
         titleLabel.setFont(new Font("SansSerif", Font.BOLD, 26));
         titleLabel.setForeground(Color.WHITE);
         panel.add(titleLabel);
@@ -121,6 +121,9 @@ public class SettingsBlueGether {
                             JOptionPane.showMessageDialog(frame, "Gagal memperbarui nama tabungan.", "Error",
                                     JOptionPane.ERROR_MESSAGE);
                         }
+
+                        frame.dispose();
+                        new SettingsBlueGether(blueGether);
                     }
                 } else {
                     JOptionPane.showMessageDialog(frame, "Nama tabungan tidak boleh kosong.", "Error",

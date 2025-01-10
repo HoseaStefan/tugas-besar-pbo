@@ -31,7 +31,7 @@ public class DetailBlueSavingPage {
 
         // Title Label
         JLabel titleLabel = new JLabel("Detail Blue Saving");
-        titleLabel.setBounds(120, 30, 300, 40);
+        titleLabel.setBounds(130, 30, 300, 40);
         titleLabel.setFont(new Font("SansSerif", Font.BOLD, 26));
         titleLabel.setForeground(Color.WHITE);
         panel.add(titleLabel);
@@ -89,6 +89,11 @@ public class DetailBlueSavingPage {
             double nominal = Double
                     .parseDouble(JOptionPane.showInputDialog("Masukkan nominal yang ingin dipindahkan:"));
 
+            boolean check = BlueSavingController.cekSaldoUser(userId, nominal);
+            if (!check) {
+                return;
+            }
+
             FormInputPIN formInputPIN = new FormInputPIN();
             boolean isVerified = formInputPIN.showInputPIN(nasabah);
             if (isVerified) {
@@ -125,6 +130,11 @@ public class DetailBlueSavingPage {
         tarikSaldoButton.addActionListener(e -> {
             String userId = nasabah.getUser_id();
             double nominal = Double.parseDouble(JOptionPane.showInputDialog("Masukkan nominal yang ingin ditarik:"));
+
+            boolean check = BlueSavingController.cekSaldoSaving(blueSaving, nominal);
+            if (!check) {
+                return;
+            }
 
             FormInputPIN formInputPIN = new FormInputPIN();
             boolean isVerified = formInputPIN.showInputPIN(nasabah);
