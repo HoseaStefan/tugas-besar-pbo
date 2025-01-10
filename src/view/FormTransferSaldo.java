@@ -174,6 +174,7 @@ public class FormTransferSaldo {
                             if (response == JOptionPane.YES_OPTION) {
                                 frame.dispose();
                                 new MenuBonTransaksi(TransaksiType.TRANSFER, true, amount, rekeningTujuan, 2500.0, null);
+                                loyaltyController.useVoucherTransfer(nasabah.getUser_id());
                                 
                             } else if (response == JOptionPane.NO_OPTION) {
                                 frame.dispose();

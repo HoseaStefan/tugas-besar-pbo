@@ -138,11 +138,12 @@ public class FormSetorSaldo {
                             frame.dispose();
                             new MenuBonTransaksi(TransaksiType.SETOR, true, amount, nasabah.getNomorRekening(),
                             5000.0, null);
+                            loyaltyController.useVoucherSetor(nasabah.getUser_id());
                             
                         } else if (response == JOptionPane.NO_OPTION) {
+                            frame.dispose();
                             new MenuBonTransaksi(TransaksiType.SETOR, promoValid, amount, nasabah.getNomorRekening(),
                             5000.0, null);
-                            frame.dispose();
                         } 
 
                     } else {
