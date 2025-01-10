@@ -176,19 +176,16 @@ public class FormTopUpEmoney {
                         }
                     }
                     if (promoCode.isEmpty()) {
-                        int response = JOptionPane.showConfirmDialog(
-                                null,
-                                "Apakah anda mau menggunakan voucher loyalty?",
-                                "Konfirmasi Penggunaan Voucher",
-                                JOptionPane.YES_NO_OPTION,
-                                JOptionPane.QUESTION_MESSAGE);
-                                if (response == JOptionPane.YES_OPTION) {
-                                    frame.dispose();
-                                    new MenuBonTransaksi(TransaksiType.TOPUP, true, amount, Integer.parseInt(eMoneyInput), 2500.0, topUpType);
-                                } else if (response == JOptionPane.NO_OPTION) {
+                        boolean response = loyaltyController.paymentLoyaltyCode(nasabah.getUser_id());
+                        if (response == true) {
+                            frame.dispose();
+                            new MenuBonTransaksi(TransaksiType.TOPUP, true, amount, Integer.parseInt(eMoneyInput), 2500.0, topUpType);
+                            loyaltyController.getChecked(nasabah.getUser_id());
+
+                        } else if (response == false) {
                                     frame.dispose();
                                     new MenuBonTransaksi(TransaksiType.TOPUP, promoValid, amount, Integer.parseInt(eMoneyInput), 2500.0, topUpType);
-                                }
+                        }
                     } else {
                         JOptionPane.showMessageDialog(frame, "Kode promo tidak valid.", "Error", JOptionPane.ERROR_MESSAGE);
                     }

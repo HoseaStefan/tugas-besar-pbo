@@ -268,5 +268,8 @@ public class LoyaltyController {
 
         return false;
     }
+    public static boolean getChecked(String userId){
+        return true;
+    }
 
 }

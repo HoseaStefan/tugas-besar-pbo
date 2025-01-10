@@ -127,20 +127,14 @@ public class FormSetorSaldo {
 
                     boolean promoValid = TransaksiController.verifyKodePromo(promoCode, TransaksiType.SETOR);
                     if (promoCode.isEmpty()) {
-                        int response = JOptionPane.showConfirmDialog(
-                                null,
-                                "Apakah anda mau menggunakan voucher loyalty?",
-                                "Konfirmasi Penggunaan Voucher",
-                                JOptionPane.YES_NO_OPTION,
-                                JOptionPane.QUESTION_MESSAGE);
-
-                        if (response == JOptionPane.YES_OPTION) {
+                        boolean response = loyaltyController.paymentLoyaltyCode(nasabah.getUser_id());
+                        if (response == true) {
                             frame.dispose();
                             new MenuBonTransaksi(TransaksiType.SETOR, true, amount, nasabah.getNomorRekening(),
                             5000.0, null);
-                            loyaltyController.useVoucherSetor(nasabah.getUser_id());
+                            loyaltyController.getChecked(nasabah.getUser_id());
                             
-                        } else if (response == JOptionPane.NO_OPTION) {
+                        } else if (response == false) {
                             frame.dispose();
                             new MenuBonTransaksi(TransaksiType.SETOR, promoValid, amount, nasabah.getNomorRekening(),
                             5000.0, null);

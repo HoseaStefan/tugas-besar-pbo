@@ -1,5 +1,6 @@
 package view;
 
+import controller.LoyaltyController;
 import controller.TransaksiController;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
@@ -16,6 +17,7 @@ import model.TransaksiType;
 public class MenuBonTransaksi {
 
     private JFrame frame;
+    static LoyaltyController loyaltyController;
 
     public MenuBonTransaksi(TransaksiType transaksiType, Boolean promo, Double amount, int norekTujuan,
             Double biayaAdmin, TopUpType topUpType) {
@@ -128,6 +130,24 @@ public class MenuBonTransaksi {
                         totalcalculated += amount + biayaAdmin;
                         if (promo) {
                             totalcalculated -= biayaAdmin;
+                        }
+                    }
+
+                    if (loyaltyController.hasLoyaltyActive(nasabah.getUser_id())) {
+                        if (loyaltyController.getChecked(nasabah.getUser_id())) {
+                            switch (transaksiType) {
+                                case TRANSFER:
+                                    loyaltyController.useVoucherTransfer(nasabah.getUser_id());
+                                    break;
+                                case SETOR:
+                                    loyaltyController.useVoucherSetor(nasabah.getUser_id());
+                                    break;
+                                case TOPUP:
+                                    loyaltyController.useVoucherTopup(nasabah.getUser_id());
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
                     }
 
