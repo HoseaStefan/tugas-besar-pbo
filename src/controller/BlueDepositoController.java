@@ -124,31 +124,54 @@ public class BlueDepositoController {
 
     public static boolean updateBlueDepositoSaldo(String userId, double newSaldoAwal, double nominal) {
         conn.connect();
-
+    
         try {
-
             String query = "UPDATE blue_deposito SET saldo_awal = ? WHERE user_id = ?";
-
             PreparedStatement stmt = conn.con.prepareStatement(query);
-
-            stmt.setDouble(1, newSaldoAwal); // Set nilai saldo baru
-            stmt.setString(2, userId); // Set user_id berdasarkan input
-
-            boolean transaksi = createTransaksi(TransaksiType.BLUEDEPOSITO, null, 0, nominal, userId, 0.0, 0,
-                    null);
-            if (!transaksi) {
-                System.out.println("Create Transaksi gagal");
-                return false;
-            }
-
+    
+            stmt.setDouble(1, newSaldoAwal); 
+            stmt.setString(2, userId); 
+    
             int affectedRows = stmt.executeUpdate();
-            return affectedRows > 0; // Kembalikan true jika update berhasil
-
+            if (affectedRows > 0) {
+                boolean isTarikBerhasil = tarikSaldoDeposit(userId, nominal);
+                if (!isTarikBerhasil) {
+                    System.out.println("Gagal menambah saldo ke akun pengguna.");
+                    return false;
+                }
+                return true;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false; // Jika terjadi error, kembalikan false
+        } finally {
+            conn.disconnect();
         }
+        return false;
     }
+    
+    public static boolean tarikSaldoDeposit(String userId, double tarikSaldo) {
+        conn.connect();
+        try {
+            String query = "UPDATE users SET saldo = saldo + ? WHERE user_id = ?";
+            PreparedStatement stmt = conn.con.prepareStatement(query);
+    
+            stmt.setDouble(1, tarikSaldo);
+            stmt.setString(2, userId);
+    
+            int rowsUpdated = stmt.executeUpdate();
+    
+            if (rowsUpdated > 0) {
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            conn.disconnect();
+        }
+        return false;
+    }
+    
+    
 
     public boolean updateCompleteStatus(String userId, String tabunganId) {
         conn.connect();

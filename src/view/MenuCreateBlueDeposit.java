@@ -162,13 +162,13 @@ public class MenuCreateBlueDeposit {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                FormInputPIN formInputPIN = new FormInputPIN();
-                boolean isVerified = formInputPIN.showInputPIN(nasabah);
-                if (isVerified == true) {
+                // FormInputPIN formInputPIN = new FormInputPIN();
+                // boolean isVerified = formInputPIN.showInputPIN(nasabah);
+                // if (isVerified == true) {
                     String saldoAwal = saldoawaField.getText().replace(",", "").trim();
                     if (saldoAwal.isEmpty()) {
                         JOptionPane.showMessageDialog(frame,
-                                "Please fill all fields with valid numeric values.",
+                                "Isi dengan angka yaa",
                                 "Error", JOptionPane.ERROR_MESSAGE);
                     }
 
@@ -215,15 +215,15 @@ public class MenuCreateBlueDeposit {
 
                         frame.dispose();
                         new MenuBlueDeposit(); // Kembali ke menu utama
-                } else {
+                // } else {
 
-                    JOptionPane.showMessageDialog(frame, "Pin salah silakan coba lagi", "error", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
+                //     JOptionPane.showMessageDialog(frame, "Pin salah silakan coba lagi", "error", JOptionPane.WARNING_MESSAGE);
+                //     return;
+                // }
                     
                     } else {
                         JOptionPane.showMessageDialog(frame,
-                                "Deposito tidak bisa dibuat. Please try again.",
+                                "Deposito tidak berhasil dibuat. Please try again.",
                                 "Error", JOptionPane.ERROR_MESSAGE);
                     }
 

@@ -113,6 +113,7 @@ public class AdminController {
         return totalAdminFee;
     }
 
+
     public static double pendapatanAdminLoyalty() {
         conn.connect(); 
         double pendapatan = 0;
