@@ -164,7 +164,7 @@ public class MenuTarikBlueDeposit {
 
                         // Update saldo di BlueDeposito di database
                         boolean updated = BlueDepositoController.updateBlueDepositoSaldo(nasabah.getUser_id(),
-                                newSaldoAwal);
+                                newSaldoAwal, nominal);
 
                         // Tambahkan nominal ke saldo nasabah jika berhasil
                         if (updated) {
@@ -230,8 +230,9 @@ public class MenuTarikBlueDeposit {
                     }
                 } else {
 
-                    JOptionPane.showMessageDialog(frame, "Pin salah silakan coba lagi", "error", JOptionPane.WARNING_MESSAGE);
-                    return; 
+                    JOptionPane.showMessageDialog(frame, "Pin salah silakan coba lagi", "error",
+                            JOptionPane.WARNING_MESSAGE);
+                    return;
 
                 }
             } catch (Exception ex) {

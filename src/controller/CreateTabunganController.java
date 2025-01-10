@@ -86,6 +86,13 @@ public class CreateTabunganController {
                 return false;
             }
 
+            boolean transaksi = createTransaksi(TransaksiType.BLUEDEPOSITO, null, saldoAwal, 0, blueDeposito, 0.0, 0,
+                    null);
+            if (!transaksi) {
+                System.out.println("Create Transaksi gagal");
+                return false;
+            }
+
             // Deduct saldoAwal from user's current balance
             String updateSaldoQuery = "UPDATE users SET saldo = saldo - ? WHERE user_id = ?";
             PreparedStatement updateSaldoStmt = conn.con.prepareStatement(updateSaldoQuery);
@@ -107,12 +114,11 @@ public class CreateTabunganController {
                 return false;
             }
 
-            
             // Insert the new deposit record
             String query = "INSERT INTO blue_deposito (tabungan_id, user_id, nama_tabungan, tabungan_type, saldo_awal, deposito_type, start_date, saldo_akhir, end_date, complete) "
-            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement insertStmt = conn.con.prepareStatement(query);
-            
+
             insertStmt.setString(1, tabunganId);
             insertStmt.setString(2, blueDeposito.getuser_id());
             insertStmt.setString(3, blueDeposito.getNamaTabungan());
@@ -123,23 +129,16 @@ public class CreateTabunganController {
             insertStmt.setDouble(8, blueDeposito.getSaldoAkhir());
             insertStmt.setTimestamp(9, blueDeposito.getEndDate());
             insertStmt.setBoolean(10, blueDeposito.getComplete());
-            
-            boolean transaksi = createTransaksi(TransaksiType.BLUEDEPOSITO, null, 0, saldoAwal, blueDeposito, 0.0, 0,
-                    null);
-            if (!transaksi) {
-                System.out.println("Create Transaksi gagal");
-                return false;
-            }
-            
+
             int rowsInserted = insertStmt.executeUpdate();
             return rowsInserted > 0;
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
     public String generateTabunganIdDeposito() {
         conn.connect();
         String prefix = "d-";

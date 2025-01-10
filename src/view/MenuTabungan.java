@@ -1,5 +1,6 @@
 package view;
 
+import controller.BlueDepositoController;
 import controller.BlueGetherController;
 import controller.BlueSavingController;
 import java.awt.*;
@@ -57,7 +58,8 @@ public class MenuTabungan {
 
         double totalSimpanan = nasabah.getSaldo()
                 + BlueGetherController.getTotalDanaGetherByUserId(nasabah.getUser_id())
-                + BlueSavingController.getTotalDanaByUserId(nasabah.getUser_id());
+                + BlueSavingController.getTotalDanaByUserId(nasabah.getUser_id())
+                + BlueDepositoController.getTotalDanaByUserId(nasabah.getUser_id());
         // Saldo Label
         JLabel saldoLabel = new JLabel("Total Simpanan: Rp." + totalSimpanan, SwingConstants.CENTER);
         saldoLabel.setBounds(0, 100, FRAME_WIDTH, 30);
