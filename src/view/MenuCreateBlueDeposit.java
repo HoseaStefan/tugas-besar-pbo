@@ -1,6 +1,7 @@
 package view;
 
 import controller.CreateTabunganController;
+import controller.UserController;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -162,65 +163,71 @@ public class MenuCreateBlueDeposit {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                FormInputPIN formInputPIN = new FormInputPIN();
-                boolean isVerified = formInputPIN.showInputPIN(nasabah);
-                if (isVerified == true) {
-                    String saldoAwal = saldoawaField.getText().replace(",", "").trim();
-                    if (saldoAwal.isEmpty()) {
-                        JOptionPane.showMessageDialog(frame,
-                                "Isi dengan angka yaa",
-                                "Error", JOptionPane.ERROR_MESSAGE);
-                    }
+                    FormInputPIN formInputPIN = new FormInputPIN();
+                    boolean isVerified = formInputPIN.showInputPIN(nasabah);
+                    if (isVerified == true) {
+                        String saldoAwal = saldoawaField.getText().replace(",", "").trim();
+                        if (saldoAwal.isEmpty()) {
+                            JOptionPane.showMessageDialog(frame,
+                                    "Isi dengan angka yaa",
+                                    "Error", JOptionPane.ERROR_MESSAGE);
+                        }
 
-                    Timestamp endDate = null;
-                    DepositoType depoType = null;
+                        Timestamp endDate = null;
+                        DepositoType depoType = null;
 
-                    if (depo3Bulan.isSelected()) {
-                        depoType = DepositoType.TIGABULAN;
-                        endDate = calculateEndDate(startDate, 3);
+                        if (depo3Bulan.isSelected()) {
+                            depoType = DepositoType.TIGABULAN;
+                            endDate = calculateEndDate(startDate, 3);
 
-                    } else if (depo6Bulan.isSelected()) {
-                        depoType = DepositoType.ENAMBULAN;
-                        endDate = calculateEndDate(startDate, 6);
+                        } else if (depo6Bulan.isSelected()) {
+                            depoType = DepositoType.ENAMBULAN;
+                            endDate = calculateEndDate(startDate, 6);
 
-                    } else if (depo12Bulan.isSelected()) {
-                        depoType = DepositoType.SETAHUN;
-                        endDate = calculateEndDate(startDate, 12);
+                        } else if (depo12Bulan.isSelected()) {
+                            depoType = DepositoType.SETAHUN;
+                            endDate = calculateEndDate(startDate, 12);
 
-                    } else {
-                        JOptionPane.showMessageDialog(frame,
-                                "Input error ",
-                                "Error", JOptionPane.ERROR_MESSAGE);
-                    }
+                        } else {
+                            JOptionPane.showMessageDialog(frame,
+                                    "Input error ",
+                                    "Error", JOptionPane.ERROR_MESSAGE);
+                        }
 
-                    double saldo_awal = Double.parseDouble(saldoAwal);
+                        double saldo_awal = Double.parseDouble(saldoAwal);
 
-                    BlueDeposito blueDeposito = new BlueDeposito("", nasabah.getUser_id(), null,
-                            TabunganType.BLUEDEPOSITO, saldo_awal, startDate, depoType, saldo_awal, endDate, false);
+                        BlueDeposito blueDeposito = new BlueDeposito("", nasabah.getUser_id(), null,
+                                TabunganType.BLUEDEPOSITO, saldo_awal, startDate, depoType, saldo_awal, endDate, false);
 
-                    CreateTabunganController controller = new CreateTabunganController();
-                    boolean isCreated = controller.createBlueDeposito(blueDeposito);
+                        CreateTabunganController controller = new CreateTabunganController();
+                        boolean isCreated = controller.createBlueDeposito(blueDeposito);
 
-                    if (isCreated) {
-                        // Update saldo nasabah setelah deposito dibuat
-                        double updatedSaldo = nasabah.getSaldo() - saldo_awal; // Mengurangi saldo awal
-                        nasabah.setSaldo(updatedSaldo);
+                        if (isCreated) {
+                          
+                            double updatedSaldo = nasabah.getSaldo() - saldo_awal; // Mengurangi saldo awal
+                            nasabah.setSaldo(updatedSaldo);
 
-                        // Update label saldo di GUI
-                        saldoLabel.setText("Current saldo : Rp." + updatedSaldo);
+                            // Update label saldo di GUI
+                            saldoLabel.setText("Current saldo : Rp." + updatedSaldo);
 
-                        JOptionPane.showMessageDialog(frame,
-                                "Deposito berhasil dibuat",
-                                "Info", JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showMessageDialog(frame,
+                                    "Deposito berhasil dibuat",
+                                    "Info", JOptionPane.INFORMATION_MESSAGE);
+                            UserController userController = new UserController();
+                            userController.updateUserSaldo(nasabah.getUser_id(), updatedSaldo);
+                            System.out.println("wkkwkwkwkwkkwk");
+                            frame.dispose();
+                            System.out.println("print apa");
+                            new MenuTabungan();
+                            System.out.println("print lagi");
 
-                        frame.dispose();
-                        new MenuBlueDeposit(); // Kembali ke menu utama
-                } else {
+                        } else {
 
-                    JOptionPane.showMessageDialog(frame, "Pin salah silakan coba lagi", "error", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-                    
+                            JOptionPane.showMessageDialog(frame, "Pin salah silakan coba lagi", "error",
+                                    JOptionPane.WARNING_MESSAGE);
+                            return;
+                        }
+
                     } else {
                         JOptionPane.showMessageDialog(frame,
                                 "Deposito tidak berhasil dibuat. Please try again.",
@@ -239,7 +246,6 @@ public class MenuCreateBlueDeposit {
             }
         });
 
-        
         btnBack.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

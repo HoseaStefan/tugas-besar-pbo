@@ -86,7 +86,7 @@ public class CreateTabunganController {
                 return false;
             }
 
-            boolean transaksi = createTransaksi(TransaksiType.BLUEDEPOSITO, null, saldoAwal, 0, blueDeposito, 0.0, 0,
+            boolean transaksi = createTransaksi(TransaksiType.BLUEDEPOSIT, null, saldoAwal, 0, blueDeposito, 0.0, 0,
                     null);
             if (!transaksi) {
                 System.out.println("Create Transaksi gagal");
@@ -256,7 +256,7 @@ public class CreateTabunganController {
             double saldoTerpotong, double saldoDitambah, BlueDeposito blueDeposito, Double biayaAdmin, int norekTujuan,
             TopUpType topUpType) {
 
-        conn.connect(); // Memastikan koneksi berhasil
+        conn.connect(); 
 
         try {
             String transaksiId = java.util.UUID.randomUUID().toString();
@@ -276,7 +276,7 @@ public class CreateTabunganController {
             stmt.setString(9, StatusType.BERHASIL.name());
             stmt.setString(10, topUpType != null ? topUpType.name() : null);
 
-            // Eksekusi query
+
             int rows = stmt.executeUpdate();
             conn.con.setAutoCommit(false);
 

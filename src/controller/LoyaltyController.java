@@ -186,30 +186,32 @@ public class LoyaltyController {
             // Generate loyalty_id
             String loyaltyId = generateLoyaltyId();
             if (loyaltyId == null) {
-                JOptionPane.showMessageDialog(null, "Failed to generate Loyalty ID.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Failed to generate Loyalty ID.", "Error",
+                        JOptionPane.ERROR_MESSAGE);
                 return false;
             }
-    
+
             // Check if the user already has an active loyalty
             String checkQuery = "SELECT COUNT(*) AS count FROM loyalty WHERE user_id = ? AND loyalty_active = true";
             PreparedStatement checkStmt = conn.con.prepareStatement(checkQuery);
             checkStmt.setString(1, loyalty.getUser_id());
             ResultSet rs = checkStmt.executeQuery();
-    
+
             if (rs.next() && rs.getInt("count") > 0) {
-                JOptionPane.showMessageDialog(null, "Loyalty is already active for this user.", "Info", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Loyalty is already active for this user.", "Info",
+                        JOptionPane.WARNING_MESSAGE);
                 return false; // User already has an active loyalty
             }
-    
+
             // Prepare insert query
             String query = "INSERT INTO loyalty (loyalty_id, user_id, loyalty_value, banyak_voucher_setor, banyak_voucher_transfer, banyak_voucher_topup_money, loyalty_active, expired_date) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement stmt = conn.con.prepareStatement(query);
-    
+
             // Calculate loyalty details
             double loyaltyPrice = 99000; // Price for loyalty
             Timestamp expiryDate = calculateEndDate(new Timestamp(System.currentTimeMillis()));
-    
+
             stmt.setString(1, loyaltyId);
             stmt.setString(2, loyalty.getUser_id());
             stmt.setDouble(3, loyaltyPrice);
@@ -218,20 +220,21 @@ public class LoyaltyController {
             stmt.setInt(6, loyalty.getBanyakVoucherTopup());
             stmt.setBoolean(7, true); // Loyalty active
             stmt.setTimestamp(8, expiryDate);
-    
+
             // Execute insert query
             int rowsInserted = stmt.executeUpdate();
             if (rowsInserted > 0) {
-                JOptionPane.showMessageDialog(null, "Successfully purchased loyalty!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Successfully purchased loyalty!", "Success",
+                        JOptionPane.INFORMATION_MESSAGE);
                 return true;
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
         return false;
     }
-    
 
     public static String generateLoyaltyId() {
         conn.connect();
@@ -255,21 +258,51 @@ public class LoyaltyController {
         }
     }
 
-    public static boolean paymentLoyaltyCode(String userId){
+    public static boolean kurangSaldoUser(String userId) {
+        conn.connect();
+        try {
+            String querySelect = "SELECT saldo FROM users WHERE user_id = ?";
+            PreparedStatement pstmtSelect = conn.con.prepareStatement(querySelect);
+            pstmtSelect.setString(1, userId);
+
+            ResultSet rs = pstmtSelect.executeQuery();
+            if (rs.next()) {
+                int saldo = rs.getInt("saldo");
+                if (saldo >= 99000) {
+                    String queryUpdate = "UPDATE users SET saldo = saldo - 99000 WHERE user_id = ?";
+                    PreparedStatement pstmtUpdate = conn.con.prepareStatement(queryUpdate);
+                    pstmtUpdate.setString(1, userId);
+
+                    int rowsUpdated = pstmtUpdate.executeUpdate();
+                    pstmtUpdate.close();
+
+                    return rowsUpdated > 0;
+                } else {
+                    System.out.println("Saldo tidak mencukupi.");
+                    return false;
+                }
+            } else {
+                System.out.println("User ID tidak ditemukan.");
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean paymentLoyaltyCode(String userId) {
         int response = JOptionPane.showConfirmDialog(
-                                null,
-                                "Apakah anda mau menggunakan voucher loyalty?",
-                                "Konfirmasi Penggunaan Voucher",
-                                JOptionPane.YES_NO_OPTION,
-                                JOptionPane.QUESTION_MESSAGE);
+                null,
+                "Apakah anda mau menggunakan voucher loyalty?",
+                "Konfirmasi Penggunaan Voucher",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE);
         if (response == JOptionPane.YES_OPTION) {
             return true;
         }
 
         return false;
-    }
-    public static boolean getChecked(String userId){
-        return true;
     }
 
 }

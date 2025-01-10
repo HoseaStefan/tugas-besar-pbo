@@ -129,6 +129,13 @@ public class BlueDepositoController {
             String query = "UPDATE blue_deposito SET saldo_awal = ? WHERE user_id = ?";
             PreparedStatement stmt = conn.con.prepareStatement(query);
     
+            boolean transaksi = createTransaksi(TransaksiType.BLUEDEPOSIT, null, 0, nominal, userId, 0.0, 0,
+                    null);
+            if (!transaksi) {
+                System.out.println("Create Transaksi gagal");
+                return false;
+            }
+
             stmt.setDouble(1, newSaldoAwal); 
             stmt.setString(2, userId); 
     
@@ -203,7 +210,7 @@ public class BlueDepositoController {
             double saldoTerpotong, double saldoDitambah, String userId, Double biayaAdmin, int norekTujuan,
             TopUpType topUpType) {
 
-        conn.connect(); // Memastikan koneksi berhasil
+        conn.connect(); 
 
         try {
             String transaksiId = java.util.UUID.randomUUID().toString();
@@ -223,7 +230,6 @@ public class BlueDepositoController {
             stmt.setString(9, StatusType.BERHASIL.name());
             stmt.setString(10, topUpType != null ? topUpType.name() : null);
 
-            // Eksekusi query
             int rows = stmt.executeUpdate();
             conn.con.setAutoCommit(false);
 

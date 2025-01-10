@@ -161,12 +161,14 @@ public class MenuTarikBlueDeposit {
 
                         double newSaldoAwal = saldoAwal - nominal;
 
-                        boolean updateUserSaldo = UserController.updateUserSaldo(nasabah.getUser_id(), saldoAkhir);
+                        boolean update = BlueDepositoController.tarikSaldoDeposit(nasabah.getUser_id(), nominal);
+                            if (update) {
+                                nasabah.setSaldo(nasabah.getSaldo()+saldoAwal);
+                            }
 
-                        boolean updated = BlueDepositoController.updateBlueDepositoSaldo(nasabah.getUser_id(),
-                                newSaldoAwal, nominal);
+                        if (update) {
 
-                        if (updated) {
+                            boolean checked = BlueDepositoController.updateBlueDepositoSaldo(nasabah.getUser_id(), newSaldoAwal, nominal);
 
                             nasabah.setSaldo(nasabah.getSaldo() + nominal);
                             JOptionPane.showMessageDialog(frame, "Penarikan berhasil! Saldo Anda telah diperbarui.",
@@ -198,22 +200,24 @@ public class MenuTarikBlueDeposit {
                                 return;
                             }
 
+                            boolean update = BlueDepositoController.tarikSaldoDeposit(nasabah.getUser_id(), saldoAwal);
+                            if (update) {
+                                nasabah.setSaldo(nasabah.getSaldo()+saldoAwal);
+                            }
+
                             BlueDepositoController.deleteBlueDeposito(nasabah.getUser_id());
                             frame.dispose();
                             new MenuBlueDeposit();
 
                         } else {
-                            // Jika waktu saat ini belum mencapai end_date
+
                             JOptionPane.showMessageDialog(frame,
                                     "Saldo awal sebesar Rp " + saldoAwal + " dikembalikan.", "Sukses",
                                     JOptionPane.INFORMATION_MESSAGE);
 
-                            // Tambahkan saldo awal ke saldo nasabah
-                            boolean updated = UserController.updateUserSaldo(nasabah.getUser_id(), saldoAwal);
-                            if (!updated) {
-                                JOptionPane.showMessageDialog(frame, "Gagal memperbarui saldo nasabah!", "Error",
-                                        JOptionPane.ERROR_MESSAGE);
-                                return;
+                            boolean update = BlueDepositoController.tarikSaldoDeposit(nasabah.getUser_id(), saldoAwal);
+                            if (update) {
+                                nasabah.setSaldo(nasabah.getSaldo()+saldoAwal);
                             }
 
                             BlueDepositoController.deleteBlueDeposito(nasabah.getUser_id());

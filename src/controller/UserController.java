@@ -216,12 +216,15 @@ public class UserController {
     public static boolean updateUserSaldo(String userId, double nominal) {
         conn.connect();
         try {
-            String query = "UPDATE users SET saldo = saldo + ? WHERE user_id = ?";
+            String query = "UPDATE users SET saldo = saldo - ? WHERE user_id = ?";
             PreparedStatement stmt = conn.con.prepareStatement(query);
             stmt.setDouble(1, nominal);
             stmt.setString(2, userId);
 
+            System.out.println("checkk");
             int rowsUpdated = stmt.executeUpdate();
+
+            System.out.println("wkkwkwkwk");
             return rowsUpdated > 0;
         } catch (SQLException e) {
             e.printStackTrace();

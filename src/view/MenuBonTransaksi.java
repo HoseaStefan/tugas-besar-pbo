@@ -24,6 +24,8 @@ public class MenuBonTransaksi {
         showMenuBonTransaksi(transaksiType, promo, amount, norekTujuan, biayaAdmin, topUpType);
     }
 
+    static boolean finalPromo;
+
     public void showMenuBonTransaksi(TransaksiType transaksiType, Boolean promo, Double amount, int norekTujuan,
             Double biayaAdmin, TopUpType topUpType) {
         CurrentUser currentUser = CurrentUser.getInstance();
@@ -83,11 +85,13 @@ public class MenuBonTransaksi {
         double total = 0;
         if (transaksiType == TransaksiType.SETOR) {
             total += amount - biayaAdmin;
+            System.out.println(amount);
         } else {
             total += amount + biayaAdmin;
+            System.out.println(amount);
         }
 
-        if (promo) {
+        if (promo && loyaltyController.hasLoyaltyActive(nasabah.getUser_id()) || promo) {
             System.out.println(promo);
             JLabel promoLabel = new JLabel("Promo Terpakai (+): " + biayaAdmin);
             promoLabel.setBounds(50, 230, 400, 30);
@@ -98,6 +102,37 @@ public class MenuBonTransaksi {
             } else {
                 total -= biayaAdmin;
             }
+        } else if (!promo && loyaltyController.hasLoyaltyActive(nasabah.getUser_id())) {
+
+            boolean payment = loyaltyController.paymentLoyaltyCode(nasabah.getUser_id());
+
+            if (payment) {
+                switch (transaksiType) {
+                    case TRANSFER:
+                        loyaltyController.useVoucherTransfer(nasabah.getUser_id());
+                        break;
+                    case SETOR:
+                        loyaltyController.useVoucherSetor(nasabah.getUser_id());
+                        break;
+                    case TOPUP:
+                        loyaltyController.useVoucherTopup(nasabah.getUser_id());
+                        break;
+                    default:
+                        break;
+                }
+                JLabel promoLabel = new JLabel("Promo Terpakai (+): " + biayaAdmin);
+                promoLabel.setBounds(50, 230, 400, 30);
+                promoLabel.setForeground(Color.WHITE);
+                panel.add(promoLabel);
+                if (transaksiType == TransaksiType.SETOR) {
+                    total += biayaAdmin;
+                } else {
+                    total -= biayaAdmin;
+                }
+
+                finalPromo = true;
+            }
+
         }
 
         JLabel totalLabel = new JLabel();
@@ -116,6 +151,7 @@ public class MenuBonTransaksi {
         confirmButton.addActionListener(e -> {
             try {
                 double totalcalculated = 0;
+                double finalAdmin = 0;
                 System.out.println("nasabah");
 
                 FormInputPIN formInputPIN = new FormInputPIN();
@@ -123,41 +159,31 @@ public class MenuBonTransaksi {
                 if (isVerified) {
                     if (transaksiType == TransaksiType.SETOR) {
                         totalcalculated += amount - biayaAdmin;
-                        if (promo) {
+                        System.out.println("1" + totalcalculated);
+                        if (promo || finalPromo) {
                             totalcalculated += biayaAdmin;
+                            System.out.println("2" + totalcalculated);
+                        } else {
+                            
+                            finalAdmin = biayaAdmin;
                         }
+
                     } else {
                         totalcalculated += amount + biayaAdmin;
-                        if (promo) {
+                        if (promo || finalPromo) {
                             totalcalculated -= biayaAdmin;
                         }
                     }
-
-                    if (loyaltyController.hasLoyaltyActive(nasabah.getUser_id())) {
-                        if (loyaltyController.getChecked(nasabah.getUser_id())) {
-                            switch (transaksiType) {
-                                case TRANSFER:
-                                    loyaltyController.useVoucherTransfer(nasabah.getUser_id());
-                                    break;
-                                case SETOR:
-                                    loyaltyController.useVoucherSetor(nasabah.getUser_id());
-                                    break;
-                                case TOPUP:
-                                    loyaltyController.useVoucherTopup(nasabah.getUser_id());
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                    }
-
+                    System.out.println("biaya admin"+biayaAdmin);
+                    System.out.println("wkwkwk    " + amount);
+                    System.out.println("final"+ finalAdmin);
                     boolean success = TransaksiController.createTransaksi(
                             transaksiType,
                             amount,
                             promo ? "VALID_PROMO" : "",
                             nasabah,
                             norekTujuan,
-                            biayaAdmin,
+                            finalAdmin,
                             topUpType);
 
                     if (success) {
@@ -166,10 +192,11 @@ public class MenuBonTransaksi {
                                 : nasabah.getSaldo() - totalcalculated;
 
                         nasabah.setSaldo(updatedSaldo);
-                        JOptionPane.showMessageDialog(frame, "Transaksi berhasil! Saldo baru: Rp. " + updatedSaldo,
+                        JOptionPane.showMessageDialog(frame, "Transaksi berhasil!",
                                 "Success", JOptionPane.INFORMATION_MESSAGE);
                         frame.dispose();
                         new MenuNasabah();
+
                     } else {
                         JOptionPane.showMessageDialog(frame, "Transaksi gagal, coba lagi.", "Error",
                                 JOptionPane.ERROR_MESSAGE);

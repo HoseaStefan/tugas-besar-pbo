@@ -35,7 +35,7 @@ public class TransaksiController {
                     "            WHEN jumlah_saldo_terpotong > 0 THEN -jumlah_saldo_terpotong" +
                     "            ELSE 0" +
                     "        END" +
-                    "   WHEN transaksi_type = 'BLUEDEPOSITO' THEN" +
+                    "   WHEN transaksi_type = 'BLUEDEPOSIT' THEN" +
                     "        CASE" +
                     "            WHEN jumlah_saldo_ditambah > 0 THEN jumlah_saldo_ditambah" +
                     "            WHEN jumlah_saldo_terpotong > 0 THEN -jumlah_saldo_terpotong" +
@@ -94,6 +94,7 @@ public class TransaksiController {
             if (kodePromo != null && !kodePromo.isEmpty()) {
                 biayaAdmin = 0.0;
             }
+
 
             if (tipeTransaksi == TransaksiType.SETOR) {
                 saldoDitambah = amount - biayaAdmin;

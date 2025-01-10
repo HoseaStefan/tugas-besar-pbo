@@ -89,7 +89,6 @@ public class MenuBeliLoyalty {
                         return; // Berhenti jika saldo kurang
                     }
 
-                    // Melanjutkan pembelian loyalty
                     if (!controller.hasLoyaltyActive(nasabah.getUser_id())) {
                         expiredTimestamp = controller.calculateEndDate(startDate);
                         loyalty = new Loyalty("", nasabah.getUser_id(), loyaltyPrice, 100, 100, 100, true,
@@ -97,6 +96,7 @@ public class MenuBeliLoyalty {
 
                         Boolean isCreated = controller.buyLoyaltyByUserId(loyalty);
                         if (isCreated) {
+                            loyaltyController.kurangSaldoUser(nasabah.getUser_id());
                             double updatedSaldo = userSaldo - loyaltyPrice;
                             nasabah.setSaldo(updatedSaldo);
 

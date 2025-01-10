@@ -92,110 +92,56 @@ public class FormTransferSaldo {
         Component.styleButton(transferButton, new Color(3, 123, 252), buttonFont);
         transferButton.addActionListener(e -> {
 
-            if (loyaltyController.hasLoyaltyActive(nasabah.getUser_id()) == false) {
-                try {
-                    String promoCode = inputPromo.getText();
-                    String saldoInput = inputSaldo.getText();
-                    String rekeningInput = inputRekening.getText();
-                    double amount = Double.parseDouble(saldoInput);
+            try {
+                String promoCode = inputPromo.getText();
+                String saldoInput = inputSaldo.getText();
+                String rekeningInput = inputRekening.getText();
+                double amount = Double.parseDouble(saldoInput);
 
-                    if (amount < 0) {
-                        JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak boleh negatif.", "Error",
-                                JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
+                if (amount < 10000) {
+                    JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak boleh kurang dari 10.000.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
-                    int rekeningTujuan = Integer.parseInt(rekeningInput);
+                if (amount < 0) {
+                    JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak boleh negatif.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
-                    System.out.println(rekeningTujuan);
-                    if (TransaksiController.verifyNomorRekeningTujuan(rekeningTujuan)) {
-                        JOptionPane.showMessageDialog(frame, "Nomor rekening tujuan tidak valid.", "Error",
-                                JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
+                int rekeningTujuan = Integer.parseInt(rekeningInput);
 
-                    boolean promoValid = TransaksiController.verifyKodePromo(promoCode, TransaksiType.TRANSFER);
-                    if (amount > nasabah.getSaldo()) {
+                System.out.println(rekeningTujuan);
+                if (TransaksiController.verifyNomorRekeningTujuan(rekeningTujuan)) {
+                    JOptionPane.showMessageDialog(frame, "Nomor rekening tujuan tidak valid.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                boolean promoValid = TransaksiController.verifyKodePromo(promoCode, TransaksiType.TRANSFER);
+                if (amount > nasabah.getSaldo()) {
+                    JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak mencukupi.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if (!promoValid) {
+                    if (amount + 2500 > nasabah.getSaldo()) {
                         JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak mencukupi.", "Error",
                                 JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                    if (!promoValid) {
-                        if (amount + 2500 > nasabah.getSaldo()) {
-                            JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak mencukupi.", "Error",
-                                    JOptionPane.ERROR_MESSAGE);
-                            return;
-                        }
-                    }
-                    if (promoValid || promoCode.isEmpty()) {
-                        frame.dispose();
-                        new MenuBonTransaksi(TransaksiType.TRANSFER, promoValid, amount, rekeningTujuan, 2500.0, null);
-                    } else {
-                        JOptionPane.showMessageDialog(frame, "Kode promo tidak valid.", "Error",
-                                JOptionPane.ERROR_MESSAGE);
-                    }
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(frame, "Input saldo harus berupa angka.", "Error",
+                }
+                if (promoValid || promoCode.isEmpty()) {
+                    frame.dispose();
+                    new MenuBonTransaksi(TransaksiType.TRANSFER, promoValid, amount, rekeningTujuan, 2500.0, null);
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Kode promo tidak valid.", "Error",
                             JOptionPane.ERROR_MESSAGE);
                 }
-
-            } else {
-                try {
-                    String promoCode = inputPromo.getText();
-                    String saldoInput = inputSaldo.getText();
-                    String rekeningInput = inputRekening.getText();
-                    double amount = Double.parseDouble(saldoInput);
-
-                    if (amount < 0) {
-                        JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak boleh negatif.", "Error",
-                                JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-
-                    int rekeningTujuan = Integer.parseInt(rekeningInput);
-
-                    System.out.println(rekeningTujuan);
-                    if (TransaksiController.verifyNomorRekeningTujuan(rekeningTujuan)) {
-                        JOptionPane.showMessageDialog(frame, "Nomor rekening tujuan tidak valid.", "Error",
-                                JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-
-                    boolean promoValid = TransaksiController.verifyKodePromo(promoCode, TransaksiType.TRANSFER);
-                    if (amount > nasabah.getSaldo()) {
-                        JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak mencukupi.", "Error",
-                                JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    if (!promoValid) {
-                        if (amount + 2500 > nasabah.getSaldo()) {
-                            JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak mencukupi.", "Error",
-                                    JOptionPane.ERROR_MESSAGE);
-                            return;
-                        }
-                    }
-                    if (promoCode.isEmpty()) {
-                        boolean response = loyaltyController.paymentLoyaltyCode(nasabah.getUser_id());
-
-                        if (response == true) {
-                            frame.dispose();
-                            new MenuBonTransaksi(TransaksiType.TRANSFER, true, amount, rekeningTujuan, 2500.0, null);
-                            loyaltyController.getChecked(nasabah.getUser_id());
-
-                        } else if (response == false) {
-                            frame.dispose();
-                            new MenuBonTransaksi(TransaksiType.TRANSFER, promoValid, amount, rekeningTujuan, 2500.0,
-                                    null);
-                        }
-                    } else {
-                        JOptionPane.showMessageDialog(frame, "Kode promo tidak valid.", "Error",
-                                JOptionPane.ERROR_MESSAGE);
-                    }
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(frame, "Input saldo harus berupa angka.", "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                }
-
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(frame, "Input saldo harus berupa angka.", "Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
         });
         panel.add(transferButton);
