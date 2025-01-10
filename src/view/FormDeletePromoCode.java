@@ -57,7 +57,7 @@ public class FormDeletePromoCode {
         AdminController.loadPromoCodesForDeletion(tableModel);
 
         JButton exitButton = new JButton("Back to Menu");
-        exitButton.setBounds(120, 600, 260, 50);
+        exitButton.setBounds(170, 600, 260, 50);
         exitButton.setFont(buttonFont);
         exitButton.setBackground(new Color(255, 69, 58));
         exitButton.setForeground(Color.WHITE);

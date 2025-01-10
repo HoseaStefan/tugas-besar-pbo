@@ -19,7 +19,7 @@ public class CreateTabunganController {
     public boolean createBlueSaving(BlueSaving blueSaving) {
         conn.connect();
         try {
-            String query = "INSERT INTO BlueSaving (tabungan_id, user_id, namaTabungan, saldoAwal, dateCreated, saldoSaving, jangkaWaktu, targetSaldo, tabunganHarian) "
+            String query = "INSERT INTO bluesaving (tabungan_id, nasabah_id, namaTabungan, saldoAwal, dateCreated, saldoSaving, jangkaWaktu, targetSaldo, tabunganHarian) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement stmt = conn.con.prepareStatement(query);
 
@@ -162,7 +162,7 @@ public class CreateTabunganController {
         int nextId = 1;
 
         try {
-            String query = "SELECT COUNT(*) AS total FROM blue_saving";
+            String query = "SELECT tabungan_id FROM bluesaving ORDER BY CAST(SUBSTRING_INDEX(tabungan_id, '-', -1) AS UNSIGNED) DESC LIMIT 1";
             PreparedStatement stmt = conn.con.prepareStatement(query);
             ResultSet rs = stmt.executeQuery();
 
@@ -180,7 +180,7 @@ public class CreateTabunganController {
     public boolean createBlueGether(BlueGether blueGether) {
         conn.connect();
         try {
-            String query = "INSERT INTO bluegether (tabungan_id, user_id, namaTabungan, saldoAwal, dateCreated, saldoGether, jangkaWaktu, targetSaldo, tabunganHarian) "
+            String query = "INSERT INTO bluegether (tabungan_id, nasabah_id, namaTabungan, saldoAwal, dateCreated, saldoGether, jangkaWaktu, targetSaldo, tabunganHarian) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement stmt = conn.con.prepareStatement(query);
 
@@ -236,7 +236,7 @@ public class CreateTabunganController {
 
         try {
             // Query untuk mencari ID terakhir
-            String query = "SELECT tabungan_id FROM bluegether ORDER BY tabungan_id DESC LIMIT 1";
+            String query = "SELECT tabungan_id FROM bluegether ORDER BY CAST(SUBSTRING_INDEX(tabungan_id, '-', -1) AS UNSIGNED) DESC LIMIT 1";
             PreparedStatement stmt = conn.con.prepareStatement(query);
             ResultSet rs = stmt.executeQuery();
 

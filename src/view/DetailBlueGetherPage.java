@@ -2,6 +2,8 @@ package view;
 
 import javax.swing.*;
 import controller.BlueGetherController;
+import controller.BlueSavingController;
+
 import java.awt.*;
 import model.BlueGether;
 import model.CurrentUser;
@@ -31,7 +33,7 @@ public class DetailBlueGetherPage {
 
         // Title Label
         JLabel titleLabel = new JLabel("Detail Blue Gether");
-        titleLabel.setBounds(120, 30, 300, 40);
+        titleLabel.setBounds(130, 30, 300, 40);
         titleLabel.setFont(new Font("SansSerif", Font.BOLD, 26));
         titleLabel.setForeground(Color.WHITE);
         panel.add(titleLabel);
@@ -89,6 +91,11 @@ public class DetailBlueGetherPage {
             try {
                 double nominal = Double
                         .parseDouble(JOptionPane.showInputDialog("Masukkan nominal yang ingin dipindahkan:"));
+
+                boolean check = BlueGetherController.cekSaldoUser(userId, nominal);
+                if (!check) {
+                    return;
+                }
 
                 FormInputPIN formInputPIN = new FormInputPIN();
                 boolean isVerified = formInputPIN.showInputPIN(nasabah);
@@ -184,6 +191,11 @@ public class DetailBlueGetherPage {
                 try {
                     double nominal = Double
                             .parseDouble(JOptionPane.showInputDialog("Masukkan nominal yang ingin ditarik:"));
+
+                    boolean check = BlueGetherController.cekSaldoGether(nominal, blueGether);
+                    if (!check) {
+                        return;
+                    }
 
                     FormInputPIN formInputPIN = new FormInputPIN();
                     boolean isVerified = formInputPIN.showInputPIN(nasabah);

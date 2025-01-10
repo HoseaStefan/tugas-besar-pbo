@@ -96,7 +96,7 @@ public class BlueSavingController {
         }
     }
 
-    public static boolean pindahSaldo(String userId, double nominal, BlueSaving blueSaving) {
+    public static boolean cekSaldoUser(String userId, double nominal) {
 
         conn.connect();
 
@@ -111,20 +111,44 @@ public class BlueSavingController {
 
             if (!rs.next()) {
                 conn.con.rollback();
+                JOptionPane.showMessageDialog(null, "User tidak ditemukan.", "BlueSaving", JOptionPane.ERROR_MESSAGE);
                 return false; // User tidak ditemukan
             }
 
             double saldoUser = rs.getDouble("saldo");
             if (saldoUser < nominal) {
                 conn.con.rollback();
+                JOptionPane.showMessageDialog(null, "Saldo user tidak cukup.", "BlueSaving", JOptionPane.ERROR_MESSAGE);
                 return false; // Saldo tidak cukup
             }
 
-            boolean transaksi = createTransaksi(TransaksiType.BLUESAVING, null, nominal, 0, blueSaving, 0.0, 0,
-                    null);
-            if (!transaksi) {
-                System.out.println("Create Transaksi gagal");
-                return false;
+            return true;
+        } catch (SQLException ex) {
+            try {
+                conn.con.rollback(); // Rollback jika terjadi kesalahan
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
+            ex.printStackTrace();
+            return false;
+        }
+
+    }
+
+    public static boolean pindahSaldo(String userId, double nominal, BlueSaving blueSaving) {
+
+        conn.connect();
+
+        try {
+            conn.con.setAutoCommit(false); // Mulai transaksi
+
+            if (nominal != 0) {
+                boolean transaksi = createTransaksi(TransaksiType.BLUESAVING, null, nominal, 0, blueSaving, 0.0, 0,
+                        null);
+                if (!transaksi) {
+                    System.out.println("Create Transaksi gagal");
+                    return false;
+                }
             }
 
             // Kurangi saldo pengguna
@@ -155,9 +179,9 @@ public class BlueSavingController {
         }
     }
 
-    public static boolean tarikSaldo(String userId, double nominal, BlueSaving blueSaving) {
-        conn.connect();
+    public static boolean cekSaldoSaving(BlueSaving blueSaving, double nominal) {
 
+        conn.connect();
         try {
             conn.con.setAutoCommit(false); // Mulai transaksi
 
@@ -169,22 +193,44 @@ public class BlueSavingController {
 
             if (!rs.next()) {
                 conn.con.rollback();
+                JOptionPane.showMessageDialog(null, "bluesaving tidak ditemukan.", "BlueSaving",
+                        JOptionPane.ERROR_MESSAGE);
                 return false; // BlueSaving tidak ditemukan
             }
 
             double saldoSaving = rs.getDouble("saldoSaving");
             if (saldoSaving < nominal) {
                 conn.con.rollback();
-                System.out.println("Saldo Saving saat ini: " + saldoSaving);
-                System.out.println("Nominal yang ingin ditarik: " + nominal);
+                JOptionPane.showMessageDialog(null, "Saldo bluesaving tidak cukup.", "BlueSaving",
+                        JOptionPane.ERROR_MESSAGE);
                 return false; // Saldo BlueSaving tidak cukup
             }
 
-            boolean transaksi = createTransaksi(TransaksiType.BLUESAVING, null, 0, nominal, blueSaving, 0.0, 0,
-                    null);
-            if (!transaksi) {
-                System.out.println("Create Transaksi gagal");
-                return false;
+            return true;
+        } catch (SQLException ex) {
+            try {
+                conn.con.rollback(); // Rollback jika terjadi kesalahan
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean tarikSaldo(String userId, double nominal, BlueSaving blueSaving) {
+        conn.connect();
+
+        try {
+            conn.con.setAutoCommit(false); // Mulai transaksi
+
+            if (nominal != 0) {
+                boolean transaksi = createTransaksi(TransaksiType.BLUESAVING, null, 0, nominal, blueSaving, 0.0, 0,
+                        null);
+                if (!transaksi) {
+                    System.out.println("Create Transaksi gagal");
+                    return false;
+                }
             }
 
             // Kurangi saldo BlueSaving

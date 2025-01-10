@@ -34,8 +34,8 @@ public class SettingsBlueSaving {
         panel.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0, 50), 2));
 
         // Title Label
-        JLabel titleLabel = new JLabel("Detail Blue Saving");
-        titleLabel.setBounds(120, 30, 300, 40);
+        JLabel titleLabel = new JLabel("Settings Blue Saving");
+        titleLabel.setBounds(130, 30, 300, 40);
         titleLabel.setFont(new Font("SansSerif", Font.BOLD, 26));
         titleLabel.setForeground(Color.WHITE);
         panel.add(titleLabel);
@@ -104,10 +104,9 @@ public class SettingsBlueSaving {
                     JOptionPane.showMessageDialog(frame, "Nama tabungan sudah digunakan, pilih nama lain.", "Error",
                             JOptionPane.ERROR_MESSAGE);
                 } else {
+
                     blueSaving.setNamaTabungan(newName);
-
                     boolean isUpdated = BlueSavingController.gantiNamaBlueSaving(blueSaving, blueSaving.getuser_id());
-
                     if (isUpdated) {
                         JOptionPane.showMessageDialog(frame, "Nama Blue Saving berhasil diperbarui!", "Success",
                                 JOptionPane.INFORMATION_MESSAGE);
@@ -115,6 +114,9 @@ public class SettingsBlueSaving {
                         JOptionPane.showMessageDialog(frame, "Gagal memperbarui nama tabungan.", "Error",
                                 JOptionPane.ERROR_MESSAGE);
                     }
+
+                    frame.dispose();
+                    new SettingsBlueSaving(blueSaving);
                 }
             } else {
                 JOptionPane.showMessageDialog(frame, "Nama tabungan tidak boleh kosong.", "Error",

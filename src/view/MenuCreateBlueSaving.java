@@ -101,10 +101,6 @@ public class MenuCreateBlueSaving {
         JButton createButton = new JButton("Create New Blue Saving");
         Component.styleRoundedButton(createButton, new Color(0, 102, 204), Color.WHITE);
         createButton.setBounds(120, 500, 260, 50);
-        createButton.addActionListener(e -> {
-            frame.dispose();
-            new MenuCreateBlueGether();
-        });
         Component.addHoverEffect(createButton, new Color(0, 102, 204), new Color(0, 123, 180));
         panel.add(createButton);
 

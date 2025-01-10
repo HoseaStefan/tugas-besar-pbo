@@ -111,10 +111,6 @@ public class FormReportUser {
         JButton reportButton = new JButton("Submit");
         Component.styleRoundedButton(reportButton, new Color(0, 102, 204), Color.WHITE);
         reportButton.setBounds(120, 500, 260, 50);
-        reportButton.addActionListener(e -> {
-            frame.dispose();
-            new MainMenu();
-        });
         Component.addHoverEffect(reportButton, new Color(0, 102, 204), new Color(0, 123, 180));
         panel.add(reportButton);
 
@@ -126,6 +122,7 @@ public class FormReportUser {
 
             if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
                 JOptionPane.showMessageDialog(frame, "Please fill in all fields!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
             } else {
                 String isValid = ReportController.validateUserData(username, email, password);
 
@@ -144,6 +141,7 @@ public class FormReportUser {
                     JOptionPane.showMessageDialog(frame,
                             "Report submitted successfully! Waiting for admin verification.", "Success",
                             JOptionPane.INFORMATION_MESSAGE);
+                    new MainMenu();
                 }
             }
         });
