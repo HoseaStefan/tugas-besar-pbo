@@ -8,8 +8,10 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import model.Nasabah;
 import model.Report;
 import model.StatusReport;
+import model.UserType;
 
 public class ReportController {
     static DatabaseHandler conn = new DatabaseHandler();
@@ -161,4 +163,40 @@ public class ReportController {
             return false;
         }
     }
+
+    public static List<Nasabah> getNasabahByUserId(String user_id) {
+        conn.connect(); // Pastikan metode ini menginisialisasi conn.con
+        List<Nasabah> nasabahs = new ArrayList<>();
+
+        String query = "SELECT * FROM users WHERE user_id = ?";
+
+        try (PreparedStatement checkStmt = conn.con.prepareStatement(query)) {
+            // Set parameter untuk PreparedStatement
+            checkStmt.setString(1, user_id);
+
+            try (ResultSet rs = checkStmt.executeQuery()) {
+                // Iterasi melalui semua hasil
+                while (rs.next()) {
+                    Nasabah nasabah = new Nasabah(
+                            rs.getString("user_id"),
+                            rs.getString("name"),
+                            rs.getString("username"),
+                            rs.getString("email"),
+                            UserType.NASABAH,
+                            rs.getString("full_name"),
+                            rs.getInt("pin"),
+                            rs.getInt("nomor_rekening"),
+                            rs.getDouble("saldo"),
+                            null,
+                            rs.getString("status"));
+                    nasabahs.add(nasabah);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return nasabahs;
+    }
+
 }

@@ -89,6 +89,16 @@ public class MenuAdmin {
             new MenuReportAdmin();
         });
 
+        JButton blockNasabahButton = new JButton("Block Nasabah");
+        blockNasabahButton.setBounds(120, 420, 260, 50);
+        Component.styleButton(blockNasabahButton, new Color(3, 123, 252), buttonFont);
+        panel.add(blockNasabahButton);
+
+        blockNasabahButton.addActionListener(e -> {
+            frame.dispose();
+            new MenuBlockNasabahByAdmin();
+        });
+
         JButton exitButton = new JButton("Logout");
         exitButton.setBounds(120, 600, 260, 50);
         Component.styleButton(exitButton, new Color(255, 69, 58), buttonFont);

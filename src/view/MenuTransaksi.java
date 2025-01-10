@@ -22,11 +22,11 @@ public class MenuTransaksi {
 
     private JFrame frame;
 
-    public MenuTransaksi(){
+    public MenuTransaksi() {
         showMenuTransaksi();
     }
 
-    public void showMenuTransaksi(){
+    public void showMenuTransaksi() {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
 
@@ -66,28 +66,28 @@ public class MenuTransaksi {
 
         JButton setorSaldoButton = new JButton("Setor Saldo");
         setorSaldoButton.setBounds(120, 275, 260, 50);
-        Component.styleButton(setorSaldoButton, new Color(3, 123, 252), buttonFont); 
+        Component.styleButton(setorSaldoButton, new Color(3, 123, 252), buttonFont);
         setorSaldoButton.addActionListener(e -> {
             frame.dispose();
-            new FormSetorSaldo(); 
+            new FormSetorSaldo();
         });
         panel.add(setorSaldoButton);
 
         JButton transferButton = new JButton("Transfer");
         transferButton.setBounds(120, 345, 260, 50);
-        Component.styleButton(transferButton, new Color(3, 123, 252), buttonFont); 
+        Component.styleButton(transferButton, new Color(3, 123, 252), buttonFont);
         transferButton.addActionListener(e -> {
             frame.dispose();
-            new FormTransferSaldo(); 
+            new FormTransferSaldo();
         });
         panel.add(transferButton);
 
         JButton topUpButton = new JButton("Top Up E-money");
         topUpButton.setBounds(120, 415, 260, 50);
-        Component.styleButton(topUpButton, new Color(3, 123, 252), buttonFont); 
+        Component.styleButton(topUpButton, new Color(3, 123, 252), buttonFont);
         topUpButton.addActionListener(e -> {
             frame.dispose();
-            new FormTopUpEmoney(); 
+            new FormTopUpEmoney();
         });
         panel.add(topUpButton);
 

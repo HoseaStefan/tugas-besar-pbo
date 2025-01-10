@@ -9,7 +9,10 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import model.BlueGether;
+import model.StatusType;
 import model.TabunganType;
+import model.TopUpType;
+import model.TransaksiType;
 
 public class BlueGetherController {
     static DatabaseHandler conn = new DatabaseHandler();
@@ -64,58 +67,6 @@ public class BlueGetherController {
             }
         }
         return blueGethers;
-    }
-
-    public static boolean pindahSaldo(String userId, double nominal, String tabunganId) {
-
-        conn.connect();
-
-        try {
-            conn.con.setAutoCommit(false); // Mulai transaksi
-
-            // Periksa saldo pengguna
-            String cekSaldoQuery = "SELECT saldo FROM users WHERE user_id = ?";
-            PreparedStatement cekSaldoStmt = conn.con.prepareStatement(cekSaldoQuery);
-            cekSaldoStmt.setString(1, userId);
-            ResultSet rs = cekSaldoStmt.executeQuery();
-
-            if (!rs.next()) {
-                conn.con.rollback();
-                return false; // User tidak ditemukan
-            }
-
-            double saldoUser = rs.getDouble("saldo");
-            if (saldoUser < nominal) {
-                conn.con.rollback();
-                return false; // Saldo tidak cukup
-            }
-
-            // Kurangi saldo pengguna
-            String updateUserSaldoQuery = "UPDATE users SET saldo = saldo - ? WHERE user_id = ?";
-            PreparedStatement updateUserSaldoStmt = conn.con.prepareStatement(updateUserSaldoQuery);
-            updateUserSaldoStmt.setDouble(1, nominal);
-            updateUserSaldoStmt.setString(2, userId);
-            updateUserSaldoStmt.executeUpdate();
-
-            // Tambahkan saldo ke BlueSaving
-            String updateBlueGetherQuery = "UPDATE bluegether SET saldoGether = saldoGether + ? WHERE tabungan_id = ?";
-            PreparedStatement updateBlueGetherStmt = conn.con.prepareStatement(updateBlueGetherQuery);
-            updateBlueGetherStmt.setDouble(1, nominal);
-            updateBlueGetherStmt.setString(2, tabunganId);
-            updateBlueGetherStmt.executeUpdate();
-
-            conn.con.commit();
-            return true;
-
-        } catch (SQLException ex) {
-            try {
-                conn.con.rollback();
-            } catch (SQLException rollbackEx) {
-                rollbackEx.printStackTrace();
-            }
-            ex.printStackTrace();
-            return false;
-        }
     }
 
     public static boolean cekNomorRekeningDiDatabase(int nomorRekening) {
@@ -215,7 +166,7 @@ public class BlueGetherController {
         return false;
     }
 
-    public static boolean pindahSaldoGether(String userId, double nominal, String tabunganId) {
+    public static boolean pindahSaldoGether(String userId, double nominal, BlueGether blueGether) {
 
         conn.connect();
 
@@ -239,6 +190,13 @@ public class BlueGetherController {
                 return false; // Saldo tidak cukup
             }
 
+            boolean transaksi = createTransaksi(TransaksiType.BLUEGETHER, null, nominal, 0, blueGether, 0.0, 0,
+                    null);
+            if (!transaksi) {
+                System.out.println("Create Transaksi gagal");
+                return false;
+            }
+
             // Kurangi saldo pengguna
             String updateUserSaldoQuery = "UPDATE users SET saldo = saldo - ? WHERE user_id = ?";
             PreparedStatement updateUserSaldoStmt = conn.con.prepareStatement(updateUserSaldoQuery);
@@ -250,7 +208,7 @@ public class BlueGetherController {
             String updateBlueGetherQuery = "UPDATE bluegether SET saldoGether = saldoGether + ? WHERE tabungan_id = ?";
             PreparedStatement updateBlueGetherStmt = conn.con.prepareStatement(updateBlueGetherQuery);
             updateBlueGetherStmt.setDouble(1, nominal);
-            updateBlueGetherStmt.setString(2, tabunganId);
+            updateBlueGetherStmt.setString(2, blueGether.getTabungan_id());
             updateBlueGetherStmt.executeUpdate();
 
             conn.con.commit(); // Commit transaksi
@@ -267,7 +225,7 @@ public class BlueGetherController {
         }
     }
 
-    public static boolean tarikSaldoGether(String userId, double nominal, String tabunganId) {
+    public static boolean tarikSaldoGether(String userId, double nominal, BlueGether blueGether) {
         conn.connect();
 
         try {
@@ -276,7 +234,7 @@ public class BlueGetherController {
             // Periksa saldo BlueSaving
             String cekSaldoGetherQuery = "SELECT saldoGether FROM bluegether WHERE tabungan_id = ?";
             PreparedStatement cekSaldoGetherStmt = conn.con.prepareStatement(cekSaldoGetherQuery);
-            cekSaldoGetherStmt.setString(1, tabunganId);
+            cekSaldoGetherStmt.setString(1, blueGether.getTabungan_id());
             ResultSet rs = cekSaldoGetherStmt.executeQuery();
 
             if (!rs.next()) {
@@ -290,11 +248,18 @@ public class BlueGetherController {
                 return false; // Saldo tidak cukup
             }
 
+            boolean transaksi = createTransaksi(TransaksiType.BLUEGETHER, null, 0, nominal, blueGether, 0.0, 0,
+                    null);
+            if (!transaksi) {
+                System.out.println("Create Transaksi gagal");
+                return false;
+            }
+
             // Kurangi saldo BlueGether
             String updateBlueGetherQuery = "UPDATE bluegether SET saldoGether = saldoGether - ? WHERE tabungan_id = ?";
             PreparedStatement updateBlueGetherStmt = conn.con.prepareStatement(updateBlueGetherQuery);
             updateBlueGetherStmt.setDouble(1, nominal);
-            updateBlueGetherStmt.setString(2, tabunganId);
+            updateBlueGetherStmt.setString(2, blueGether.getTabungan_id());
             updateBlueGetherStmt.executeUpdate();
 
             // Tambahkan saldo ke pengguna
@@ -421,6 +386,47 @@ public class BlueGetherController {
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
+            return false;
+        }
+    }
+
+    public static Boolean createTransaksi(TransaksiType tipeTransaksi, String kodePromo,
+            double saldoTerpotong, double saldoDitambah, BlueGether blueGether, Double biayaAdmin, int norekTujuan,
+            TopUpType topUpType) {
+
+        conn.connect(); // Memastikan koneksi berhasil
+
+        try {
+            String transaksiId = java.util.UUID.randomUUID().toString();
+            String query = "INSERT INTO transaksi (transaksi_id, nasabah_id, nomor_rekening_tujuan, transaksi_type, biaya_admin, transaksi_date, kode_promo, jumlah_saldo_terpotong, jumlah_saldo_ditambah, status_type, topup_type) "
+                    + "VALUES (?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?)";
+            PreparedStatement stmt = conn.con.prepareStatement(query);
+
+            // Set parameter untuk query
+            stmt.setString(1, transaksiId);
+            stmt.setString(2, blueGether.getuser_id());
+            stmt.setInt(3, norekTujuan);
+            stmt.setString(4, tipeTransaksi.name());
+            stmt.setDouble(5, biayaAdmin);
+            stmt.setString(6, kodePromo != null ? kodePromo : "");
+            stmt.setDouble(7, saldoTerpotong);
+            stmt.setDouble(8, saldoDitambah);
+            stmt.setString(9, StatusType.BERHASIL.name());
+            stmt.setString(10, topUpType != null ? topUpType.name() : null);
+
+            // Eksekusi query
+            int rows = stmt.executeUpdate();
+            conn.con.setAutoCommit(false);
+
+            if (rows > 0) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error executing update: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }

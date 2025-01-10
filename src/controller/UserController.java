@@ -161,7 +161,8 @@ public class UserController {
                 userRs.getInt("pin"),
                 userRs.getInt("nomor_rekening"),
                 userRs.getDouble("saldo"),
-                null);
+                null,
+                userRs.getString("status"));
     }
 
     public static Admin fetchAdmin(String userId, ResultSet userRs) throws SQLException {
@@ -219,7 +220,7 @@ public class UserController {
             PreparedStatement stmt = conn.con.prepareStatement(query);
             stmt.setDouble(1, nominal);
             stmt.setString(2, userId);
-    
+
             int rowsUpdated = stmt.executeUpdate();
             return rowsUpdated > 0;
         } catch (SQLException e) {
@@ -227,5 +228,5 @@ public class UserController {
             return false;
         }
     }
-    
+
 }

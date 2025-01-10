@@ -86,14 +86,14 @@ public class DetailBlueSavingPage {
 
         pindahSaldoButton.addActionListener(e -> {
             String userId = nasabah.getUser_id();
-            String tabunganId = blueSaving.getTabungan_id();
             double nominal = Double
                     .parseDouble(JOptionPane.showInputDialog("Masukkan nominal yang ingin dipindahkan:"));
 
             FormInputPIN formInputPIN = new FormInputPIN();
             boolean isVerified = formInputPIN.showInputPIN(nasabah);
             if (isVerified) {
-                boolean success = BlueSavingController.pindahSaldo(userId, nominal, tabunganId);
+                boolean success = BlueSavingController.pindahSaldo(userId, nominal, blueSaving);
+
                 if (success) {
                     JOptionPane.showMessageDialog(frame, "Saldo berhasil dipindahkan!");
 
@@ -124,14 +124,13 @@ public class DetailBlueSavingPage {
 
         tarikSaldoButton.addActionListener(e -> {
             String userId = nasabah.getUser_id();
-            String tabunganId = blueSaving.getTabungan_id();
             double nominal = Double.parseDouble(JOptionPane.showInputDialog("Masukkan nominal yang ingin ditarik:"));
 
             FormInputPIN formInputPIN = new FormInputPIN();
             boolean isVerified = formInputPIN.showInputPIN(nasabah);
             if (isVerified) {
 
-                boolean success = BlueSavingController.tarikSaldo(userId, nominal, tabunganId);
+                boolean success = BlueSavingController.tarikSaldo(userId, nominal, blueSaving);
 
                 if (success) {
                     JOptionPane.showMessageDialog(frame, "Saldo berhasil ditarik!");

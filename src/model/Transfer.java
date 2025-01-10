@@ -19,7 +19,6 @@ public class Transfer extends Transaksi {
         this.nomorRekeningTujuan = nomorRekeningTujuan;
     }
 
-
     public double getJumlahSaldoTerpotong() {
         return jumlahSaldoTerpotong;
     }

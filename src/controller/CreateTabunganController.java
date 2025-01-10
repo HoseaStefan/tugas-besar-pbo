@@ -22,7 +22,8 @@ public class CreateTabunganController {
 
             String tabungan_id = generateTabunganId();
             if (tabungan_id == null) {
-                JOptionPane.showMessageDialog(null, "Failed to generate Tabungan ID.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Failed to generate Tabungan ID.", "Error",
+                        JOptionPane.ERROR_MESSAGE);
                 return false;
             }
 
@@ -58,7 +59,8 @@ public class CreateTabunganController {
             ResultSet rs = checkStmt.executeQuery();
 
             if (rs.next() && rs.getInt("depositCount") > 0) {
-                JOptionPane.showMessageDialog(null, "User already has an active deposit.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "User already has an active deposit.", "Error",
+                        JOptionPane.ERROR_MESSAGE);
                 return false;
             }
 
@@ -89,14 +91,16 @@ public class CreateTabunganController {
             int rowsUpdated = updateSaldoStmt.executeUpdate();
 
             if (rowsUpdated <= 0) {
-                JOptionPane.showMessageDialog(null, "Failed to update user's balance.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Failed to update user's balance.", "Error",
+                        JOptionPane.ERROR_MESSAGE);
                 return false;
             }
 
             // Generate a unique tabungan ID
             String tabunganId = generateTabunganIdDeposito();
             if (tabunganId == null) {
-                JOptionPane.showMessageDialog(null, "Failed to generate Tabungan ID.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Failed to generate Tabungan ID.", "Error",
+                        JOptionPane.ERROR_MESSAGE);
                 return false;
             }
 
@@ -152,6 +156,10 @@ public class CreateTabunganController {
             PreparedStatement stmt = conn.con.prepareStatement(query);
             ResultSet rs = stmt.executeQuery();
 
+            if (rs.next()) {
+                String lastId = rs.getString("tabungan_id");
+                nextId = Integer.parseInt(lastId.split("-")[1]) + 1;
+            }
             return prefix + nextId;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -168,7 +176,8 @@ public class CreateTabunganController {
 
             String tabungan_id = generateTabunganIdBlueGether();
             if (tabungan_id == null) {
-                JOptionPane.showMessageDialog(null, "Failed to generate Tabungan ID.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Failed to generate Tabungan ID.", "Error",
+                        JOptionPane.ERROR_MESSAGE);
                 return false;
             }
 
@@ -191,10 +200,13 @@ public class CreateTabunganController {
             if (rowsInserted > 0) {
                 // Tambahkan semua nasabah di listNasabah ke database
                 for (Nasabah nasabah : blueGether.getListNasabah()) {
-                    boolean success = BlueGetherController.tambahNasabahToListNasabah(tabungan_id, nasabah.getUser_id());
+                    boolean success = BlueGetherController.tambahNasabahToListNasabah(tabungan_id,
+                            nasabah.getUser_id());
 
                     if (!success) {
-                        JOptionPane.showMessageDialog(null, "Failed to add nasabah with user ID: " + nasabah.getUser_id(), "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null,
+                                "Failed to add nasabah with user ID: " + nasabah.getUser_id(), "Error",
+                                JOptionPane.ERROR_MESSAGE);
                     }
                 }
                 return true;

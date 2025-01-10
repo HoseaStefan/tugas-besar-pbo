@@ -67,7 +67,7 @@ public class MenuNasabah {
 
         btnLoyalty.addActionListener((actionEvent) -> {
             frame.dispose();
-            new MenuBeliLoyalty();
+            // new MenuBeliLoyalty();
         });
 
         JButton createSavingButton = new JButton("Tabungan");

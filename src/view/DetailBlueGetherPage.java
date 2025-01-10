@@ -86,7 +86,6 @@ public class DetailBlueGetherPage {
 
         pindahSaldoButton.addActionListener(e -> {
             String userId = nasabah.getUser_id();
-            String tabunganId = blueGether.getTabungan_id();
             try {
                 double nominal = Double
                         .parseDouble(JOptionPane.showInputDialog("Masukkan nominal yang ingin dipindahkan:"));
@@ -95,7 +94,7 @@ public class DetailBlueGetherPage {
                 boolean isVerified = formInputPIN.showInputPIN(nasabah);
                 if (isVerified) {
 
-                    boolean success = BlueGetherController.pindahSaldo(userId, nominal, tabunganId);
+                    boolean success = BlueGetherController.pindahSaldoGether(userId, nominal, blueGether);
                     if (success) {
                         JOptionPane.showMessageDialog(frame, "Saldo berhasil dipindahkan!");
 
@@ -182,7 +181,6 @@ public class DetailBlueGetherPage {
 
             tarikSaldoButton.addActionListener(e -> {
                 String userId = nasabah.getUser_id();
-                String tabunganId = blueGether.getTabungan_id();
                 try {
                     double nominal = Double
                             .parseDouble(JOptionPane.showInputDialog("Masukkan nominal yang ingin ditarik:"));
@@ -191,7 +189,7 @@ public class DetailBlueGetherPage {
                     boolean isVerified = formInputPIN.showInputPIN(nasabah);
                     if (isVerified) {
 
-                        boolean success = BlueGetherController.tarikSaldoGether(userId, nominal, tabunganId);
+                        boolean success = BlueGetherController.tarikSaldoGether(userId, nominal, blueGether);
                         if (success) {
                             JOptionPane.showMessageDialog(frame, "Saldo berhasil ditarik!");
 

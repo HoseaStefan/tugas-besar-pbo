@@ -1,5 +1,5 @@
 package model;
 
 public enum TransaksiType {
-    TOPUP, TRANSFER, SETOR;
+    TOPUP, TRANSFER, SETOR, BLUESAVING, BLUEGETHER, BLUEDEPOSITO;
 }

@@ -8,6 +8,7 @@ public class Nasabah extends User {
     private int nomorRekening;
     private double saldo;
     private Loyalty loyalty;
+    private String status;
     private ArrayList<Tabungan> listTabungan;
     private ArrayList<PromoUsed> listVoucher;
     private ArrayList<Transaksi> listTransaksi;
@@ -21,13 +22,14 @@ public class Nasabah extends User {
     }
 
     public Nasabah(String user_id, String name, String username, String email, UserType userType,
-            String fullName, int pin, int nomorRekening, double saldo, Loyalty loyalty) {
+            String fullName, int pin, int nomorRekening, double saldo, Loyalty loyalty, String status) {
         super(user_id, name, username, email, userType);
         this.fullName = fullName;
         this.pin = pin;
         this.nomorRekening = nomorRekening;
         this.saldo = saldo;
         this.loyalty = loyalty;
+        this.status = status;
     }
 
     public Nasabah(int nomorRekening) {
@@ -72,6 +74,14 @@ public class Nasabah extends User {
 
     public void setLoyalty(Loyalty loyalty) {
         this.loyalty = loyalty;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public ArrayList<Tabungan> getListTabungan() {
