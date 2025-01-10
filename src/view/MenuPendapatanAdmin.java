@@ -1,11 +1,10 @@
 package view;
 
-import javax.swing.*;
+import controller.AdminController;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
+import javax.swing.*;
 import model.TransaksiType;
-
-import controller.AdminController;
 
 public class MenuPendapatanAdmin {
 
@@ -97,7 +96,7 @@ public class MenuPendapatanAdmin {
         double setorUangPendapatan = AdminController.pendapatanAdminTransaksi(TransaksiType.SETOR);
         double transferPendapatan = AdminController.pendapatanAdminTransaksi(TransaksiType.TRANSFER);
         double topUpPendapatan = AdminController.pendapatanAdminTransaksi(TransaksiType.TOPUP);
-        double loyaltyPackagePendapatan = 0.0;  
+        double loyaltyPackagePendapatan = AdminController.pendapatanAdminLoyalty(); 
 
         setorUangValue.setText("Rp " + formatCurrency(setorUangPendapatan));
         transferValue.setText("Rp " + formatCurrency(transferPendapatan));

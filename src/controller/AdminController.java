@@ -1,9 +1,7 @@
 package controller;
 
 import java.sql.*;
-
 import javax.swing.table.DefaultTableModel;
-
 import model.TransaksiType;
 
 public class AdminController {
@@ -14,38 +12,38 @@ public class AdminController {
         String query = "DELETE FROM promo WHERE kode_promo = ?";
         try {
             conn.connect();
-    
+
             PreparedStatement stmt = conn.con.prepareStatement(query);
             stmt.setString(1, promoCode);
             int rowsAffected = stmt.executeUpdate();
-            
+
             return rowsAffected > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            conn.disconnect(); 
+            conn.disconnect();
         }
         return false;
     }
-    
+
     public static void loadPromoCodesForDeletion(DefaultTableModel tableModel) {
         String query = "SELECT kode_promo, promo_type, potongan_value FROM promo";
         try {
-            conn.connect(); 
-    
+            conn.connect();
+
             PreparedStatement stmt = conn.con.prepareStatement(query);
             ResultSet rs = stmt.executeQuery();
-            
+
             while (rs.next()) {
                 String promoCode = rs.getString("kode_promo");
                 String promoType = rs.getString("promo_type");
                 double discountValue = rs.getDouble("potongan_value");
-                tableModel.addRow(new Object[]{promoCode, promoType, discountValue});
+                tableModel.addRow(new Object[] { promoCode, promoType, discountValue });
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            conn.disconnect(); 
+            conn.disconnect();
         }
     }
 
@@ -114,4 +112,30 @@ public class AdminController {
 
         return totalAdminFee;
     }
+
+    public static double pendapatanAdminLoyalty() {
+        conn.connect(); 
+        double pendapatan = 0;
+    
+        try {
+            String query = "SELECT COUNT(*) AS total FROM loyalty";
+            PreparedStatement stmt = conn.con.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+    
+            if (rs.next()) {
+                int totalRows = rs.getInt("total");
+                pendapatan = totalRows * 99000; 
+            }
+    
+            rs.close();
+            stmt.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            conn.disconnect(); 
+        }
+    
+        return pendapatan;
+    }
+    
 }

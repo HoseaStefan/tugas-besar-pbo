@@ -1,13 +1,14 @@
 package view;
 
-import javax.swing.*;
+import controller.LoyaltyController;
+import controller.TransaksiController;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
-import controller.TransaksiController;
+import javax.swing.*;
 import model.CurrentUser;
 import model.Nasabah;
-import model.TransaksiType;
 import model.TopUpType;
+import model.TransaksiType;
 
 public class FormTopUpEmoney {
 
@@ -16,6 +17,8 @@ public class FormTopUpEmoney {
     public FormTopUpEmoney() {
         showFormTopUpEmoney();
     }
+
+    static LoyaltyController loyaltyController;
 
     public void showFormTopUpEmoney() {
         CurrentUser currentUser = CurrentUser.getInstance();
@@ -99,49 +102,104 @@ public class FormTopUpEmoney {
         topUpButton.setBounds(120, 540, 260, 50);
         Component.styleButton(topUpButton, new Color(3, 123, 252), buttonFont);
         topUpButton.addActionListener(e -> {
-            try {
-                String promoCode = inputPromo.getText();
-                String saldoInput = inputSaldo.getText();
-                String eMoneyInput = inputEMoney.getText();
-                double amount = Double.parseDouble(saldoInput);
-
-                if (amount < 0) {
-                    JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak boleh negatif.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                
-
-                String selectedTopUpType = (String) eMoneyComboBox.getSelectedItem();
-                TopUpType topUpType = TopUpType.valueOf(selectedTopUpType);
-
-                if (TransaksiController.verifyNomorRekeningTujuan(Integer.parseInt(eMoneyInput))) { 
-                    JOptionPane.showMessageDialog(frame, "Nomor e-money tujuan tidak valid.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                boolean promoValid = TransaksiController.verifyKodePromo(promoCode, TransaksiType.TOPUP);
-                if (amount > nasabah.getSaldo()) {
-                    JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak mencukupi.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                if (!promoValid) {
-                    if (amount + 2500 > nasabah.getSaldo()) {
+            if (loyaltyController.hasLoyaltyActive(nasabah.getUser_id()) == false) {
+                try {
+                    String promoCode = inputPromo.getText();
+                    String saldoInput = inputSaldo.getText();
+                    String eMoneyInput = inputEMoney.getText();
+                    double amount = Double.parseDouble(saldoInput);
+    
+                    if (amount < 0) {
+                        JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak boleh negatif.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    
+    
+                    String selectedTopUpType = (String) eMoneyComboBox.getSelectedItem();
+                    TopUpType topUpType = TopUpType.valueOf(selectedTopUpType);
+    
+                    if (TransaksiController.verifyNomorRekeningTujuan(Integer.parseInt(eMoneyInput))) { 
+                        JOptionPane.showMessageDialog(frame, "Nomor e-money tujuan tidak valid.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+    
+                    boolean promoValid = TransaksiController.verifyKodePromo(promoCode, TransaksiType.TOPUP);
+                    if (amount > nasabah.getSaldo()) {
                         JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak mencukupi.", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                }
-                if (promoValid || promoCode.isEmpty()) {
-                    frame.dispose();
-                    new MenuBonTransaksi(TransaksiType.TOPUP, promoValid, amount, Integer.parseInt(eMoneyInput), 2500.0, topUpType);
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Kode promo tidak valid.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(frame, "Input saldo harus berupa angka.", "Error", JOptionPane.ERROR_MESSAGE);
+                    if (!promoValid) {
+                        if (amount + 2500 > nasabah.getSaldo()) {
+                            JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak mencukupi.", "Error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                    }
+                    if (promoValid || promoCode.isEmpty()) {
+                        frame.dispose();
+                        new MenuBonTransaksi(TransaksiType.TOPUP, promoValid, amount, Integer.parseInt(eMoneyInput), 2500.0, topUpType);
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Kode promo tidak valid.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(frame, "Input saldo harus berupa angka.", "Error", JOptionPane.ERROR_MESSAGE);
+                }   
+            } else {
+                try {
+                    String promoCode = inputPromo.getText();
+                    String saldoInput = inputSaldo.getText();
+                    String eMoneyInput = inputEMoney.getText();
+                    double amount = Double.parseDouble(saldoInput);
+                    
+                    if (amount < 0) {
+                        JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak boleh negatif.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    
+                    
+                    String selectedTopUpType = (String) eMoneyComboBox.getSelectedItem();
+                    TopUpType topUpType = TopUpType.valueOf(selectedTopUpType);
+                    
+                    if (TransaksiController.verifyNomorRekeningTujuan(Integer.parseInt(eMoneyInput))) { 
+                        JOptionPane.showMessageDialog(frame, "Nomor e-money tujuan tidak valid.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    
+                    boolean promoValid = TransaksiController.verifyKodePromo(promoCode, TransaksiType.TOPUP);
+                    if (amount > nasabah.getSaldo()) {
+                        JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak mencukupi.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    if (!promoValid) {
+                        if (amount + 2500 > nasabah.getSaldo()) {
+                            JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak mencukupi.", "Error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                    }
+                    if (promoCode.isEmpty()) {
+                        int response = JOptionPane.showConfirmDialog(
+                                null,
+                                "Apakah anda mau menggunakan voucher loyalty?",
+                                "Konfirmasi Penggunaan Voucher",
+                                JOptionPane.YES_NO_OPTION,
+                                JOptionPane.QUESTION_MESSAGE);
+                                if (response == JOptionPane.YES_OPTION) {
+                                    frame.dispose();
+                                    new MenuBonTransaksi(TransaksiType.TOPUP, true, amount, Integer.parseInt(eMoneyInput), 2500.0, topUpType);
+                                } else if (response == JOptionPane.NO_OPTION) {
+                                    frame.dispose();
+                                    new MenuBonTransaksi(TransaksiType.TOPUP, promoValid, amount, Integer.parseInt(eMoneyInput), 2500.0, topUpType);
+                                }
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Kode promo tidak valid.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(frame, "Input saldo harus berupa angka.", "Error", JOptionPane.ERROR_MESSAGE);
+                }   
+                
             }
         });
         panel.add(topUpButton);
-
+        
         JButton exitButton = new JButton("Back To Homepage");
         exitButton.setBounds(120, 600, 260, 50);
         Component.styleButton(exitButton, new Color(255, 69, 58), buttonFont);

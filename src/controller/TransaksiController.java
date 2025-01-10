@@ -3,10 +3,8 @@ package controller;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-
 import model.*;
 
 public class TransaksiController {
@@ -175,5 +173,10 @@ public class TransaksiController {
         }
 
         return false;
+    }
+    public static boolean useLoyaltyPromoCode(TransaksiType transaksiType, String userId){
+
+
+        return true;
     }
 }

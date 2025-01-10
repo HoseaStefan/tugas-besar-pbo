@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 
 public class Loyalty {
     private String loyalty_id;
-    private String nasabah_id;
+    private String user_id;
     private double hargaLoyalty;
     private int banyakVoucherSetor;
     private int banyakVoucherTransfer;
@@ -22,13 +22,13 @@ public class Loyalty {
     }
 
 
-    public String getNasabah_id() {
-        return nasabah_id;
+    public String getUser_id() {
+        return user_id;
     }
 
 
-    public void setNasabah_id(String nasabah_id) {
-        this.nasabah_id = nasabah_id;
+    public void setUser_id(String getuser_id) {
+        this.user_id = getuser_id;
     }
 
     
@@ -92,10 +92,10 @@ public class Loyalty {
     }
 
     
-    public Loyalty(String loyalty_id, String nasabah_id, double hargaLoyalty, int banyakVoucherSetor,
+    public Loyalty(String loyalty_id, String getuser_id, double hargaLoyalty, int banyakVoucherSetor,
             int banyakVoucherTransfer, int banyakVoucherTopup, boolean loyaltyActive, Timestamp expiredDate) {
         this.loyalty_id = loyalty_id;
-        this.nasabah_id = nasabah_id;
+        this.user_id = getuser_id;
         this.hargaLoyalty = hargaLoyalty;
         this.banyakVoucherSetor = banyakVoucherSetor;
         this.banyakVoucherTransfer = banyakVoucherTransfer;

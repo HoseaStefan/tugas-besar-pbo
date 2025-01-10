@@ -1,5 +1,9 @@
 package view;
 
+import controller.LoyaltyController;
+import controller.TransaksiController;
+import java.awt.*;
+import java.awt.geom.RoundRectangle2D;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -7,15 +11,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
-import controller.TransaksiController;
-
-import java.awt.*;
-import java.awt.geom.RoundRectangle2D;
-
 import model.CurrentUser;
 import model.Nasabah;
-import model.Transaksi;
 import model.TransaksiType;
 
 public class FormSetorSaldo {
@@ -25,6 +22,8 @@ public class FormSetorSaldo {
     public FormSetorSaldo() {
         showFormSetorSaldo();
     }
+
+    static LoyaltyController loyaltyController;
 
     public void showFormSetorSaldo() {
         CurrentUser currentUser = CurrentUser.getInstance();
@@ -87,28 +86,74 @@ public class FormSetorSaldo {
         topUpButton.setBounds(120, 380, 260, 50);
         Component.styleButton(topUpButton, new Color(3, 123, 252), buttonFont);
         topUpButton.addActionListener(e -> {
-            try {
-                String promoCode = inputPromo.getText();
-                String saldoInput = inputSaldo.getText();
-                double amount = Double.parseDouble(saldoInput);
+            if (loyaltyController.hasLoyaltyActive(nasabah.getUser_id()) == false) {
+                try {
+                    String promoCode = inputPromo.getText();
+                    String saldoInput = inputSaldo.getText();
+                    double amount = Double.parseDouble(saldoInput);
 
-                if (amount < 0) {
-                    JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak boleh negatif.", "Error",
+                    if (amount < 0) {
+                        JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak boleh negatif.", "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    boolean promoValid = TransaksiController.verifyKodePromo(promoCode, TransaksiType.SETOR);
+                    if (promoValid || promoCode.isEmpty()) {
+                        frame.dispose();
+                        System.out.println(promoValid);
+                        new MenuBonTransaksi(TransaksiType.SETOR, promoValid, amount, nasabah.getNomorRekening(),
+                                5000.0, null);
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Kode promo tidak valid.", "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(frame, "Input saldo harus berupa angka.", "Error",
                             JOptionPane.ERROR_MESSAGE);
-                    return;
                 }
 
-                boolean promoValid = TransaksiController.verifyKodePromo(promoCode, TransaksiType.SETOR);
-                if (promoValid || promoCode.isEmpty()) {
-                    frame.dispose();
-                    System.out.println(promoValid);
-                    new MenuBonTransaksi(TransaksiType.SETOR, promoValid, amount, nasabah.getNomorRekening(), 5000.0, null);
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Kode promo tidak valid.", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                try {
+                    String promoCode = inputPromo.getText();
+                    String saldoInput = inputSaldo.getText();
+                    double amount = Double.parseDouble(saldoInput);
+
+                    if (amount < 0) {
+                        JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak boleh negatif.", "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    boolean promoValid = TransaksiController.verifyKodePromo(promoCode, TransaksiType.SETOR);
+                    if (promoCode.isEmpty()) {
+                        int response = JOptionPane.showConfirmDialog(
+                                null,
+                                "Apakah anda mau menggunakan voucher loyalty?",
+                                "Konfirmasi Penggunaan Voucher",
+                                JOptionPane.YES_NO_OPTION,
+                                JOptionPane.QUESTION_MESSAGE);
+
+                        if (response == JOptionPane.YES_OPTION) {
+                            frame.dispose();
+                            new MenuBonTransaksi(TransaksiType.SETOR, true, amount, nasabah.getNomorRekening(),
+                            5000.0, null);
+                            
+                        } else if (response == JOptionPane.NO_OPTION) {
+                            new MenuBonTransaksi(TransaksiType.SETOR, promoValid, amount, nasabah.getNomorRekening(),
+                            5000.0, null);
+                            frame.dispose();
+                        } 
+
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Kode promo tidak valid.", "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(frame, "Input saldo harus berupa angka.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(frame, "Input saldo harus berupa angka.", "Error",
-                        JOptionPane.ERROR_MESSAGE);
+
             }
         });
         panel.add(topUpButton);

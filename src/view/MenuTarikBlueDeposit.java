@@ -123,107 +123,116 @@ public class MenuTarikBlueDeposit {
             new MenuBlueDeposit();
         });
 
-        // ActionListener tombol Submit
-        // ActionListener tombol Submit
         btnSubmit.addActionListener(e -> {
             String input = txtTarik.getText();
 
             try {
-                // Ambil data deposito berdasarkan user_id
-                List<BlueDeposito> blueDepositos = BlueDepositoController.getDepositsByUserId(nasabah.getUser_id());
-                double nominal = Double.parseDouble(input);
+                FormInputPIN formInputPIN = new FormInputPIN();
+                boolean isVerified = formInputPIN.showInputPIN(nasabah);
+                if (isVerified == true) {
+                    // Ambil data deposito berdasarkan user_id
+                    List<BlueDeposito> blueDepositos = BlueDepositoController.getDepositsByUserId(nasabah.getUser_id());
+                    double nominal = Double.parseDouble(input);
 
-                // Validasi jika data deposito tidak ditemukan
-                if (!BlueDepositoController.hasBlueDeposito(nasabah.getUser_id())) {
-                    JOptionPane.showMessageDialog(frame, "Data deposito tidak ditemukan!", "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                // Pilih deposito pertama dari daftar
-                BlueDeposito blueDeposito = blueDepositos.get(0);
-                double saldoAwal = blueDeposito.getSaldoAwal();
-                double saldoAkhir = blueDeposito.getSaldoAkhir();
-                Timestamp endDate = blueDeposito.getEndDate();
-
-                // Validasi nominal yang diinput
-                if (nominal > saldoAwal) {
-                    // Jika input lebih besar dari saldo awal
-                    JOptionPane.showMessageDialog(frame, "Nominal tidak valid! Saldo tidak mencukupi.", "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                    frame.dispose();
-                    new MenuBlueDeposit();
-
-                } else if (nominal < saldoAwal) {
-                    // Jika input lebih kecil dari saldo awal
-                    JOptionPane.showMessageDialog(frame, "Penarikan sebesar Rp " + nominal + " berhasil dilakukan!",
-                            "Sukses", JOptionPane.INFORMATION_MESSAGE);
-
-                    double newSaldoAwal = saldoAwal - nominal;
-
-                    // Update saldo di BlueDeposito di database
-                    boolean updated = BlueDepositoController.updateBlueDepositoSaldo(nasabah.getUser_id(),
-                            newSaldoAwal);
-
-                    // Tambahkan nominal ke saldo nasabah jika berhasil
-                    if (updated) {
-                        // Update saldo nasabah
-                        double newSaldoNasabah = nasabah.getSaldo() + nominal;
-                        nasabah.setSaldo(newSaldoNasabah); // Update saldo nasabah
-
-                        // Mengupdate saldo label nasabah di GUI
-                        saldoLabel.setText("Current saldo: Rp." + nasabah.getSaldo());
-                    } else {
-                        JOptionPane.showMessageDialog(frame, "Gagal memperbarui saldo nasabah!", "Error",
+                    // Validasi jika data deposito tidak ditemukan
+                    if (!BlueDepositoController.hasBlueDeposito(nasabah.getUser_id())) {
+                        JOptionPane.showMessageDialog(frame, "Data deposito tidak ditemukan!", "Error",
                                 JOptionPane.ERROR_MESSAGE);
+                        return;
                     }
 
-                    frame.dispose();
-                    new MenuBlueDeposit();
+                    // Pilih deposito pertama dari daftar
+                    BlueDeposito blueDeposito = blueDepositos.get(0);
+                    double saldoAwal = blueDeposito.getSaldoAwal();
+                    double saldoAkhir = blueDeposito.getSaldoAkhir();
+                    Timestamp endDate = blueDeposito.getEndDate();
 
-                } else if (nominal == saldoAwal) {
-                    // Jika input sama dengan saldo awal
-                    if (now.after(endDate) || now.equals(endDate)) {
-                        // Jika waktu saat ini lebih besar atau sama dengan end_date
-                        JOptionPane.showMessageDialog(frame,
-                                "Saldo akhir sebesar Rp " + saldoAkhir + " dikembalikan karena deposito telah selesai.",
+                    // Validasi nominal yang diinput
+                    if (nominal > saldoAwal) {
+                        // Jika input lebih besar dari saldo awal
+                        JOptionPane.showMessageDialog(frame, "Nominal tidak valid! Saldo tidak mencukupi.", "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                        frame.dispose();
+                        new MenuBlueDeposit();
+
+                    } else if (nominal < saldoAwal) {
+                        // Jika input lebih kecil dari saldo awal
+                        JOptionPane.showMessageDialog(frame, "Penarikan sebesar Rp " + nominal + " berhasil dilakukan!",
                                 "Sukses", JOptionPane.INFORMATION_MESSAGE);
 
-                        // Tambahkan saldo akhir ke saldo nasabah
-                        boolean updated = UserController.updateUserSaldo(nasabah.getUser_id(), saldoAkhir);
-                        if (!updated) {
+                        double newSaldoAwal = saldoAwal - nominal;
+
+                        // Update saldo di BlueDeposito di database
+                        boolean updated = BlueDepositoController.updateBlueDepositoSaldo(nasabah.getUser_id(),
+                                newSaldoAwal);
+
+                        // Tambahkan nominal ke saldo nasabah jika berhasil
+                        if (updated) {
+                            // Update saldo nasabah
+                            double newSaldoNasabah = nasabah.getSaldo() + nominal;
+                            nasabah.setSaldo(newSaldoNasabah); // Update saldo nasabah
+
+                            // Mengupdate saldo label nasabah di GUI
+                            saldoLabel.setText("Current saldo: Rp." + nasabah.getSaldo());
+                        } else {
                             JOptionPane.showMessageDialog(frame, "Gagal memperbarui saldo nasabah!", "Error",
                                     JOptionPane.ERROR_MESSAGE);
-                            return;
                         }
 
-                        BlueDepositoController.deleteBlueDeposito(nasabah.getUser_id());
                         frame.dispose();
                         new MenuBlueDeposit();
 
+                    } else if (nominal == saldoAwal) {
+                        // Jika input sama dengan saldo awal
+                        if (now.after(endDate) || now.equals(endDate)) {
+                            // Jika waktu saat ini lebih besar atau sama dengan end_date
+                            JOptionPane.showMessageDialog(frame,
+                                    "Saldo akhir sebesar Rp " + saldoAkhir
+                                            + " dikembalikan karena deposito telah selesai.",
+                                    "Sukses", JOptionPane.INFORMATION_MESSAGE);
+
+                            // Tambahkan saldo akhir ke saldo nasabah
+                            boolean updated = UserController.updateUserSaldo(nasabah.getUser_id(), saldoAkhir);
+                            if (!updated) {
+                                JOptionPane.showMessageDialog(frame, "Gagal memperbarui saldo nasabah!", "Error",
+                                        JOptionPane.ERROR_MESSAGE);
+                                return;
+                            }
+
+                            BlueDepositoController.deleteBlueDeposito(nasabah.getUser_id());
+                            frame.dispose();
+                            new MenuBlueDeposit();
+
+                        } else {
+                            // Jika waktu saat ini belum mencapai end_date
+                            JOptionPane.showMessageDialog(frame,
+                                    "Saldo awal sebesar Rp " + saldoAwal + " dikembalikan.", "Sukses",
+                                    JOptionPane.INFORMATION_MESSAGE);
+
+                            // Tambahkan saldo awal ke saldo nasabah
+                            boolean updated = UserController.updateUserSaldo(nasabah.getUser_id(), saldoAwal);
+                            if (!updated) {
+                                JOptionPane.showMessageDialog(frame, "Gagal memperbarui saldo nasabah!", "Error",
+                                        JOptionPane.ERROR_MESSAGE);
+                                return;
+                            }
+
+                            BlueDepositoController.deleteBlueDeposito(nasabah.getUser_id());
+                            frame.dispose();
+                            new MenuBlueDeposit();
+
+                        }
                     } else {
-                        // Jika waktu saat ini belum mencapai end_date
-                        JOptionPane.showMessageDialog(frame,
-                                "Saldo awal sebesar Rp " + saldoAwal + " dikembalikan.", "Sukses",
-                                JOptionPane.INFORMATION_MESSAGE);
-
-                        // Tambahkan saldo awal ke saldo nasabah
-                        boolean updated = UserController.updateUserSaldo(nasabah.getUser_id(), saldoAwal);
-                        if (!updated) {
-                            JOptionPane.showMessageDialog(frame, "Gagal memperbarui saldo nasabah!", "Error",
-                                    JOptionPane.ERROR_MESSAGE);
-                            return;
-                        }
-
-                        BlueDepositoController.deleteBlueDeposito(nasabah.getUser_id());
-                        frame.dispose();
-                        new MenuBlueDeposit();
-
+                        // Jika input tidak valid
+                        JOptionPane.showMessageDialog(frame, "Input tidak valid! Masukkan nominal yang sesuai.",
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE);
                     }
                 } else {
-                    // Jika input tidak valid
-                    JOptionPane.showMessageDialog(frame, "Input tidak valid! Masukkan nominal yang sesuai.", "Error",
-                            JOptionPane.ERROR_MESSAGE);
+
+                    JOptionPane.showMessageDialog(frame, "Pin salah silakan coba lagi", "error", JOptionPane.WARNING_MESSAGE);
+                    return; 
+
                 }
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(frame, "Terjadi kesalahan: " + ex.getMessage(), "Error",

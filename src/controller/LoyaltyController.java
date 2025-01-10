@@ -26,7 +26,7 @@ public class LoyaltyController {
             while (rs.next()) {
                 Loyalty loyalty = new Loyalty(
                         rs.getString("loyalty_id"),
-                        rs.getNString("user_id"), 
+                        rs.getNString("user_id"),
                         rs.getDouble("loyalty_value"),
                         rs.getInt("banyak_voucher_setor"),
                         rs.getInt("banyak_voucher_transfer"),
@@ -44,27 +44,132 @@ public class LoyaltyController {
         return loyaltyList;
     }
 
-    public static boolean hasLoyaltyActive(String user_id) {
+    public static boolean useVoucherSetor(String userId) {
         conn.connect();
         try {
-            String query = "SELECT loyalty_active FROM loyalty WHERE user ";
+            String query = "SELECT banyak_voucher_setor FROM loyalty WHERE user_id = ?";
+            PreparedStatement stmt = conn.con.prepareStatement(query);
+            stmt.setString(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                int banyakVoucherSetor = rs.getInt("banyak_voucher_setor");
+
+                if (banyakVoucherSetor > 0) {
+                    // Decrement the voucher count
+                    String updateQuery = "UPDATE loyalty SET banyak_voucher_setor = ? WHERE user_id = ?";
+                    PreparedStatement updateStmt = conn.con.prepareStatement(updateQuery);
+                    updateStmt.setInt(1, banyakVoucherSetor - 1);
+                    updateStmt.setString(2, userId);
+                    updateStmt.executeUpdate();
+
+                    return true; // Voucher available and decremented
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return true;
+        return false; // Voucher not available or error occurred
     }
 
-    public static void deleteExpiredLoyalty(String user_id){
+    public static boolean useVoucherTransfer(String userId) {
         conn.connect();
-        Timestamp now = new Timestamp(System.currentTimeMillis());
-        Timestamp endDate = calculateEndDate(now);
-
         try {
-            if (now.after(endDate)) {
-                // String query
+            String query = "SELECT banyak_voucher_transfer FROM loyalty WHERE user_id = ?";
+            PreparedStatement stmt = conn.con.prepareStatement(query);
+            stmt.setString(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                int banyakVoucherTransfer = rs.getInt("banyak_voucher_transfer");
+
+                if (banyakVoucherTransfer > 0) {
+                    // Decrement the voucher count
+                    String updateQuery = "UPDATE loyalty SET banyak_voucher_transfer = ? WHERE user_id = ?";
+                    PreparedStatement updateStmt = conn.con.prepareStatement(updateQuery);
+                    updateStmt.setInt(1, banyakVoucherTransfer - 1);
+                    updateStmt.setString(2, userId);
+                    updateStmt.executeUpdate();
+
+                    return true; // Voucher available and decremented
+                }
             }
         } catch (Exception e) {
-            
+            e.printStackTrace();
+        }
+        return false; // Voucher not available or error occurred
+    }
+
+    public static boolean useVoucherTopup(String userId) {
+        conn.connect();
+        try {
+            String query = "SELECT banyak_voucher_topup_money FROM loyalty WHERE user_id = ?";
+            PreparedStatement stmt = conn.con.prepareStatement(query);
+            stmt.setString(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                int banyakVoucherTopup = rs.getInt("banyak_voucher_topup_money");
+
+                if (banyakVoucherTopup > 0) {
+                    // Decrement the voucher count
+                    String updateQuery = "UPDATE loyalty SET banyak_voucher_topup_money = ? WHERE user_id = ?";
+                    PreparedStatement updateStmt = conn.con.prepareStatement(updateQuery);
+                    updateStmt.setInt(1, banyakVoucherTopup - 1);
+                    updateStmt.setString(2, userId);
+                    updateStmt.executeUpdate();
+
+                    return true; // Voucher available and decremented
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false; // Voucher not available or error occurred
+    }
+
+    public static boolean hasLoyaltyActive(String userId) {
+        conn.connect();
+        try {
+            // Query to check if the user has an active loyalty
+            String query = "SELECT loyalty_active FROM loyalty WHERE user_id = ?";
+            PreparedStatement stmt = conn.con.prepareStatement(query);
+            stmt.setString(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            // If result set has a row, then the user has an active loyalty
+            return rs.next(); // If there's at least one row, it means the user has an active loyalty
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false; // If no active loyalty found
+    }
+
+    public static void deleteExpiredLoyalty(String userId) {
+        conn.connect();
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+
+        try {
+            // Query to get the expiration date of loyalty for the user
+            String query = "SELECT expired_date FROM loyalty WHERE user_id = ?";
+            PreparedStatement stmt = conn.con.prepareStatement(query);
+            stmt.setString(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Timestamp expiredDate = rs.getTimestamp("expired_date");
+
+                // If the current date is after the expiration date, delete the loyalty entry
+                if (now.after(expiredDate)) {
+                    String deleteQuery = "DELETE FROM loyalty WHERE user_id = ?";
+                    PreparedStatement deleteStmt = conn.con.prepareStatement(deleteQuery);
+                    deleteStmt.setString(1, userId);
+                    deleteStmt.executeUpdate();
+                    System.out.println("Expired loyalty entry deleted for user: " + userId);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -75,68 +180,58 @@ public class LoyaltyController {
         return new Timestamp(calendar.getTimeInMillis());
     }
 
-    public static Boolean buyLoyaltyByUserId(String user_id) {
+    public static boolean buyLoyaltyByUserId(Loyalty loyalty) {
         conn.connect();
         try {
-            // Query untuk mendapatkan loyalty_id dan saldo dari tabel users
-            String query = "SELECT loyalty_id, saldo FROM users WHERE user_id = ?";
-            PreparedStatement stmt = conn.con.prepareStatement(query);
-            stmt.setString(1, user_id);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                String loyaltyId = rs.getString("loyalty_id");
-                double saldoUser = rs.getDouble("saldo");
-                double loyaltyValue = 99000; // Harga loyalty selalu 99000
-
-                // Jika loyalty_id null, lanjutkan proses pembelian loyalty
-                if (loyaltyId == null) {
-                    // Cek apakah saldo user cukup untuk membeli loyalty
-                    if (saldoUser >= loyaltyValue) {
-                        // Generate loyalty_id baru
-                        String newLoyaltyId = generateLoyaltyId();
-
-                        // Hitung expired_date: waktu saat ini + 3 bulan
-                        Calendar cal = Calendar.getInstance();
-                        cal.add(Calendar.MONTH, 3);
-                        Timestamp expiredDate = new Timestamp(cal.getTimeInMillis());
-
-                        // Update user untuk membeli loyalty
-                        String updateUserQuery = "UPDATE users SET loyalty_id = ?, saldo = saldo - ? WHERE user_id = ?";
-                        PreparedStatement updateUserStmt = conn.con.prepareStatement(updateUserQuery);
-                        updateUserStmt.setString(1, newLoyaltyId);
-                        updateUserStmt.setDouble(2, loyaltyValue);
-                        updateUserStmt.setString(3, user_id);
-                        updateUserStmt.executeUpdate();
-
-                        // Update loyalty atribut termasuk expired_date
-                        String updateLoyaltyQuery = "UPDATE loyalty SET banyak_voucher_setor, banyak_voucher_topup_money = 100, banyak_voucher_transfer = 100, loyalty_active = true, expired_date = ? WHERE loyalty_id = ?";
-                        PreparedStatement updateLoyaltyStmt = conn.con.prepareStatement(updateLoyaltyQuery);
-                        updateLoyaltyStmt.setTimestamp(1, expiredDate);
-                        updateLoyaltyStmt.setString(2, newLoyaltyId);
-                        updateLoyaltyStmt.executeUpdate();
-
-                        JOptionPane.showMessageDialog(null, "Berhasil membeli loyalty!", "Sukses",
-                                JOptionPane.INFORMATION_MESSAGE);
-                        return true; // Berhasil membeli loyalty
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Saldo user tidak mencukupi untuk membeli loyalty.",
-                                "Kesalahan", JOptionPane.ERROR_MESSAGE);
-                        return false;
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(null, "User sudah memiliki loyalty.", "Informasi",
-                            JOptionPane.WARNING_MESSAGE);
-                    return false;
-                }
+            // Generate loyalty_id
+            String loyaltyId = generateLoyaltyId();
+            if (loyaltyId == null) {
+                JOptionPane.showMessageDialog(null, "Failed to generate Loyalty ID.", "Error", JOptionPane.ERROR_MESSAGE);
+                return false;
             }
-        } catch (Exception e) {
-            e.printStackTrace(); // Log error untuk debugging
-            JOptionPane.showMessageDialog(null, "Terjadi kesalahan: " + e.getMessage(), "Kesalahan",
-                    JOptionPane.ERROR_MESSAGE);
+    
+            // Check if the user already has an active loyalty
+            String checkQuery = "SELECT COUNT(*) AS count FROM loyalty WHERE user_id = ? AND loyalty_active = true";
+            PreparedStatement checkStmt = conn.con.prepareStatement(checkQuery);
+            checkStmt.setString(1, loyalty.getUser_id());
+            ResultSet rs = checkStmt.executeQuery();
+    
+            if (rs.next() && rs.getInt("count") > 0) {
+                JOptionPane.showMessageDialog(null, "Loyalty is already active for this user.", "Info", JOptionPane.WARNING_MESSAGE);
+                return false; // User already has an active loyalty
+            }
+    
+            // Prepare insert query
+            String query = "INSERT INTO loyalty (loyalty_id, user_id, loyalty_value, banyak_voucher_setor, banyak_voucher_transfer, banyak_voucher_topup_money, loyalty_active, expired_date) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement stmt = conn.con.prepareStatement(query);
+    
+            // Calculate loyalty details
+            double loyaltyPrice = 99000; // Price for loyalty
+            Timestamp expiryDate = calculateEndDate(new Timestamp(System.currentTimeMillis()));
+    
+            stmt.setString(1, loyaltyId);
+            stmt.setString(2, loyalty.getUser_id());
+            stmt.setDouble(3, loyaltyPrice);
+            stmt.setInt(4, loyalty.getBanyakVoucherSetor());
+            stmt.setInt(5, loyalty.getBanyakVoucherTransfer());
+            stmt.setInt(6, loyalty.getBanyakVoucherTopup());
+            stmt.setBoolean(7, true); // Loyalty active
+            stmt.setTimestamp(8, expiryDate);
+    
+            // Execute insert query
+            int rowsInserted = stmt.executeUpdate();
+            if (rowsInserted > 0) {
+                JOptionPane.showMessageDialog(null, "Successfully purchased loyalty!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-        return false; // Jika kondisi tidak terpenuhi
+        return false;
     }
+    
 
     public static String generateLoyaltyId() {
         conn.connect();
@@ -158,6 +253,20 @@ public class LoyaltyController {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static boolean paymentLoyaltyCode(String userId){
+        int response = JOptionPane.showConfirmDialog(
+                                null,
+                                "Apakah anda mau menggunakan voucher loyalty?",
+                                "Konfirmasi Penggunaan Voucher",
+                                JOptionPane.YES_NO_OPTION,
+                                JOptionPane.QUESTION_MESSAGE);
+        if (response == JOptionPane.YES_OPTION) {
+            return true;
+        }
+
+        return false;
     }
 
 }

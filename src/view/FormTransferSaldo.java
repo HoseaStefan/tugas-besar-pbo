@@ -1,9 +1,10 @@
 package view;
 
-import javax.swing.*;
+import controller.LoyaltyController;
+import controller.TransaksiController;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
-import controller.TransaksiController;
+import javax.swing.*;
 import model.CurrentUser;
 import model.Nasabah;
 import model.TransaksiType;
@@ -15,6 +16,8 @@ public class FormTransferSaldo {
     public FormTransferSaldo() {
         showFormTransferSaldo();
     }
+
+    static LoyaltyController loyaltyController;
 
     public void showFormTransferSaldo() {
         CurrentUser currentUser = CurrentUser.getInstance();
@@ -88,6 +91,8 @@ public class FormTransferSaldo {
         transferButton.setBounds(120, 460, 260, 50);
         Component.styleButton(transferButton, new Color(3, 123, 252), buttonFont);
         transferButton.addActionListener(e -> {
+
+        if (loyaltyController.hasLoyaltyActive(nasabah.getUser_id()) == false) {
             try {
                 String promoCode = inputPromo.getText();
                 String saldoInput = inputSaldo.getText();
@@ -127,6 +132,61 @@ public class FormTransferSaldo {
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(frame, "Input saldo harus berupa angka.", "Error", JOptionPane.ERROR_MESSAGE);
             }
+            
+        } else {
+            try {
+                String promoCode = inputPromo.getText();
+                String saldoInput = inputSaldo.getText();
+                String rekeningInput = inputRekening.getText();
+                double amount = Double.parseDouble(saldoInput);
+
+                if (amount < 0) {
+                    JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak boleh negatif.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                int rekeningTujuan = Integer.parseInt(rekeningInput);
+
+                System.out.println(rekeningTujuan);
+                if (TransaksiController.verifyNomorRekeningTujuan(rekeningTujuan)) { 
+                    JOptionPane.showMessageDialog(frame, "Nomor rekening tujuan tidak valid.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                boolean promoValid = TransaksiController.verifyKodePromo(promoCode, TransaksiType.TRANSFER);
+                if (amount > nasabah.getSaldo()) {
+                    JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak mencukupi.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if (!promoValid) {
+                    if (amount + 2500 > nasabah.getSaldo()) {
+                        JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak mencukupi.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+                if (promoCode.isEmpty()) {
+                    int response = JOptionPane.showConfirmDialog(
+                                null,
+                                "Apakah anda mau menggunakan voucher loyalty?",
+                                "Konfirmasi Penggunaan Voucher",
+                                JOptionPane.YES_NO_OPTION,
+                                JOptionPane.QUESTION_MESSAGE);
+                            if (response == JOptionPane.YES_OPTION) {
+                                frame.dispose();
+                                new MenuBonTransaksi(TransaksiType.TRANSFER, true, amount, rekeningTujuan, 2500.0, null);
+                                
+                            } else if (response == JOptionPane.NO_OPTION) {
+                                frame.dispose();
+                                new MenuBonTransaksi(TransaksiType.TRANSFER, promoValid, amount, rekeningTujuan, 2500.0, null);
+                            }
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Kode promo tidak valid.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(frame, "Input saldo harus berupa angka.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            
+        }
         });
         panel.add(transferButton);
 

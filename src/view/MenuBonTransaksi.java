@@ -1,15 +1,13 @@
 package view;
 
+import controller.TransaksiController;
+import java.awt.*;
+import java.awt.geom.RoundRectangle2D;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
-import java.awt.*;
-import java.awt.geom.RoundRectangle2D;
-
-import controller.TransaksiController;
 import model.CurrentUser;
 import model.Nasabah;
 import model.TopUpType;
@@ -88,6 +86,7 @@ public class MenuBonTransaksi {
         }
 
         if (promo) {
+            System.out.println(promo);
             JLabel promoLabel = new JLabel("Promo Terpakai (+): " + biayaAdmin);
             promoLabel.setBounds(50, 230, 400, 30);
             promoLabel.setForeground(Color.WHITE);
