@@ -52,9 +52,39 @@ public class CreateTabunganController {
         }
     }
 
-    public boolean createBlueDeposito(BlueDeposito blueDeposito) {
+    public static boolean pindahSaldoGether(String userId, double nominal) {
+
+        conn.connect();
+
+        try {
+            conn.con.setAutoCommit(false); // Mulai transaksi
+
+            // Kurangi saldo pengguna
+            String updateUserSaldoQuery = "UPDATE users SET saldo = saldo - ? WHERE user_id = ?";
+            PreparedStatement updateUserSaldoStmt = conn.con.prepareStatement(updateUserSaldoQuery);
+            updateUserSaldoStmt.setDouble(1, nominal);
+            updateUserSaldoStmt.setString(2, userId);
+            updateUserSaldoStmt.executeUpdate();
+
+            conn.con.commit(); // Commit transaksi
+            return true;
+
+        } catch (SQLException ex) {
+            try {
+                conn.con.rollback(); // Rollback jika terjadi kesalahan
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean createBlueDeposito(BlueDeposito blueDeposito, Nasabah nasabah) {
         conn.connect();
         try {
+            conn.con.setAutoCommit(false);
+
             // Check if the user already has an active deposit
             String checkQuery = "SELECT COUNT(*) AS depositCount FROM blue_deposito WHERE user_id = ? AND complete = false";
             PreparedStatement checkStmt = conn.con.prepareStatement(checkQuery);
@@ -67,17 +97,18 @@ public class CreateTabunganController {
                 return false;
             }
 
-            String getBalanceQuery = "SELECT saldo FROM users WHERE user_id = ?";
-            PreparedStatement balanceStmt = conn.con.prepareStatement(getBalanceQuery);
-            balanceStmt.setString(1, blueDeposito.getuser_id());
-            ResultSet balanceRs = balanceStmt.executeQuery();
+            // String getBalanceQuery = "SELECT saldo FROM users WHERE user_id = ?";
+            // PreparedStatement balanceStmt = conn.con.prepareStatement(getBalanceQuery);
+            // balanceStmt.setString(1, blueDeposito.getuser_id());
+            // ResultSet balanceRs = balanceStmt.executeQuery();
 
-            if (!balanceRs.next()) {
-                JOptionPane.showMessageDialog(null, "User not found.", "Error", JOptionPane.ERROR_MESSAGE);
-                return false;
-            }
+            // if (!balanceRs.next()) {
+            // JOptionPane.showMessageDialog(null, "User not found.", "Error",
+            // JOptionPane.ERROR_MESSAGE);
+            // return false;
+            // }
 
-            double currentSaldo = balanceRs.getDouble("saldo");
+            double currentSaldo = nasabah.getSaldo();
             double saldoAwal = blueDeposito.getSaldoAwal();
 
             // Check if the user has enough balance
@@ -86,7 +117,8 @@ public class CreateTabunganController {
                 return false;
             }
 
-            boolean transaksi = createTransaksi(TransaksiType.BLUEDEPOSIT, null, saldoAwal, 0, blueDeposito, 0.0, 0,
+            boolean transaksi = createTransaksi(TransaksiType.BLUEDEPOSIT, null,
+                    saldoAwal, 0, blueDeposito, 0.0, 0,
                     null);
             if (!transaksi) {
                 System.out.println("Create Transaksi gagal");
@@ -100,11 +132,17 @@ public class CreateTabunganController {
             updateSaldoStmt.setString(2, blueDeposito.getuser_id());
             int rowsUpdated = updateSaldoStmt.executeUpdate();
 
+            if (rowsUpdated > 0) {
+                System.out.println("Success ganti saldo!");
+            }
             if (rowsUpdated <= 0) {
+                System.out.println("Update saldo error!");
                 JOptionPane.showMessageDialog(null, "Failed to update user's balance.", "Error",
                         JOptionPane.ERROR_MESSAGE);
                 return false;
             }
+
+            // nasabah.setSaldo(currentSaldo - saldoAwal);
 
             // Generate a unique tabungan ID
             String tabunganId = generateTabunganIdDeposito();
@@ -256,7 +294,7 @@ public class CreateTabunganController {
             double saldoTerpotong, double saldoDitambah, BlueDeposito blueDeposito, Double biayaAdmin, int norekTujuan,
             TopUpType topUpType) {
 
-        conn.connect(); 
+        conn.connect();
 
         try {
             String transaksiId = java.util.UUID.randomUUID().toString();
@@ -275,7 +313,6 @@ public class CreateTabunganController {
             stmt.setDouble(8, saldoDitambah);
             stmt.setString(9, StatusType.BERHASIL.name());
             stmt.setString(10, topUpType != null ? topUpType.name() : null);
-
 
             int rows = stmt.executeUpdate();
             conn.con.setAutoCommit(false);

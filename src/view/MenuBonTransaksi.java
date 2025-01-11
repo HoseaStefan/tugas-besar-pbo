@@ -163,8 +163,8 @@ public class MenuBonTransaksi {
                         if (promo || finalPromo) {
                             totalcalculated += biayaAdmin;
                             System.out.println("2" + totalcalculated);
+
                         } else {
-                            
                             finalAdmin = biayaAdmin;
                         }
 
@@ -172,11 +172,13 @@ public class MenuBonTransaksi {
                         totalcalculated += amount + biayaAdmin;
                         if (promo || finalPromo) {
                             totalcalculated -= biayaAdmin;
+                        } else {
+                            finalAdmin = biayaAdmin;
                         }
+
                     }
-                    System.out.println("biaya admin"+biayaAdmin);
-                    System.out.println("wkwkwk    " + amount);
-                    System.out.println("final"+ finalAdmin);
+
+                    System.out.println("final" + finalAdmin);
                     boolean success = TransaksiController.createTransaksi(
                             transaksiType,
                             amount,

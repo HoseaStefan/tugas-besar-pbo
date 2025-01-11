@@ -124,11 +124,11 @@ public class BlueDepositoController {
 
     public static boolean updateBlueDepositoSaldo(String userId, double newSaldoAwal, double nominal) {
         conn.connect();
-    
+
         try {
             String query = "UPDATE blue_deposito SET saldo_awal = ? WHERE user_id = ?";
             PreparedStatement stmt = conn.con.prepareStatement(query);
-    
+
             boolean transaksi = createTransaksi(TransaksiType.BLUEDEPOSIT, null, 0, nominal, userId, 0.0, 0,
                     null);
             if (!transaksi) {
@@ -136,9 +136,9 @@ public class BlueDepositoController {
                 return false;
             }
 
-            stmt.setDouble(1, newSaldoAwal); 
-            stmt.setString(2, userId); 
-    
+            stmt.setDouble(1, newSaldoAwal);
+            stmt.setString(2, userId);
+
             int affectedRows = stmt.executeUpdate();
             if (affectedRows > 0) {
                 boolean isTarikBerhasil = tarikSaldoDeposit(userId, nominal);
@@ -155,18 +155,18 @@ public class BlueDepositoController {
         }
         return false;
     }
-    
+
     public static boolean tarikSaldoDeposit(String userId, double tarikSaldo) {
         conn.connect();
         try {
             String query = "UPDATE users SET saldo = saldo + ? WHERE user_id = ?";
             PreparedStatement stmt = conn.con.prepareStatement(query);
-    
+
             stmt.setDouble(1, tarikSaldo);
             stmt.setString(2, userId);
-    
+
             int rowsUpdated = stmt.executeUpdate();
-    
+
             if (rowsUpdated > 0) {
                 return true;
             }
@@ -177,12 +177,12 @@ public class BlueDepositoController {
         }
         return false;
     }
-    
-    
 
     public boolean updateCompleteStatus(String userId, String tabunganId) {
         conn.connect();
         try {
+            conn.con.setAutoCommit(false);
+
             String updateQuery = "UPDATE blue_deposito SET complete = ? WHERE user_id = ? AND tabungan_id = ?";
             PreparedStatement stmt = conn.con.prepareStatement(updateQuery);
 
@@ -210,9 +210,11 @@ public class BlueDepositoController {
             double saldoTerpotong, double saldoDitambah, String userId, Double biayaAdmin, int norekTujuan,
             TopUpType topUpType) {
 
-        conn.connect(); 
+        conn.connect();
 
         try {
+            conn.con.setAutoCommit(false);
+
             String transaksiId = java.util.UUID.randomUUID().toString();
             String query = "INSERT INTO transaksi (transaksi_id, nasabah_id, nomor_rekening_tujuan, transaksi_type, biaya_admin, transaksi_date, kode_promo, jumlah_saldo_terpotong, jumlah_saldo_ditambah, status_type, topup_type) "
                     + "VALUES (?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?)";

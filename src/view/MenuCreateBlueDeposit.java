@@ -200,10 +200,16 @@ public class MenuCreateBlueDeposit {
                                 TabunganType.BLUEDEPOSITO, saldo_awal, startDate, depoType, saldo_awal, endDate, false);
 
                         CreateTabunganController controller = new CreateTabunganController();
-                        boolean isCreated = controller.createBlueDeposito(blueDeposito);
+                        boolean isCreated = controller.createBlueDeposito(blueDeposito, nasabah);
+                        // boolean updateSaldo = controller.pindahSaldoGether(blueDeposito.getuser_id(),
+                        // saldo_awal);
+
+                        // if (updateSaldo) {
+                        // System.out.println("berhasil ganti saldo user");
+                        // }
 
                         if (isCreated) {
-                          
+
                             double updatedSaldo = nasabah.getSaldo() - saldo_awal; // Mengurangi saldo awal
                             nasabah.setSaldo(updatedSaldo);
 
@@ -213,13 +219,12 @@ public class MenuCreateBlueDeposit {
                             JOptionPane.showMessageDialog(frame,
                                     "Deposito berhasil dibuat",
                                     "Info", JOptionPane.INFORMATION_MESSAGE);
-                            UserController userController = new UserController();
-                            userController.updateUserSaldo(nasabah.getUser_id(), updatedSaldo);
-                            System.out.println("wkkwkwkwkwkkwk");
+                            // UserController userController = new UserController();
+                            // userController.updateUserSaldo(nasabah.getUser_id(), updatedSaldo);
+
                             frame.dispose();
-                            System.out.println("print apa");
+
                             new MenuTabungan();
-                            System.out.println("print lagi");
 
                         } else {
 

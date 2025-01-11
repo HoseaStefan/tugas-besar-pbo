@@ -1,4 +1,3 @@
-
 package view;
 
 import controller.BlueDepositoController;
@@ -162,13 +161,14 @@ public class MenuTarikBlueDeposit {
                         double newSaldoAwal = saldoAwal - nominal;
 
                         boolean update = BlueDepositoController.tarikSaldoDeposit(nasabah.getUser_id(), nominal);
-                            if (update) {
-                                nasabah.setSaldo(nasabah.getSaldo()+saldoAwal);
-                            }
+                        if (update) {
+                            nasabah.setSaldo(nasabah.getSaldo() + saldoAwal);
+                        }
 
                         if (update) {
 
-                            boolean checked = BlueDepositoController.updateBlueDepositoSaldo(nasabah.getUser_id(), newSaldoAwal, nominal);
+                            boolean checked = BlueDepositoController.updateBlueDepositoSaldo(nasabah.getUser_id(),
+                                    newSaldoAwal, nominal);
 
                             nasabah.setSaldo(nasabah.getSaldo() + nominal);
                             JOptionPane.showMessageDialog(frame, "Penarikan berhasil! Saldo Anda telah diperbarui.",
@@ -194,6 +194,9 @@ public class MenuTarikBlueDeposit {
 
                             // Tambahkan saldo akhir ke saldo nasabah
                             boolean updated = UserController.updateUserSaldo(nasabah.getUser_id(), saldoAkhir);
+
+                            nasabah.setSaldo(nasabah.getSaldo() + nominal);
+
                             if (!updated) {
                                 JOptionPane.showMessageDialog(frame, "Gagal memperbarui saldo nasabah!", "Error",
                                         JOptionPane.ERROR_MESSAGE);
@@ -202,7 +205,7 @@ public class MenuTarikBlueDeposit {
 
                             boolean update = BlueDepositoController.tarikSaldoDeposit(nasabah.getUser_id(), saldoAwal);
                             if (update) {
-                                nasabah.setSaldo(nasabah.getSaldo()+saldoAwal);
+                                nasabah.setSaldo(nasabah.getSaldo() + saldoAwal);
                             }
 
                             BlueDepositoController.deleteBlueDeposito(nasabah.getUser_id());
@@ -217,7 +220,7 @@ public class MenuTarikBlueDeposit {
 
                             boolean update = BlueDepositoController.tarikSaldoDeposit(nasabah.getUser_id(), saldoAwal);
                             if (update) {
-                                nasabah.setSaldo(nasabah.getSaldo()+saldoAwal);
+                                nasabah.setSaldo(nasabah.getSaldo() + saldoAwal);
                             }
 
                             BlueDepositoController.deleteBlueDeposito(nasabah.getUser_id());

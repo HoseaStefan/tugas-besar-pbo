@@ -97,44 +97,8 @@ public class FormSetorSaldo {
                     return;
                 }
 
-<<<<<<< HEAD
                 if (amount < 0) {
                     JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak boleh negatif.", "Error",
-=======
-            } else {
-                try {
-                    String promoCode = inputPromo.getText();
-                    String saldoInput = inputSaldo.getText();
-                    double amount = Double.parseDouble(saldoInput);
-
-                    if (amount < 0) {
-                        JOptionPane.showMessageDialog(frame, "Jumlah saldo tidak boleh negatif.", "Error",
-                                JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-
-                    boolean promoValid = TransaksiController.verifyKodePromo(promoCode, TransaksiType.SETOR);
-                    if (promoCode.isEmpty() || promoValid) {
-                        boolean response = loyaltyController.paymentLoyaltyCode(nasabah.getUser_id());
-                        if (response == true) {
-                            frame.dispose();
-                            new MenuBonTransaksi(TransaksiType.SETOR, true, amount, nasabah.getNomorRekening(),
-                                    5000.0, null);
-                            loyaltyController.getChecked(nasabah.getUser_id());
-
-                        } else if (response == false) {
-                            frame.dispose();
-                            new MenuBonTransaksi(TransaksiType.SETOR, promoValid, amount, nasabah.getNomorRekening(),
-                                    5000.0, null);
-                        }
-
-                    } else {
-                        JOptionPane.showMessageDialog(frame, "Kode promo tidak valid.", "Error",
-                                JOptionPane.ERROR_MESSAGE);
-                    }
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(frame, "Input saldo harus berupa angka.", "Error",
->>>>>>> 6ee9075dc8843edcacbdd70d2833a5f8f867ed5e
                             JOptionPane.ERROR_MESSAGE);
                     return;
                 }
